@@ -11,5 +11,5 @@ public class DatabaseContext : DbContext
         
     }
     
-    public DbSet<Test> Test { get; set; }
+    public DbSet<User> Users { get; set; }
 }
