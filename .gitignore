@@ -5,5 +5,7 @@ riderModule.iml
 /_ReSharper.Caches/
 
 .idea/
-/VisconSupportAPI/appsettings.Development.json
-/VisconSupportAPI/appsettings.json
+appsettings.Development.json
+appsettings.json
+
+.DS_Store
