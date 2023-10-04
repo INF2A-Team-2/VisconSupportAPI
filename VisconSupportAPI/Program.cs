@@ -1,4 +1,7 @@
+using System.Text;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
 using VisconSupportAPI.Data;
 
 namespace VisconSupportAPI;
@@ -16,6 +19,23 @@ public static class Program
 
         builder.Services.AddDbContextPool<DatabaseContext>(options =>
             options.UseNpgsql(builder.Configuration.GetConnectionString("Database")));
+
+        builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+            .AddJwtBearer(options =>
+            {
+                options.TokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ValidIssuer = builder.Configuration["Jwt:Issuer"],
+                    ValidAudience = builder.Configuration["Jwt:Issuer"],
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+                };
+            });
+
+        builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
 
         WebApplication app = builder.Build();
 
@@ -36,6 +56,7 @@ public static class Program
         app.UseHttpsRedirection();
 
         app.UseAuthorization();
+        app.UseAuthentication();
 
         app.MapControllers();
 
