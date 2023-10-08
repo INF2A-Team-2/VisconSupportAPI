@@ -1,4 +1,5 @@
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Cryptography;
@@ -42,11 +43,24 @@ public class AuthController : ControllerBase
         return Ok(new { token = token });
     }
 
+    // [HttpGet]
+    // [Authorize]
+    // public ActionResult<string> Test()
+    // {
+    //     return "Test";
+    // }
+
     [HttpGet]
     [Authorize]
-    public ActionResult<string> Test()
+    public ActionResult<string> Type()
     {
-        return "Test";
+        string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        var type = _context.Users.First(h => h.Username == userId).Type;
+        if (userId == null || type == null)
+        {
+            return NotFound();
+        }
+        return Ok(type);
     }
 
     private string GenerateJSONWebToken(User user)
