@@ -16,7 +16,7 @@ public class User
     public long Id { get; set; }
     public string Username { get; set; }
     public string PasswordHash { get; set; }
-    public AccountType? Type { get; set; }
+    public AccountType Type { get; set; }
     public long? PhoneNumber { get; set; }
     public string? Unit { get; set; }
 }
