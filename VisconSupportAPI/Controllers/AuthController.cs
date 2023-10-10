@@ -1,9 +1,11 @@
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using VisconSupportAPI.Data;
 using VisconSupportAPI.Models;
@@ -42,11 +44,45 @@ public class AuthController : ControllerBase
         return Ok(new { token = token });
     }
 
+    // [HttpGet]
+    // [Authorize]
+    // public ActionResult<string> Test()
+    // {
+    //     return "Test";
+    // }
+
     [HttpGet]
     [Authorize]
-    public ActionResult<string> Test()
+    public ActionResult<User> GetUser()
     {
-        return "Test";
+        string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (userId == null)
+        {
+            return NotFound();
+        }
+        
+        User? user = _context.Users.FirstOrDefault(h => h.Username == userId);
+        
+        if (user == null)
+        {
+            return NotFound();
+        }
+
+        _context.Entry(user).State = EntityState.Detached;
+
+        user.PasswordHash = "";
+        
+        return Ok(user);    
+    }
+
+    [HttpGet]
+    [Route("/api/login/hash-password")]
+    public ActionResult<string> GetHashPassword([FromQuery ]string password)
+    {
+        string hashedPassword = HashPassword(password);
+
+        return Ok(hashedPassword);
     }
 
     private string GenerateJSONWebToken(User user)
@@ -81,7 +117,7 @@ public class AuthController : ControllerBase
         return user;
     }
     
-    private static string HashPassword(string input)
+    private string HashPassword(string input)
     {
         byte[] bytes = Encoding.UTF8.GetBytes(input);
         byte[] hash = SHA256.HashData(bytes);

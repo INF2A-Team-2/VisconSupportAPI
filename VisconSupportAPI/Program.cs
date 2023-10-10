@@ -36,22 +36,26 @@ public static class Program
             });
 
         builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
-
-        WebApplication app = builder.Build();
-
-        app.Use(async (context, next) =>
+        builder.Services.AddCors(options =>
         {
-            context.Response.Headers.Add("Access-Control-Allow-Origin", "*");
-            context.Response.Headers.Add("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
-
-            await next(context);
+            options.AddPolicy("Default", policyBuilder =>
+            {
+                policyBuilder
+                    .AllowAnyHeader()
+                    .AllowAnyMethod()
+                    .AllowAnyOrigin();
+            });
         });
+        
+        WebApplication app = builder.Build();
 
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();
             app.UseSwaggerUI();
         }
+
+        app.UseCors("Default");
 
         app.UseHttpsRedirection();
         
