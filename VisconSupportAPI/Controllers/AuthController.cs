@@ -52,15 +52,22 @@ public class AuthController : ControllerBase
 
     [HttpGet]
     [Authorize]
-    public ActionResult<string> Type()
+    public ActionResult<User> Type()
     {
-        string userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        var type = _context.Users.First(h => h.Username == userId).Type;
-        if (userId == null || type == null)
+        string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+
+        if (userId == null)
         {
             return NotFound();
         }
-        return Ok(type);
+        
+        User? user = _context.Users.FirstOrDefault(h => h.Username == userId);
+        
+        if (user == null)
+        {
+            return NotFound();
+        }
+        return Ok(user);
     }
 
     private string GenerateJSONWebToken(User user)
