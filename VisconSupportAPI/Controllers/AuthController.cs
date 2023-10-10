@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using System.Security.Cryptography;
 using System.Text;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using VisconSupportAPI.Data;
 using VisconSupportAPI.Models;
@@ -67,6 +68,11 @@ public class AuthController : ControllerBase
         {
             return NotFound();
         }
+
+        _context.Entry(user).State = EntityState.Detached;
+
+        user.PasswordHash = "";
+        
         return Ok(user);
     }
 
