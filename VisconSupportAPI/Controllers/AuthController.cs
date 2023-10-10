@@ -53,7 +53,7 @@ public class AuthController : ControllerBase
 
     [HttpGet]
     [Authorize]
-    public ActionResult<User> Type()
+    public ActionResult<User> GetUser()
     {
         string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
 
@@ -73,7 +73,16 @@ public class AuthController : ControllerBase
 
         user.PasswordHash = "";
         
-        return Ok(user);
+        return Ok(user);    
+    }
+
+    [HttpGet]
+    [Route("/api/login/hash-password")]
+    public ActionResult<string> GetHashPassword([FromQuery ]string password)
+    {
+        string hashedPassword = HashPassword(password);
+
+        return Ok(hashedPassword);
     }
 
     private string GenerateJSONWebToken(User user)
@@ -108,7 +117,7 @@ public class AuthController : ControllerBase
         return user;
     }
     
-    private static string HashPassword(string input)
+    private string HashPassword(string input)
     {
         byte[] bytes = Encoding.UTF8.GetBytes(input);
         byte[] hash = SHA256.HashData(bytes);
