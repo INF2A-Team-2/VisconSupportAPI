@@ -130,6 +130,11 @@ public class UserController : BaseController
             return NotFound();
         }
 
+        if (data.Username != null && Context.Users.Select(u => u.Username).Contains(data.Username))
+        {
+            return Conflict();
+        }
+
         selectedUser.Username = data.Username ?? selectedUser.Username;
         
         selectedUser.PasswordHash = data.Password != null
