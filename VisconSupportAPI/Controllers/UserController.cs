@@ -81,6 +81,16 @@ public class UserController : BaseController
             return Forbid();
         }
 
+        if (data.Username == null || data.Password == null)
+        {
+            return BadRequest();
+        }
+
+        if (Context.Users.Select(u => u.Username).Contains(data.Username))
+        {
+            return Conflict();
+        }
+
         User createdUser = new User()
         {
             Username = data.Username,
@@ -91,7 +101,9 @@ public class UserController : BaseController
         Context.Users.Add(createdUser);
         Context.SaveChanges();
 
-        return Created(Url.Action("GetUser", "User", new { userId=createdUser.Id}, Request.Scheme) ?? "", createdUser);
+        return Created(
+            Url.Action("GetUser", "User", new { userId=createdUser.Id}, Request.Scheme) ?? "",
+            createdUser);
     }
 
     [HttpPut]
