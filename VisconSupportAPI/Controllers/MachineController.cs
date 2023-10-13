@@ -45,21 +45,21 @@ public class MachineController : BaseController
         }
         if(machineId == 1){
             return new List<Issue>{
-            new Issue("logistics", "no working", "brokey"),
-            new Issue("birds", "no working", "no eggs"),
-            new Issue("fish", "no water", "dry"),
-            new Issue("cow", "no milk", "dry"),
-            new Issue("logistics", "no working", "brokey"),
-            new Issue("birds", "no working", "no eggs"),
-            new Issue("fish", "no water", "dry"),
-            new Issue("cow", "no milk", "dry")
+            new Issue(1, "logistics", "no working", "brokey"),
+            new Issue(2, "birds", "no working", "no eggs"),
+            new Issue(3,"fish", "no water", "dry"),
+            new Issue(4,"cow", "no milk", "dry"),
+            new Issue(5,"logistics", "no working", "brokey"),
+            new Issue(6,"birds", "no working", "no eggs"),
+            new Issue(7,"fish", "no water", "dry"),
+            new Issue(8,"cow", "no milk", "dry")
         };
         }
         return new List<Issue>{
-            new Issue("logistics", "no working", "brokey"),
-            new Issue("birds", "no working", "no eggs"),
-            new Issue("fish", "no water", "dry"),
-            new Issue("cow", "no milk", "dry")
+            new Issue(1,"logistics", "no working", "brokey"),
+            new Issue(2,"birds", "no working", "no eggs"),
+            new Issue(3,"fish", "no water", "dry"),
+            new Issue(4,"cow", "no milk", "dry")
         };
     }
 
