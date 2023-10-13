@@ -34,6 +34,35 @@ public class MachineController : BaseController
         
     }
 
+    [HttpGet("issues")]
+    [Authorize]
+    
+    public ActionResult<List<Issue>> GetIssueByMachine(long machineId){
+        User? user = GetUserFromClaims();
+        if(user == null)
+        {
+            return Unauthorized();
+        }
+        if(machineId == 1){
+            return new List<Issue>{
+            new Issue("logistics", "no working", "brokey"),
+            new Issue("birds", "no working", "no eggs"),
+            new Issue("fish", "no water", "dry"),
+            new Issue("cow", "no milk", "dry"),
+            new Issue("logistics", "no working", "brokey"),
+            new Issue("birds", "no working", "no eggs"),
+            new Issue("fish", "no water", "dry"),
+            new Issue("cow", "no milk", "dry")
+        };
+        }
+        return new List<Issue>{
+            new Issue("logistics", "no working", "brokey"),
+            new Issue("birds", "no working", "no eggs"),
+            new Issue("fish", "no water", "dry"),
+            new Issue("cow", "no milk", "dry")
+        };
+    }
+
 }
 
 
