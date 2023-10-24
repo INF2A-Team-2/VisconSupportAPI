@@ -14,19 +14,11 @@ namespace VisconSupportAPI.Controllers;
 
 [ApiController]
 [Route("api/login")]
-public class AuthController : ControllerBase
+public class AuthController : BaseController
 {
-    private readonly ILogger<AuthController> _logger;
-
-    private readonly DatabaseContext _context;
-
-    private readonly IConfiguration _configuration;
-
-    public AuthController(ILogger<AuthController> logger, DatabaseContext context, IConfiguration configuration)
+    public AuthController(ILogger<AuthController> logger, DatabaseContext context, IConfiguration configuration) 
+        : base(logger, context, configuration)
     {
-        _logger = logger;
-        _context = context;
-        _configuration = configuration;
     }
 
     [HttpPost]
@@ -43,51 +35,24 @@ public class AuthController : ControllerBase
         
         return Ok(new { token = token });
     }
-
-    // [HttpGet]
-    // [Authorize]
-    // public ActionResult<string> Test()
-    // {
-    //     return "Test";
-    // }
-
+    
     [HttpGet]
     [Authorize]
     public ActionResult<User> GetUser()
     {
-        string? userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-
-        if (userId == null)
-        {
-            return NotFound();
-        }
-        
-        User? user = _context.Users.FirstOrDefault(h => h.Username == userId);
+        User? user = GetUserFromClaims();
         
         if (user == null)
         {
             return NotFound();
         }
-
-        _context.Entry(user).State = EntityState.Detached;
-
-        user.PasswordHash = "";
         
         return Ok(user);    
     }
 
-    [HttpGet]
-    [Route("/api/login/hash-password")]
-    public ActionResult<string> GetHashPassword([FromQuery ]string password)
-    {
-        string hashedPassword = HashPassword(password);
-
-        return Ok(hashedPassword);
-    }
-
     private string GenerateJSONWebToken(User user)
     {
-        SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
+        SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]));
         SigningCredentials credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
         Claim[] claims = new Claim[]
@@ -96,8 +61,8 @@ public class AuthController : ControllerBase
         };
         
         JwtSecurityToken token = new JwtSecurityToken(
-            _configuration["Jwt:Issuer"],
-            _configuration["Jwt:Issuer"], 
+            Configuration["Jwt:Issuer"],
+            Configuration["Jwt:Issuer"], 
             claims,
             expires: DateTime.Now.AddHours(2), 
             signingCredentials: credentials);
@@ -107,7 +72,7 @@ public class AuthController : ControllerBase
 
     private User? AuthenticateUser(UserCredentials credentials)
     {
-        User? user = _context.Users.SingleOrDefault(u => u.Username == credentials.Username);
+        User? user = Context.Users.SingleOrDefault(u => u.Username == credentials.Username);
 
         if (user == null || user.PasswordHash != HashPassword(credentials.Password))
         {
@@ -117,7 +82,7 @@ public class AuthController : ControllerBase
         return user;
     }
     
-    private string HashPassword(string input)
+    public static string HashPassword(string input)
     {
         byte[] bytes = Encoding.UTF8.GetBytes(input);
         byte[] hash = SHA256.HashData(bytes);

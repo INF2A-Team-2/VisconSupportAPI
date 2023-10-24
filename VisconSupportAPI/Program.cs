@@ -2,6 +2,7 @@ using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using VisconSupportAPI.Data;
 
 namespace VisconSupportAPI;
@@ -15,7 +16,21 @@ public static class Program
         builder.Services.AddControllers();
 
         builder.Services.AddEndpointsApiExplorer();
-        builder.Services.AddSwaggerGen();
+        builder.Services.AddSwaggerGen(c =>
+        {
+            c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+            {
+                Description = """
+                              JWT Authorization header using the Bearer scheme.
+                              Enter 'Bearer' [space] and then your token in the text input below.
+                              Example: 'Bearer 12345abcdef'
+                              """,
+                Name = "Authorization",
+                In = ParameterLocation.Header,
+                Type = SecuritySchemeType.ApiKey,
+                Scheme = "Bearer"
+            });
+        });
 
         builder.Services.AddDbContextPool<DatabaseContext>(options =>
             options.UseNpgsql(builder.Configuration.GetConnectionString("Database")));
