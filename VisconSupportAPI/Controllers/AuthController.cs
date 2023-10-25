@@ -46,6 +46,8 @@ public class AuthController : BaseController
         {
             return NotFound();
         }
+
+        user.PasswordHash = "";
         
         return Ok(user);    
     }

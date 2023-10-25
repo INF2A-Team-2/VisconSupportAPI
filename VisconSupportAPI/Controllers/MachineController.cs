@@ -1,6 +1,7 @@
 using System.Reflection.PortableExecutable;
 using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using VisconSupportAPI.Controllers;
 using VisconSupportAPI.Data;
@@ -24,43 +25,20 @@ public class MachineController : BaseController
         {
             return Unauthorized();
         }
-        return new List<Machine> {
-            new Machine(0, "machine 1", 2),
-            new Machine(1, "machine 2", 2),
-            new Machine(2, "machine 3", 2),
-            new Machine(3, "machine 4", 2),
-            new Machine(4, "machine 5", 2)
-        };
-        
+
+        return Ok(user.Machines);
     }
 
     [HttpGet("issues")]
     [Authorize]
-    
     public ActionResult<List<Issue>> GetIssueByMachine(long machineId){
         User? user = GetUserFromClaims();
         if(user == null)
         {
             return Unauthorized();
         }
-        if(machineId == 1){
-            return new List<Issue>{
-            new Issue(1, "logistics", "no working", "brokey"),
-            new Issue(2, "birds", "no working", "no eggs"),
-            new Issue(3,"fish", "no water", "dry"),
-            new Issue(4,"cow", "no milk", "dry"),
-            new Issue(5,"logistics", "no working", "brokey"),
-            new Issue(6,"birds", "no working", "no eggs"),
-            new Issue(7,"fish", "no water", "dry"),
-            new Issue(8,"cow", "no milk", "dry")
-        };
-        }
-        return new List<Issue>{
-            new Issue(1,"logistics", "no working", "brokey"),
-            new Issue(2,"birds", "no working", "no eggs"),
-            new Issue(3,"fish", "no water", "dry"),
-            new Issue(4,"cow", "no milk", "dry")
-        };
+
+        return new ActionResult<List<Issue>>(new AcceptedResult());
     }
 
 }
