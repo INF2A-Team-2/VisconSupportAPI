@@ -20,18 +20,26 @@ public class DatabaseContext : DbContext
         // foreign keys for issue
         modelBuilder.Entity<User>()
             .HasMany<Issue>()
-            .WithOne();
+            .WithOne()
+            .HasForeignKey(h => h.UserId)
+            .IsRequired();
         modelBuilder.Entity<Machine>()
             .HasMany<Issue>()
-            .WithOne();
+            .WithOne()
+            .HasForeignKey(h => h.MachineId)
+            .IsRequired();
         
         // foreign keys for message
         modelBuilder.Entity<Message>()
             .HasOne<User>()
-            .WithMany();
+            .WithMany()
+            .HasForeignKey(h => h.UserId)
+            .IsRequired();
         modelBuilder.Entity<Message>()
             .HasOne<Issue>()
-            .WithMany();
+            .WithMany()
+            .HasForeignKey(h => h.IssueId)
+            .IsRequired();
         
         // foreign key for user to machines
         modelBuilder.Entity<User>()

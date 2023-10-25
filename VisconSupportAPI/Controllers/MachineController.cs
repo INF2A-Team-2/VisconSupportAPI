@@ -1,7 +1,4 @@
-using System.Reflection.PortableExecutable;
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using VisconSupportAPI.Controllers;
 using VisconSupportAPI.Data;
@@ -27,18 +24,6 @@ public class MachineController : BaseController
         }
 
         return Ok(user.Machines);
-    }
-
-    [HttpGet("issues")]
-    [Authorize]
-    public ActionResult<List<Issue>> GetIssueByMachine(long machineId){
-        User? user = GetUserFromClaims();
-        if(user == null)
-        {
-            return Unauthorized();
-        }
-
-        return new ActionResult<List<Issue>>(new AcceptedResult());
     }
 
 }

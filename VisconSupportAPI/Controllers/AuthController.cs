@@ -46,10 +46,15 @@ public class AuthController : BaseController
         {
             return NotFound();
         }
-
-        user.PasswordHash = "";
         
-        return Ok(user);    
+        return Ok(new
+        {
+            ID = user.Id,
+            Username = user.Username,
+            Unit = user.Unit,
+            PhoneNumber = user.PhoneNumber,
+            Type = user.Type
+        });    
     }
 
     private string GenerateJSONWebToken(User user)

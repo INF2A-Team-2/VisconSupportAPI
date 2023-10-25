@@ -6,5 +6,6 @@ public class Issue
     public string Expected {get; set;}
     public string Tried {get; set;}
     public DateTime TimeStamp { get; set; }
-    // also has foreign keys for machine and user defined in dbcontext
+    public long UserId { get; set; }
+    public long MachineId { get; set; }
 }
