@@ -1,7 +1,6 @@
-using System.Reflection.PortableExecutable;
-using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using VisconSupportAPI.Controllers;
 using VisconSupportAPI.Data;
 using VisconSupportAPI.Models;
@@ -22,45 +21,12 @@ public class MachineController : BaseController
         User? user = GetUserFromClaims();
         if (user == null)
         {
-            return Unauthorized();
+            return Unauthorized("Not authorized");
         }
-        return new List<Machine> {
-            new Machine(0, "machine 1", 2),
-            new Machine(1, "machine 2", 2),
-            new Machine(2, "machine 3", 2),
-            new Machine(3, "machine 4", 2),
-            new Machine(4, "machine 5", 2)
-        };
         
-    }
-
-    [HttpGet("issues")]
-    [Authorize]
-    
-    public ActionResult<List<Issue>> GetIssueByMachine(long machineId){
-        User? user = GetUserFromClaims();
-        if(user == null)
-        {
-            return Unauthorized();
-        }
-        if(machineId == 1){
-            return new List<Issue>{
-            new Issue(1, "logistics", "no working", "brokey"),
-            new Issue(2, "birds", "no working", "no eggs"),
-            new Issue(3,"fish", "no water", "dry"),
-            new Issue(4,"cow", "no milk", "dry"),
-            new Issue(5,"logistics", "no working", "brokey"),
-            new Issue(6,"birds", "no working", "no eggs"),
-            new Issue(7,"fish", "no water", "dry"),
-            new Issue(8,"cow", "no milk", "dry")
-        };
-        }
-        return new List<Issue>{
-            new Issue(1,"logistics", "no working", "brokey"),
-            new Issue(2,"birds", "no working", "no eggs"),
-            new Issue(3,"fish", "no water", "dry"),
-            new Issue(4,"cow", "no milk", "dry")
-        };
+        Context.Entry(user).Collection(h => h.Machines).Load();
+        return Ok(user.Machines);
+        // return Ok(Context.Users.Where(h => h.Id == user.Id).Include(h => h.Machines).Select(h => h.Machines));
     }
 
 }

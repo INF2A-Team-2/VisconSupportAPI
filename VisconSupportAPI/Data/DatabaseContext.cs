@@ -8,8 +8,42 @@ public class DatabaseContext : DbContext
 {
     public DatabaseContext(DbContextOptions<DatabaseContext> options) : base(options)
     {
-        
     }
     
     public DbSet<User> Users { get; set; }
+    public DbSet<Machine> Machines { get; set; }
+    public DbSet<Issue> Issues { get; set; }
+    public DbSet<Message> Messages { get; set; }
+
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        // foreign keys for issue
+        modelBuilder.Entity<User>()
+            .HasMany<Issue>()
+            .WithOne()
+            .HasForeignKey(h => h.UserId)
+            .IsRequired();
+        modelBuilder.Entity<Machine>()
+            .HasMany<Issue>()
+            .WithOne()
+            .HasForeignKey(h => h.MachineId)
+            .IsRequired();
+        
+        // foreign keys for message
+        modelBuilder.Entity<Message>()
+            .HasOne<User>()
+            .WithMany()
+            .HasForeignKey(h => h.UserId)
+            .IsRequired();
+        modelBuilder.Entity<Message>()
+            .HasOne<Issue>()
+            .WithMany()
+            .HasForeignKey(h => h.IssueId)
+            .IsRequired();
+        
+        // foreign key for user to machines
+        modelBuilder.Entity<User>()
+            .HasMany(h => h.Machines)
+            .WithMany();
+    }
 }
