@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using VisconSupportAPI.Controllers;
 using VisconSupportAPI.Data;
 using VisconSupportAPI.Models;
@@ -20,10 +21,12 @@ public class MachineController : BaseController
         User? user = GetUserFromClaims();
         if (user == null)
         {
-            return Unauthorized();
+            return Unauthorized("Not authorized");
         }
-
+        
+        Context.Entry(user).Collection(h => h.Machines).Load();
         return Ok(user.Machines);
+        // return Ok(Context.Users.Where(h => h.Id == user.Id).Include(h => h.Machines).Select(h => h.Machines));
     }
 
 }

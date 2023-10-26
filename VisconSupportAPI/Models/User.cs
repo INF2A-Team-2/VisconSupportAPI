@@ -19,5 +19,5 @@ public class User
     public AccountType Type { get; set; }
     public string? PhoneNumber { get; set; }
     public string? Unit { get; set; }
-    public List<Machine> Machines { get; set; } = new();
+    public List<Machine> Machines { get; set; }
 }
