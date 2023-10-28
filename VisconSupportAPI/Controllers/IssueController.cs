@@ -29,7 +29,7 @@ public class IssueController: BaseController
         return BadRequest();
     }
 
-    [HttpPut()]
+    [HttpPost()]
     [Authorize]
 
     public ActionResult<Issue> CreateIssue([FromBody] NewIssue Ticket)
