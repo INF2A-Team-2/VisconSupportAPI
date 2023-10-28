@@ -7,7 +7,7 @@ using VisconSupportAPI.Models;
 namespace VisconSupportAPI.Controllers;
 
 [ApiController]
-[Route("issues")]
+[Route("api/issues")]
 public class IssueController: BaseController
 {
     public IssueController(ILogger<AuthController> logger, DatabaseContext context, IConfiguration configuration) : base(logger, context, configuration)
@@ -48,8 +48,9 @@ public class IssueController: BaseController
             Headline = Ticket.Headline,
             UserId = user.Id,
             MachineId = Ticket.MachineId,
-            TimeStamp = DateTime.Now
+            TimeStamp = DateTime.UtcNow
         });
+        Context.SaveChanges();
         
         
     return Ok();
