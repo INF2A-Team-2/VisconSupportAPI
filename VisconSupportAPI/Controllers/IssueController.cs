@@ -13,23 +13,55 @@ public class IssueController: BaseController
     public IssueController(ILogger<AuthController> logger, DatabaseContext context, IConfiguration configuration) : base(logger, context, configuration)
     {
     }
-    
-    [HttpGet("{machineId}")]
+
+    [HttpGet]
     [Authorize]
-    public ActionResult<List<Issue>> GetIssues(string machineId){
+    public ActionResult<List<Issue>> GetIssues(string? machineId)
+    {
         User? user = GetUserFromClaims();
         if(user == null)
         {
             return Unauthorized();
         }
 
+        if(machineId == null){
+            if (user.Type is AccountType.Admin or AccountType.Helpdesk)
+            {
+                return Ok(Context.Issues);
+            }
+
+            if (user.Type is AccountType.User)
+            {
+                return Ok(Context.Issues.Where(h => h.UserId == user.Id));
+            }
+
+            return Unauthorized();
+        }
         if(int.TryParse(machineId, out var machine)){
-            return Ok(Context.Issues.Where(h => h.UserId == user.Id && h.MachineId == machine));
+            return Ok(Context.Issues.Where(h => h.MachineId == machine));
         }
         return BadRequest();
     }
 
-    [HttpPost()]
+    [HttpGet("{issueId}")]
+    [Authorize]
+    public ActionResult<Issue> GetSpecificIssue(string issueId)
+    {
+        User? user = GetUserFromClaims();
+        if (user == null)
+        {
+            return Unauthorized();
+        }
+
+        if (int.TryParse(issueId, out var issueNum))
+        {
+            return Ok(Context.Issues.First(h => h.Id == issueNum));
+        }
+
+        return BadRequest();
+    }
+
+    [HttpPost]
     [Authorize]
 
     public ActionResult<Issue> CreateIssue([FromBody] NewIssue Ticket)
@@ -52,8 +84,7 @@ public class IssueController: BaseController
         });
         Context.SaveChanges();
         
-        
-    return Ok();
+        return Ok();
     }
 }
 
