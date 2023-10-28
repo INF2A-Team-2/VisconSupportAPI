@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using VisconSupportAPI.Data;
 using VisconSupportAPI.Models;
@@ -27,4 +28,39 @@ public class IssueController: BaseController
         }
         return BadRequest();
     }
+
+    [HttpPut()]
+    [Authorize]
+
+    public ActionResult<Issue> CreateIssue([FromBody] NewIssue Ticket)
+    {
+        User? user = GetUserFromClaims();
+        if (user == null)
+        {
+            return Unauthorized();
+        }
+
+        Context.Issues.Add(new Issue()
+        {
+            Actual = Ticket.Actual,
+            Expected = Ticket.Expected,
+            Tried = Ticket.Tried,
+            Headline = Ticket.Headline,
+            UserId = user.Id,
+            MachineId = Ticket.MachineId,
+            TimeStamp = DateTime.Now
+        });
+        
+        
+    return Ok();
+    }
+}
+
+public class NewIssue
+{
+    public string Actual { get; set; }
+    public string Expected { get; set; }
+    public string Tried { get; set; }
+    public string Headline { get; set; }
+    public long MachineId { get; set; }
 }
