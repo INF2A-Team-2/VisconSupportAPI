@@ -23,10 +23,14 @@ public class MachineController : BaseController
         {
             return Unauthorized("Not authorized");
         }
-        
-        Context.Entry(user).Collection(h => h.Machines).Load();
-        return Ok(user.Machines);
-        // return Ok(Context.Users.Where(h => h.Id == user.Id).Include(h => h.Machines).Select(h => h.Machines));
+
+        if (user.Type == AccountType.User)
+        {
+            Context.Entry(user).Collection(h => h.Machines).Load();
+            return Ok(user.Machines);
+        }
+
+        return Ok(Context.Machines);
     }
 
 }
