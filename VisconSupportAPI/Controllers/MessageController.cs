@@ -20,8 +20,21 @@ public class MessageController: BaseController
         User? user = GetUserFromClaims();
         if (user == null)
             return Unauthorized();
-        
-        return Ok(Context.Messages.Where(h => h.IssueId == issueId && h.UserId == user.Id));
+
+        var retour = new List<RetourMessage>();
+        var messages = Context.Messages.Where(h => h.IssueId == issueId && h.UserId == user.Id);
+        foreach (var message in messages)
+        {
+            retour.Add(new RetourMessage
+            {
+                ID = message.Id,
+                Name = Context.Users.First(h => h.Id == message.UserId).Username,
+                Body = message.Body,
+                Timestamp = message.TimeStamp
+            });
+        }
+
+        return Ok(retour);
     }
 
     [HttpPost]
@@ -51,4 +64,12 @@ public class NewMessage
 {
     public int IssueId { get; set; }
     public string Body { get; set; }
+}
+
+public class RetourMessage
+{
+    public long ID { get; set; }
+    public string Name { get; set; }
+    public string Body { get; set; }
+    public DateTime Timestamp { get; set; }
 }
