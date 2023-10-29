@@ -22,7 +22,7 @@ public class MessageController: BaseController
             return Unauthorized();
 
         var retour = new List<RetourMessage>();
-        var messages = Context.Messages.Where(h => h.IssueId == issueId && h.UserId == user.Id).ToList();
+        var messages = Context.Messages.Where(h => h.IssueId == issueId).ToList();
         foreach (var message in messages)
         {
             retour.Add(new RetourMessage
