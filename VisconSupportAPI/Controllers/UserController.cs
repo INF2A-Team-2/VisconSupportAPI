@@ -1,12 +1,5 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Net;
-using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
-using System.Security.Cryptography;
-using System.Text;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using VisconSupportAPI.Data;
 using VisconSupportAPI.Models;
 
@@ -178,6 +171,13 @@ public class UserController : BaseController
         Context.SaveChanges();
 
         return Ok();
+    }
+
+    [HttpGet("name")]
+    [Authorize]
+    public ActionResult<string> GetNameById(int id)
+    {
+        return Ok(Context.Users.First(h => h.Id == id).Username);
     }
 }
 
