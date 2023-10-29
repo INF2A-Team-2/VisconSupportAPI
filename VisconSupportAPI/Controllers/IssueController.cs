@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using VisconSupportAPI.Data;
 using VisconSupportAPI.Models;
@@ -63,7 +62,6 @@ public class IssueController: BaseController
 
     [HttpPost]
     [Authorize]
-
     public ActionResult<Issue> CreateIssue([FromBody] NewIssue Ticket)
     {
         User? user = GetUserFromClaims();
