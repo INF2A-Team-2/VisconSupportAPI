@@ -172,13 +172,6 @@ public class UserController : BaseController
 
         return Ok();
     }
-
-    [HttpGet("name")]
-    [Authorize]
-    public ActionResult<string> GetNameById(int id)
-    {
-        return Ok(Context.Users.First(h => h.Id == id).Username);
-    }
 }
 
 public class UserCreationData
