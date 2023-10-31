@@ -44,7 +44,7 @@ public class IssueController: BaseController
 
     [HttpGet("{issueId}")]
     [Authorize]
-    public ActionResult<Issue> GetSpecificIssue(string issueId)
+    public ActionResult<Issue> GetIssue(string issueId)
     {
         User? user = GetUserFromClaims();
         if (user == null)
@@ -70,7 +70,7 @@ public class IssueController: BaseController
             return Unauthorized();
         }
 
-        Context.Issues.Add(new Issue()
+        Issue issue = new Issue()
         {
             Actual = Ticket.Actual,
             Expected = Ticket.Expected,
@@ -79,10 +79,14 @@ public class IssueController: BaseController
             UserId = user.Id,
             MachineId = Ticket.MachineId,
             TimeStamp = DateTime.UtcNow
-        });
+        };
+
+        Context.Issues.Add(issue);
         Context.SaveChanges();
         
-        return Ok();
+        return Created(
+            Url.Action("GetIssue", "Issue", new { issueId=issue.Id}, Request.Scheme) ?? "",
+            issue);
     }
 }
 
