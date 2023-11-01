@@ -123,7 +123,9 @@ public class UserController : BaseController
             return NotFound();
         }
 
-        if (data.Username != null && Context.Users.Select(u => u.Username).Contains(data.Username))
+        if (data.Username != null && Context.Users.Select(u => u.Username)
+                .Where(u => u != selectedUser.Username)
+                .Contains(data.Username))
         {
             return Conflict();
         }
