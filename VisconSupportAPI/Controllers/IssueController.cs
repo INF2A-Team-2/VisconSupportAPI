@@ -88,6 +88,52 @@ public class IssueController: BaseController
             Url.Action("GetIssue", "Issue", new { issueId=issue.Id}, Request.Scheme) ?? "",
             issue);
     }
+    
+    [HttpGet("{issueId:int}/messages")]
+    [Authorize]
+    public ActionResult<List<Message>> GetMessages(int issueId)
+    {
+        User? user = GetUserFromClaims();
+        if (user == null)
+            return Unauthorized();
+
+        var retour = new List<RetourMessage>();
+        var messages = Context.Messages.Where(h => h.IssueId == issueId).ToList();
+        foreach (var message in messages)
+        {
+            retour.Add(new RetourMessage
+            {
+                ID = message.Id,
+                Name = Context.Users.First(h => h.Id == message.UserId).Username,
+                Body = message.Body,
+                Timestamp = message.TimeStamp
+            });
+        }
+
+        return Ok(retour);
+    }
+
+    [HttpPost("{issueId:int}/messages")]
+    [Authorize]
+    public ActionResult CreateMessage([FromBody] NewMessage message)
+    {
+        User? user = GetUserFromClaims();
+        if (user == null)
+            return Unauthorized();
+
+        if (user.Type is not (AccountType.Admin or AccountType.Helpdesk) &&
+            Context.Issues.First(h => h.Id == message.IssueId).UserId != user.Id) return BadRequest();
+        Context.Messages.Add(new Message
+        {
+            Body = message.Body,
+            TimeStamp = DateTime.UtcNow,
+            IssueId = message.IssueId,
+            UserId = user.Id
+        });
+        Context.SaveChanges();
+        return Ok();
+
+    }
 }
 
 public class NewIssue
@@ -97,4 +143,18 @@ public class NewIssue
     public string Tried { get; set; }
     public string Headline { get; set; }
     public long MachineId { get; set; }
+}
+
+public class NewMessage
+{
+    public int IssueId { get; set; }
+    public string Body { get; set; }
+}
+
+public class RetourMessage
+{
+    public long ID { get; set; }
+    public string Name { get; set; }
+    public string Body { get; set; }
+    public DateTime Timestamp { get; set; }
 }
