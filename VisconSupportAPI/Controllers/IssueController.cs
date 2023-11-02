@@ -15,36 +15,35 @@ public class IssueController: BaseController
 
     [HttpGet]
     [Authorize]
-    public ActionResult<List<Issue>> GetIssues(string? machineId)
+    public ActionResult<List<Issue>> GetIssues(int? machineId, int? userId)
     {
         User? user = GetUserFromClaims();
+        
         if(user == null)
         {
             return Unauthorized();
         }
 
-        if(machineId == null){
-            if (user.Type is AccountType.Admin or AccountType.Helpdesk)
-            {
-                return Ok(Context.Issues);
-            }
+        IEnumerable<Issue> issues = user.Type == AccountType.User
+            ? Context.Issues.Where(i => i.UserId == user.Id)
+            : Context.Issues;
 
-            if (user.Type is AccountType.User)
-            {
-                return Ok(Context.Issues.Where(h => h.UserId == user.Id));
-            }
+        if (machineId != null)
+        {
+            issues = issues.Where(i => i.MachineId == machineId);
+        }
 
-            return Unauthorized();
+        if (userId != null)
+        {
+            issues = issues.Where(i => i.UserId == userId);
         }
-        if(int.TryParse(machineId, out var machine)){
-            return Ok(Context.Issues.Where(h => h.MachineId == machine));
-        }
-        return BadRequest();
+
+        return Ok(issues);
     }
 
     [HttpGet("{issueId}")]
     [Authorize]
-    public ActionResult<Issue> GetIssue(string issueId)
+    public ActionResult<Issue> GetIssue(int issueId)
     {
         User? user = GetUserFromClaims();
         if (user == null)
@@ -52,12 +51,14 @@ public class IssueController: BaseController
             return Unauthorized();
         }
 
-        if (int.TryParse(issueId, out var issueNum))
+        Issue? selectedIssue = Context.Issues.FirstOrDefault(h => h.Id == issueId);
+
+        if (selectedIssue == null)
         {
-            return Ok(Context.Issues.First(h => h.Id == issueNum));
+            return NotFound();
         }
 
-        return BadRequest();
+        return Ok(selectedIssue);
     }
 
     [HttpPost]
@@ -115,19 +116,19 @@ public class IssueController: BaseController
 
     [HttpPost("{issueId:int}/messages")]
     [Authorize]
-    public ActionResult CreateMessage([FromBody] NewMessage message)
+    public ActionResult CreateMessage(int issueId, NewMessage message)
     {
         User? user = GetUserFromClaims();
         if (user == null)
             return Unauthorized();
 
         if (user.Type is not (AccountType.Admin or AccountType.Helpdesk) &&
-            Context.Issues.First(h => h.Id == message.IssueId).UserId != user.Id) return BadRequest();
+            Context.Issues.First(h => h.Id == issueId).UserId != user.Id) return BadRequest();
         Context.Messages.Add(new Message
         {
             Body = message.Body,
             TimeStamp = DateTime.UtcNow,
-            IssueId = message.IssueId,
+            IssueId = issueId,
             UserId = user.Id
         });
         Context.SaveChanges();
@@ -147,7 +148,6 @@ public class NewIssue
 
 public class NewMessage
 {
-    public int IssueId { get; set; }
     public string Body { get; set; }
 }
 
