@@ -2,6 +2,8 @@
 Microsoft Visual Studio Solution File, Format Version 12.00
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisconSupportAPI", "VisconSupportAPI\VisconSupportAPI.csproj", "{745CCD6A-9CD0-44D3-A123-B76F6B45D9C2}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisconSupportAPI.Tests", "VisconSupportAPI.Tests\VisconSupportAPI.Tests.csproj", "{606D21C3-5957-4FC2-BAEA-9051E999409E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -12,5 +14,9 @@ Global
 		{745CCD6A-9CD0-44D3-A123-B76F6B45D9C2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{745CCD6A-9CD0-44D3-A123-B76F6B45D9C2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{745CCD6A-9CD0-44D3-A123-B76F6B45D9C2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{606D21C3-5957-4FC2-BAEA-9051E999409E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{606D21C3-5957-4FC2-BAEA-9051E999409E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{606D21C3-5957-4FC2-BAEA-9051E999409E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{606D21C3-5957-4FC2-BAEA-9051E999409E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
