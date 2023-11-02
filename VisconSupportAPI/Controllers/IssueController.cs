@@ -23,7 +23,7 @@ public class IssueController: BaseController
         {
             return Unauthorized();
         }
-
+        
         IEnumerable<Issue> issues = user.Type == AccountType.User
             ? Context.Issues.Where(i => i.UserId == user.Id)
             : Context.Issues;
