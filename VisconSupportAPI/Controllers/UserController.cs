@@ -16,6 +16,9 @@ public class UserController : BaseController
     
     [HttpGet]
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public ActionResult<List<User>> GetUsers()
     {
         User? user = GetUserFromClaims();
@@ -37,6 +40,9 @@ public class UserController : BaseController
     
     [HttpGet("{userId:int}")]
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public ActionResult<User> GetUser(int userId)
     {
         User? user = GetUserFromClaims();
@@ -58,6 +64,11 @@ public class UserController : BaseController
 
     [HttpPost]
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
     public ActionResult<User> PostUser(UserCreationData data)
     {
         User? user = GetUserFromClaims();
@@ -99,6 +110,11 @@ public class UserController : BaseController
 
     [HttpPut("{userId:int}")]
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
     public ActionResult PutUser(int userId, UserCreationData data)
     {
         User? user = GetUserFromClaims();
@@ -144,6 +160,10 @@ public class UserController : BaseController
 
     [HttpDelete("{userId:int}")]
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult DeleteUser(int userId)
     {   
         User? user = GetUserFromClaims();
@@ -173,6 +193,9 @@ public class UserController : BaseController
     
     [HttpGet("{userId:int}/machines")]
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult<List<Machine>> GetMachines(int userId){
         User? user = GetUserFromClaims();
         
@@ -200,6 +223,11 @@ public class UserController : BaseController
 
     [HttpPut("{userId:int}/machines")]
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public ActionResult AddMachine(int userId, List<long> machineIds)
     {
         User? user = GetUserFromClaims();

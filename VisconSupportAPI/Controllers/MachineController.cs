@@ -18,6 +18,8 @@ public class MachineController : BaseController
 
     [HttpGet]
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public ActionResult<List<Machine>> GetMachines(){
         User? user = GetUserFromClaims();
         

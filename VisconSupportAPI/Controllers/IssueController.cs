@@ -15,6 +15,8 @@ public class IssueController: BaseController
 
     [HttpGet]
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public ActionResult<List<Issue>> GetIssues(int? machineId, int? userId)
     {
         User? user = GetUserFromClaims();
@@ -43,6 +45,10 @@ public class IssueController: BaseController
 
     [HttpGet("{issueId}")]
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+
     public ActionResult<Issue> GetIssue(int issueId)
     {
         User? user = GetUserFromClaims();
@@ -63,6 +69,8 @@ public class IssueController: BaseController
 
     [HttpPost]
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public ActionResult<Issue> CreateIssue([FromBody] NewIssue Ticket)
     {
         User? user = GetUserFromClaims();
@@ -109,6 +117,8 @@ public class IssueController: BaseController
     
     [HttpGet("{issueId:int}/messages")]
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public ActionResult<List<Message>> GetMessages(int issueId)
     {
         User? user = GetUserFromClaims();
@@ -133,6 +143,10 @@ public class IssueController: BaseController
 
     [HttpPost("{issueId:int}/messages")]
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult CreateMessage(int issueId, NewMessage message)
     {
         User? user = GetUserFromClaims();
@@ -165,6 +179,10 @@ public class IssueController: BaseController
 
     [HttpGet("{issueId:int}/attachments")]
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public ActionResult<List<Attachment>> GetAttachments(int issueId)
     {
         User? user = GetUserFromClaims();
