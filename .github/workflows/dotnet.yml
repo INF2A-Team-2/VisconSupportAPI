@@ -23,7 +23,7 @@ jobs:
     steps:
     - uses: actions/checkout@v3
 
-    - name: Setup testconfig.json
+    - name: Setup appsettings.json
       run: echo "$APP_SETTINGS" > appsettings.json
       working-directory: ${{env.APP_DIR}}
     
