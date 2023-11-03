@@ -16,6 +16,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: Setup testconfig.json
+      env:
+        TEST_CONFIG: ${{ secrets.TEST_CONFIG }}
+      run: echo "$TEST_CONFIG" > testconfig.json
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
