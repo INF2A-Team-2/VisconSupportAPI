@@ -1,0 +1,10 @@
+global using Xunit;
+global using Microsoft.AspNetCore.Mvc.Testing;
+global using VisconSupportAPI.Controllers;
+global using System.Net;
+global using Newtonsoft.Json;
+global using VisconSupportAPI.Models;
+global using Xunit.Abstractions;
+global using Microsoft.Extensions.Configuration;
+global using System.Net.Http.Headers;
+global using System.Text;

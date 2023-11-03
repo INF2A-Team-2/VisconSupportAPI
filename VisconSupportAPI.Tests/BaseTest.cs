@@ -1,12 +1,3 @@
-using System.ComponentModel;
-using Microsoft.Extensions.Configuration;
-using System.Net;
-using System.Net.Http.Headers;
-using System.Text;
-using Newtonsoft.Json;
-using VisconSupportAPI.Models;
-using Xunit.Abstractions;
-
 namespace VisconSupportAPI.Tests;
 
 public class BaseTest
