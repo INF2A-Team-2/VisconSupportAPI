@@ -17,19 +17,17 @@ jobs:
     env:
         APP_SETTINGS: ${{ secrets.APP_SETTINGS }}
         TEST_CONFIG: ${{ secrets.TEST_CONFIG }}
-        APP_DIR: ./VisconSupportAPI
-        TEST_DIR: ./VisconSupportAPI.Tests
 
     steps:
     - uses: actions/checkout@v3
 
     - name: Setup appsettings.json
-      run: echo "$APP_SETTINGS" > appsettings.json
-      working-directory: ${{env.APP_DIR}}
+      run: echo "$APP_SETTINGS" > VisconSupportAPI/appsettings.json
+      working-directory: ${{ github.workspace }}
     
     - name: Setup testconfig.json
-      run: echo "$TEST_CONFIG" > testconfig.json
-      working-directory: ${{env.TEST_DIR}}
+      run: echo "$TEST_CONFIG" > VisconSupportAPI.Tests/testconfig.json
+      working-directory: ${{ github.workspace }}
       
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
