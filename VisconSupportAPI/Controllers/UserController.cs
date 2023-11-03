@@ -104,6 +104,8 @@ public class UserController : BaseController
     [Route("/api/users/{userId:int}")]
     public ActionResult PutUser(int userId, UserCreationData data)
     {
+        Console.WriteLine("PUTTTTTTTTT");
+        Console.WriteLine(data.Username);
         User? user = GetUserFromClaims();
 
         if (user == null)
@@ -139,6 +141,13 @@ public class UserController : BaseController
         selectedUser.Type = data.Type;
         selectedUser.PhoneNumber = data.PhoneNumber;
         selectedUser.Unit = data.Unit;
+        
+        Context.Entry(selectedUser).Collection(u => u.Machines).Load();
+
+        if (selectedUser.Type != AccountType.User)
+        {
+            selectedUser.Machines.Clear();
+        }
 
         Context.SaveChanges();
 
