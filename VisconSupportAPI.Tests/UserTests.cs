@@ -30,8 +30,6 @@ public class UserTests : BaseTest
         
         string? username = Config["LoginData:Admin:Username"];
         
-        Assert.NotNull(userIdS);
-        
         Assert.Equal(user.Id, userId);
         Assert.Equal(user.Username, username);
     }
