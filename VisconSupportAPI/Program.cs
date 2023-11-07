@@ -7,7 +7,7 @@ using VisconSupportAPI.Data;
 
 namespace VisconSupportAPI;
 
-public static class Program
+public class Program
 {
     public static void Main(string[] args)
     {

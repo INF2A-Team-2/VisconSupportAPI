@@ -7,6 +7,7 @@ riderModule.iml
 .idea/
 appsettings.Development.json
 appsettings.json
+testconfig.json
 .vs
 .DS_Store
 
