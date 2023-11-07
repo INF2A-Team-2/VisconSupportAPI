@@ -14,6 +14,7 @@ public class DatabaseContext : DbContext
     public DbSet<Machine> Machines { get; set; }
     public DbSet<Issue> Issues { get; set; }
     public DbSet<Message> Messages { get; set; }
+    public DbSet<Attachment> Attachments { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -23,6 +24,7 @@ public class DatabaseContext : DbContext
             .WithOne()
             .HasForeignKey(h => h.UserId)
             .IsRequired();
+        
         modelBuilder.Entity<Machine>()
             .HasMany<Issue>()
             .WithOne()
@@ -35,7 +37,15 @@ public class DatabaseContext : DbContext
             .WithMany()
             .HasForeignKey(h => h.UserId)
             .IsRequired();
+        
         modelBuilder.Entity<Message>()
+            .HasOne<Issue>()
+            .WithMany()
+            .HasForeignKey(h => h.IssueId)
+            .IsRequired();
+        
+        // foreign keys for attachment
+        modelBuilder.Entity<Attachment>()
             .HasOne<Issue>()
             .WithMany()
             .HasForeignKey(h => h.IssueId)

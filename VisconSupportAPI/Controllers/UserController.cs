@@ -13,9 +13,12 @@ public class UserController : BaseController
         : base(logger, context, configuration)
     {
     }
-
+    
     [HttpGet]
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public ActionResult<List<User>> GetUsers()
     {
         User? user = GetUserFromClaims();
@@ -35,9 +38,11 @@ public class UserController : BaseController
         return Ok(users);
     }
     
-    [HttpGet]
+    [HttpGet("{userId:int}")]
     [Authorize]
-    [Route("/api/users/{userId:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public ActionResult<User> GetUser(int userId)
     {
         User? user = GetUserFromClaims();
@@ -59,7 +64,11 @@ public class UserController : BaseController
 
     [HttpPost]
     [Authorize]
-    [Route("/api/users")]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
     public ActionResult<User> PostUser(UserCreationData data)
     {
         User? user = GetUserFromClaims();
@@ -99,9 +108,13 @@ public class UserController : BaseController
             createdUser);
     }
 
-    [HttpPut]
+    [HttpPut("{userId:int}")]
     [Authorize]
-    [Route("/api/users/{userId:int}")]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status409Conflict)]
     public ActionResult PutUser(int userId, UserCreationData data)
     {
         Console.WriteLine("PUTTTTTTTTT");
@@ -154,9 +167,12 @@ public class UserController : BaseController
         return NoContent();
     }
 
-    [HttpDelete]
+    [HttpDelete("{userId:int}")]
     [Authorize]
-    [Route("/api/users/{userId:int}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult DeleteUser(int userId)
     {   
         User? user = GetUserFromClaims();
@@ -179,6 +195,81 @@ public class UserController : BaseController
         }
 
         Context.Remove(selectedUser);
+        Context.SaveChanges();
+
+        return Ok();
+    }
+    
+    [HttpGet("{userId:int}/machines")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public ActionResult<List<Machine>> GetMachines(int userId){
+        User? user = GetUserFromClaims();
+        
+        if (user == null)
+        {
+            return Unauthorized("Not authorized");
+        }
+
+        if (user.Type == AccountType.User)
+        {
+            Context.Entry(user).Collection(u => u.Machines).Load();
+            return Ok(user.Machines);
+        }
+
+        User? selectedUser = Context.Users.FirstOrDefault(u => u.Id == userId);
+
+        if (selectedUser == null)
+        {
+            return NotFound();
+        }
+            
+        Context.Entry(selectedUser).Collection(u => u.Machines).Load();
+        return Ok(selectedUser.Machines);
+    }
+
+    [HttpPut("{userId:int}/machines")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public ActionResult AddMachine(int userId, List<long> machineIds)
+    {
+        User? user = GetUserFromClaims();
+        
+        if (user == null)
+        {
+            return Unauthorized("Not authorized");
+        }
+        
+        if (user.Type != AccountType.Admin)
+        {
+            return Forbid();
+        }
+
+        User? selectedUser = Context.Users.FirstOrDefault(u => u.Id == userId);
+        
+        if (selectedUser == null)
+        {
+            return NotFound();
+        }
+
+        if (selectedUser.Type != AccountType.User)
+        {
+            return BadRequest();
+        }
+        
+        Context.Entry(selectedUser).Collection(u => u.Machines).Load();
+
+        List<Machine> machines = Context.Machines.Where(m => machineIds.Contains(m.Id)).ToList();
+        
+        selectedUser.Machines.Clear();
+        selectedUser.Machines.AddRange(machines);
+        
         Context.SaveChanges();
 
         return Ok();

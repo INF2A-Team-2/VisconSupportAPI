@@ -22,6 +22,8 @@ public class AuthController : BaseController
     }
 
     [HttpPost]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public ActionResult Login(UserCredentials credentials)
     {
         User? user = AuthenticateUser(credentials);
@@ -38,6 +40,8 @@ public class AuthController : BaseController
     
     [HttpGet]
     [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult<User> GetUser()
     {
         User? user = GetUserFromClaims();
