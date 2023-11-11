@@ -23,7 +23,7 @@ public class ImportFileController: BaseController
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public ActionResult ImportMachines(IFormFile formFile)
+    public ActionResult ImportMachines([FromForm]IFormFile formFile)
     {
         User? user = GetUserFromClaims();
         if (user == null)
@@ -47,11 +47,13 @@ public class ImportFileController: BaseController
 
             foreach (var machine in readMachines)
             {
-                var currUser = Context.Users.First(h => h.Id == machine.UserID);
-                var mach = Context.Machines.Add(new Machine() { Name = machine.Name }).Entity;
+                var currUser = Context.Users.FirstOrDefault(h => h.Id == machine.UserId);
+                if(currUser == null) continue;
                 Context.Entry(currUser).Collection(h => h.Machines).Load();
-                currUser.Machines.Add(mach);
+                currUser.Machines.Add(new Machine() { Name = machine.Name });
             }
+
+            Context.SaveChanges();
         }
 
         return Ok();
@@ -75,6 +77,6 @@ public class ImportFileController: BaseController
 
 public class ReadMachine
 {
-    public long UserID { get; set; }
+    public long UserId { get; set; }
     public string Name { get; set; }
 }
