@@ -49,9 +49,11 @@ public class ImportFileController: BaseController
                 var currUser = Context.Users.FirstOrDefault(h => h.Id == machine.UserId);
                 if(currUser == null) continue;
                 Context.Entry(currUser).Collection(h => h.Machines).Load();
-                if(Context.Machines.Any(h => h.Name == machine.Name)) continue;
-                currUser.Machines.Add(new Machine() { Name = machine.Name });
+                var exists = Context.Machines.FirstOrDefault(h => h.Name == machine.Name);
+                currUser.Machines.Add(exists ?? new Machine() { Name = machine.Name });
             }
+
+            Context.SaveChanges();
         }
 
         return Ok();
