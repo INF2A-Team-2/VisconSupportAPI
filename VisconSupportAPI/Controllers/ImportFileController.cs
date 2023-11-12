@@ -41,8 +41,7 @@ public class ImportFileController: BaseController
         using (var reader = new StreamReader(formFile.OpenReadStream())) 
         {
             var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
-            var records = csv.GetRecords<ReadMachine>();
-            var readMachines = records.ToList();
+            var readMachines = csv.GetRecords<ReadMachine>().ToList();
             if (!readMachines.Any()) return NoContent();
 
             foreach (var machine in readMachines)
