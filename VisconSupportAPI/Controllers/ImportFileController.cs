@@ -21,7 +21,7 @@ public class ImportFileController: BaseController
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public ActionResult ImportMachines([FromForm]IFormFile formFile)
     {
@@ -41,8 +41,7 @@ public class ImportFileController: BaseController
         using (var reader = new StreamReader(formFile.OpenReadStream())) 
         {
             var csv = new CsvReader(reader, CultureInfo.InvariantCulture);
-            var records = csv.GetRecords<ReadMachine>();
-            var readMachines = records.ToList();
+            var readMachines = csv.GetRecords<ReadMachine>().ToList();
             if (!readMachines.Any()) return NoContent();
 
             foreach (var machine in readMachines)
