@@ -9,7 +9,7 @@ using VisconSupportAPI.Models;
 namespace VisconSupportAPI.Controllers;
 
 [ApiController]
-[Route("api/import")]
+[Route("api/machines/import")]
 public class ImportFileController: BaseController
 {
     public ImportFileController(ILogger<AuthController> logger, DatabaseContext context, IConfiguration configuration) : base(logger, context, configuration)
@@ -49,10 +49,9 @@ public class ImportFileController: BaseController
                 var currUser = Context.Users.FirstOrDefault(h => h.Id == machine.UserId);
                 if(currUser == null) continue;
                 Context.Entry(currUser).Collection(h => h.Machines).Load();
+                if(Context.Machines.Any(h => h.Name == machine.Name)) continue;
                 currUser.Machines.Add(new Machine() { Name = machine.Name });
             }
-
-            Context.SaveChanges();
         }
 
         return Ok();
