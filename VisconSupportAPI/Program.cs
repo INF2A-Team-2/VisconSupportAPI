@@ -1,6 +1,7 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Primitives;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using VisconSupportAPI.Data;
@@ -63,11 +64,17 @@ public class Program
         });
         
         WebApplication app = builder.Build();
-
+        
         if (app.Environment.IsDevelopment())
         {
             app.UseSwagger();
             app.UseSwaggerUI();
+            
+            app.Use((context, next) =>
+            {
+                LogRequestHeaders(context.Request);
+                return next();
+            });
         }
 
         app.UseCors("Default");
@@ -80,5 +87,15 @@ public class Program
         app.MapControllers();
 
         app.Run();
+    }
+    
+    private static void LogRequestHeaders(HttpRequest request)
+    {
+        Console.WriteLine("Request Headers:");
+        foreach (KeyValuePair<string, StringValues> header in request.Headers)
+        {
+            Console.WriteLine($"{header.Key}: {string.Join(", ", header.Value)}");
+        }
+        Console.WriteLine();
     }
 }
