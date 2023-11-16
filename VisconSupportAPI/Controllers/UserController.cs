@@ -28,14 +28,15 @@ public class UserController : BaseController
             return Unauthorized();
         }
 
-        if (user.Type != AccountType.Admin)
+        switch (user.Type)
         {
-            return Forbid();
+            case AccountType.Admin:
+                return Ok(Context.Users);
+            case AccountType.Helpdesk:
+                return Ok(Context.Users.Where(u => u.Unit == user.Unit));
+            default:
+                return Forbid();
         }
-
-        List<User> users = Context.Users.ToList();
-
-        return Ok(users);
     }
     
     [HttpGet("{userId:int}")]

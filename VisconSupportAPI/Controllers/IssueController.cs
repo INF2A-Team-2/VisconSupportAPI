@@ -87,7 +87,7 @@ public class IssueController: BaseController
     [Authorize]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public ActionResult<Issue> CreateIssue([FromBody] NewIssue Ticket)
+    public ActionResult<Issue> CreateIssue([FromBody] NewIssue Ticket, int? userId)
     {
         User? user = GetUserFromClaims();
         if (user == null)
@@ -95,13 +95,18 @@ public class IssueController: BaseController
             return Unauthorized();
         }
 
+        int? newUser = null;
+
+        if (user.Type == AccountType.Helpdesk && userId != null)
+            newUser = (int)userId;
+
         Issue issue = new Issue()
         {
             Actual = Ticket.Actual,
             Expected = Ticket.Expected,
             Tried = Ticket.Tried,
             Headline = Ticket.Headline,
-            UserId = user.Id,
+            UserId = newUser ?? user.Id,
             MachineId = Ticket.MachineId,
             TimeStamp = DateTime.UtcNow
         };
