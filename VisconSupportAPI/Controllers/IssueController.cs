@@ -28,30 +28,29 @@ public class IssueController: BaseController
 
         IEnumerable<Issue> issues = new List<Issue>();
 
+        if (machineId != null)
+        {
+            issues = issues.Where(i => i.MachineId == machineId);
+            return Ok(issues);
+        }
         switch (user.Type)
         {
             case AccountType.User:
                 issues = Context.Issues.Where(i => i.UserId == user.Id);
                 break;
             case AccountType.Helpdesk:
-                issues = from issue in Context.Issues
+                issues = (from issue in Context.Issues
                     join newUser in Context.Users on issue.UserId equals newUser.Id
                     where newUser.Unit == user.Unit
-                    select issue;
+                    select issue).Take(5);
                 break;
             case AccountType.Admin:
-                if (machineId != null)
-                {
-                    issues = issues.Where(i => i.MachineId == machineId);
-                    break;
-                }
-
                 if (userId != null)
                 {
-                    issues = issues.Where(i => i.UserId == userId);
+                    issues = issues.Where(i => i.UserId == userId).Take(5);
                     break;
                 }
-                issues = Context.Issues;
+                issues = Context.Issues.Take(5);
                 break;
         }
         
