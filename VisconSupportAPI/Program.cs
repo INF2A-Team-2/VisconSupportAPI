@@ -1,5 +1,6 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Primitives;
 using Microsoft.IdentityModel.Tokens;
@@ -62,7 +63,7 @@ public class Program
                     .AllowAnyOrigin();
             });
         });
-        
+
         WebApplication app = builder.Build();
         
         if (app.Environment.IsDevelopment())

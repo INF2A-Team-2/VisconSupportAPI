@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VisconSupportAPI.Data;
 using VisconSupportAPI.Models;
+using System;
 
 namespace VisconSupportAPI.Controllers;
 
@@ -91,23 +92,6 @@ public class IssueController: BaseController
         };
         
         Context.Issues.Add(issue);
-        Context.SaveChanges();
-        
-        Ticket.Attachments.ForEach(a =>
-        {
-            string mimeType = a
-                .Split(",")[0]
-                .Split(";")[0]
-                .Split(":")[1];
-            
-            Context.Attachments.Add(new Attachment()
-            {
-                Data = a,
-                MimeType = mimeType,
-                IssueId = issue.Id
-            });
-        });
-        
         Context.SaveChanges();
         
         return Created(
@@ -206,6 +190,35 @@ public class IssueController: BaseController
 
         return Ok(Context.Attachments.Where(a => a.IssueId == issueId));
     }
+
+    [HttpPost("{issueId:int}/attachments")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public ActionResult UploadAttachment(int issueId)
+    {
+        User? user = GetUserFromClaims();
+        if (user == null)
+        {
+            return Unauthorized();
+        }
+
+        Issue? selectedIssue = Context.Issues.FirstOrDefault(i => i.Id == issueId);
+
+        if (selectedIssue == null)
+        {
+            return NotFound();
+        }
+
+        if (user.Type is not (AccountType.Admin or AccountType.Helpdesk) && selectedIssue.UserId != user.Id)
+        {
+            return Forbid();
+        }
+        
+        
+    }
 }
 
 public class NewIssue
@@ -215,7 +228,6 @@ public class NewIssue
     public string Tried { get; set; }
     public string Headline { get; set; }
     public long MachineId { get; set; }
-    public List<string> Attachments { get; set; }
 }
 
 public class NewMessage
