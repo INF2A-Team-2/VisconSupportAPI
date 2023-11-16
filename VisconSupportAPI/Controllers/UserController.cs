@@ -33,7 +33,7 @@ public class UserController : BaseController
             case AccountType.Admin:
                 return Ok(Context.Users);
             case AccountType.Helpdesk:
-                return Ok(Context.Users.Where(u => u.Unit == user.Unit));
+                return Ok(Context.Users.Where(u => u.Unit == user.Unit && u.Type == AccountType.User));
             default:
                 return Forbid();
         }
