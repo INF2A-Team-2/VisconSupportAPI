@@ -197,7 +197,7 @@ public class IssueController: BaseController
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult UploadAttachment(int issueId)
+    public async Task<ActionResult> UploadAttachment(int issueId)
     {
         User? user = GetUserFromClaims();
         if (user == null)
@@ -216,8 +216,28 @@ public class IssueController: BaseController
         {
             return Forbid();
         }
+
+        string[] allowedTypes = new []
+        {
+            "image",
+            "video"
+        };
+
+        string? mimetype = Request.ContentType;
+
+        if (mimetype == null || !allowedTypes.Contains(mimetype.Split("/")[0]))
+        {
+            return BadRequest();
+        }
+
+        byte[] data;
+        using (MemoryStream ms = new MemoryStream())
+        {
+            await Request.Body.CopyToAsync(ms);
+            data = ms.ToArray();
+        }
         
-        
+        return Ok();
     }
 }
 
