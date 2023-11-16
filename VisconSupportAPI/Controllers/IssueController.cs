@@ -27,12 +27,7 @@ public class IssueController: BaseController
         }
 
         IEnumerable<Issue> issues = new List<Issue>();
-
-        if (machineId != null)
-        {
-            issues = issues.Where(i => i.MachineId == machineId);
-            return Ok(issues);
-        }
+        
         switch (user.Type)
         {
             case AccountType.User:
@@ -54,6 +49,11 @@ public class IssueController: BaseController
                 break;
             default:
                 return BadRequest();
+        }
+        
+        if (machineId != null)
+        {
+            issues = issues.Where(i => i.MachineId == machineId);
         }
 
         return Ok(quantity != null ? issues.Take((int)quantity) : issues);
