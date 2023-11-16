@@ -17,7 +17,7 @@ public class IssueController: BaseController
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public ActionResult<List<Issue>> GetIssues(int? machineId, int? userId)
+    public ActionResult<List<Issue>> GetIssues(int? machineId, int? userId, int? quantity)
     {
         User? user = GetUserFromClaims();
         
@@ -39,22 +39,24 @@ public class IssueController: BaseController
                 issues = Context.Issues.Where(i => i.UserId == user.Id);
                 break;
             case AccountType.Helpdesk:
-                issues = (from issue in Context.Issues
+                issues = from issue in Context.Issues
                     join newUser in Context.Users on issue.UserId equals newUser.Id
                     where newUser.Unit == user.Unit
-                    select issue).Take(5);
+                    select issue;
                 break;
             case AccountType.Admin:
                 if (userId != null)
                 {
-                    issues = issues.Where(i => i.UserId == userId).Take(5);
+                    issues = issues.Where(i => i.UserId == userId);
                     break;
                 }
-                issues = Context.Issues.Take(5);
+                issues = Context.Issues;
                 break;
+            default:
+                return BadRequest();
         }
-        
-        return Ok(issues);
+
+        return Ok(quantity != null ? issues.Take((int)quantity) : issues);
     }
 
     [HttpGet("{issueId}")]
