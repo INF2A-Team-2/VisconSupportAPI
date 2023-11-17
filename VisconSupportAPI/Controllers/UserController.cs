@@ -28,7 +28,13 @@ public class UserController : BaseController
             return Unauthorized();
         }
 
-        if (user.Type != AccountType.Admin)
+
+        if (user.Type == AccountType.Helpdesk)
+        {
+            return Ok(Context.Users.Where(u => u.Unit == user.Unit && u.Type == AccountType.User).ToList());
+        }
+
+        if (user.Type != AccountType.Admin && user.Type != AccountType.Helpdesk)
         {
             return Forbid();
         }
