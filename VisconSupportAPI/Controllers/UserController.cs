@@ -58,6 +58,18 @@ public class UserController : BaseController
             return Unauthorized();
         }
 
+    if (user.Type == AccountType.Helpdesk)
+    {
+        User? retrievedUser = Context.Users.FirstOrDefault(u => u.Id == userId);
+
+        if (retrievedUser == null || retrievedUser.Unit != user.Unit)
+        {
+            return Forbid();
+        }
+
+        return Ok(retrievedUser);
+    }
+
         if (user.Type != AccountType.Admin)
         {
             return Forbid();
