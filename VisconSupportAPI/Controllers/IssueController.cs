@@ -155,7 +155,8 @@ public class IssueController: BaseController
                 ID = message.Id,
                 Name = Context.Users.First(h => h.Id == message.UserId).Username,
                 Body = message.Body,
-                Timestamp = message.TimeStamp
+                Timestamp = message.TimeStamp,
+                UserID = message.UserId
             });
         }
 
@@ -249,4 +250,5 @@ public class RetourMessage
     public string Name { get; set; }
     public string Body { get; set; }
     public DateTime Timestamp { get; set; }
+    public long UserID { get; set; }
 }
