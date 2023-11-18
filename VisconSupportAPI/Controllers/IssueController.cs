@@ -17,7 +17,7 @@ public class IssueController: BaseController
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public ActionResult<List<Issue>> GetIssues(int? machineId, int? userId)
+    public ActionResult<List<Issue>> GetIssues(int? machineId, int? userId, int? quantity)
     {
         User? user = GetUserFromClaims();
         
@@ -25,22 +25,38 @@ public class IssueController: BaseController
         {
             return Unauthorized();
         }
-        
-        IEnumerable<Issue> issues = user.Type == AccountType.User
-            ? Context.Issues.Where(i => i.UserId == user.Id)
-            : Context.Issues;
 
+        IEnumerable<Issue> issues = new List<Issue>();
+        
+        switch (user.Type)
+        {
+            case AccountType.User:
+                issues = Context.Issues.Where(i => i.UserId == user.Id);
+                break;
+            case AccountType.Helpdesk:
+                issues = from issue in Context.Issues
+                    join newUser in Context.Users on issue.UserId equals newUser.Id
+                    where newUser.Unit == user.Unit
+                    select issue;
+                break;
+            case AccountType.Admin:
+                if (userId != null)
+                {
+                    issues = issues.Where(i => i.UserId == userId);
+                    break;
+                }
+                issues = Context.Issues;
+                break;
+            default:
+                return BadRequest();
+        }
+        
         if (machineId != null)
         {
             issues = issues.Where(i => i.MachineId == machineId);
         }
 
-        if (userId != null)
-        {
-            issues = issues.Where(i => i.UserId == userId);
-        }
-
-        return Ok(issues);
+        return Ok(quantity != null ? issues.Take((int)quantity) : issues);
     }
 
     [HttpGet("{issueId}")]
@@ -71,7 +87,7 @@ public class IssueController: BaseController
     [Authorize]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public ActionResult<Issue> CreateIssue([FromBody] NewIssue Ticket)
+    public ActionResult<Issue> CreateIssue([FromBody] NewIssue Ticket, int? userId)
     {
         User? user = GetUserFromClaims();
         if (user == null)
@@ -79,13 +95,18 @@ public class IssueController: BaseController
             return Unauthorized();
         }
 
+        int? newUser = null;
+
+        if (user.Type == AccountType.Helpdesk && userId != null)
+            newUser = (int)userId;
+
         Issue issue = new Issue()
         {
             Actual = Ticket.Actual,
             Expected = Ticket.Expected,
             Tried = Ticket.Tried,
             Headline = Ticket.Headline,
-            UserId = user.Id,
+            UserId = newUser ?? user.Id,
             MachineId = Ticket.MachineId,
             TimeStamp = DateTime.UtcNow
         };
