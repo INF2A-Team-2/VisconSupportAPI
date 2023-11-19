@@ -75,6 +75,21 @@ public class UserController : BaseController
         return requestedUser != null ? requestedUser : NotFound();
     }
 
+    [HttpGet("/api/users/customers")]
+    [Authorize]
+    public ActionResult<User> GetCustomers()
+    {
+        User? user = GetUserFromClaims();
+        if (user == null)
+        {
+            return Unauthorized();
+        }
+        
+        if (user.Type != AccountType.Helpdesk && user.Type != AccountType.Admin) return Forbid();
+
+        return Ok(Context.Users.Where(u => u.Type == AccountType.User));
+    }
+    
     [HttpPost]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status201Created)]

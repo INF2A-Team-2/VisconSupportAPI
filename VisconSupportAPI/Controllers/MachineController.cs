@@ -79,10 +79,47 @@ public class MachineController : BaseController
 
         return Ok();
     }
+
+    [HttpPost]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public ActionResult AddMachine(newMachine machine)
+    {
+        User? user = GetUserFromClaims();
+        if (user == null)
+        {
+            return Unauthorized();
+        }
+
+        if (user.Type != AccountType.Admin)
+        {
+            return Forbid();
+        }
+        
+        var currUser = Context.Users.FirstOrDefault(h => h.Id == machine.userId);
+        if(currUser == null) return BadRequest();
+        Context.Entry(currUser).Collection(h => h.Machines).Load();
+        var exists = Context.Machines.FirstOrDefault(h => h.Name == machine.machineName);
+        currUser.Machines.Add(exists ?? new Machine() { Name = machine.machineName });
+        var quant = Context.SaveChanges();
+        return quant > 0 ? Ok() : BadRequest();
+    }
 }
 
 public class ReadMachine
 {
     public long UserId { get; set; }
     public string Name { get; set; }
+    
+}
+
+public class newMachine
+{
+    public long userId { get; set; }
+    
+    public string machineName { get; set; }
 }
