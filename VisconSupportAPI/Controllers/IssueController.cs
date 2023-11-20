@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using VisconSupportAPI.Data;
+using VisconSupportAPI.Logic;
 using VisconSupportAPI.Models;
 
 namespace VisconSupportAPI.Controllers;
@@ -146,19 +147,8 @@ public class IssueController: BaseController
         if (user == null)
             return Unauthorized();
 
-        var retour = new List<RetourMessage>();
-        var messages = Context.Messages.Where(h => h.IssueId == issueId).ToList();
-        foreach (var message in messages)
-        {
-            retour.Add(new RetourMessage
-            {
-                ID = message.Id,
-                Name = Context.Users.First(h => h.Id == message.UserId).Username,
-                Body = message.Body,
-                Timestamp = message.TimeStamp,
-                UserID = message.UserId
-            });
-        }
+        var retour = MessageLogic.getMessages(user, issueId);
+        if (retour == null) return NotFound();
 
         return Ok(retour);
     }
