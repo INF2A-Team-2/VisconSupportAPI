@@ -48,12 +48,12 @@ public class DatabaseContext : DbContext
         // foreign keys for attachment
         modelBuilder.Entity<Attachment>()
             .HasOne<Issue>()
-            .WithMany()
+            .WithMany(h => h.Attachments)
             .HasForeignKey(h => h.IssueId)
             .IsRequired();
 
         modelBuilder.Entity<Attachment>()
-            .HasMany<FileChunk>()
+            .HasMany<FileChunk>(h => h.Chunks)
             .WithOne()
             .HasForeignKey(h => h.AttachmentID)
             .IsRequired();
