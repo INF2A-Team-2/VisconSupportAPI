@@ -1,5 +1,6 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Primitives;
 using Microsoft.IdentityModel.Tokens;
@@ -63,6 +64,7 @@ public class Program
                     .SetIsOriginAllowed((host) => true);
             });
         });
+      
         builder.Services.AddSignalR();
         
         WebApplication app = builder.Build();
@@ -94,6 +96,7 @@ public class Program
     
     private static void LogRequestHeaders(HttpRequest request)
     {
+        Console.WriteLine(request.Path);
         Console.WriteLine("Request Headers:");
         foreach (KeyValuePair<string, StringValues> header in request.Headers)
         {
