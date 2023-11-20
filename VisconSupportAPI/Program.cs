@@ -61,7 +61,8 @@ public class Program
                 policyBuilder
                     .AllowAnyHeader()
                     .AllowAnyMethod()
-                    .SetIsOriginAllowed((host) => true);
+                    .SetIsOriginAllowed((host) => true)
+                    .AllowCredentials();
             });
         });
       

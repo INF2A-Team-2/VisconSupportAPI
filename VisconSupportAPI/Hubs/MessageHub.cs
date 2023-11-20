@@ -6,7 +6,6 @@ using VisconSupportAPI.Models;
 
 namespace VisconSupportAPI.Hubs;
 
-[Authorize]
 public class MessageHub : Hub
 {
     static readonly DatabaseContext DataContext;
