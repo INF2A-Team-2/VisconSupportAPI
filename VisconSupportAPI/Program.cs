@@ -6,6 +6,7 @@ using Microsoft.Extensions.Primitives;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using VisconSupportAPI.Data;
+using VisconSupportAPI.Hubs;
 
 namespace VisconSupportAPI;
 
@@ -63,7 +64,9 @@ public class Program
                     .AllowAnyOrigin();
             });
         });
-
+      
+        builder.Services.AddSignalR();
+        
         WebApplication app = builder.Build();
         
         if (app.Environment.IsDevelopment())
@@ -86,6 +89,7 @@ public class Program
         app.UseAuthorization();
 
         app.MapControllers();
+        app.MapHub<MessageHub>("/messageHub");
 
         app.Run();
     }
