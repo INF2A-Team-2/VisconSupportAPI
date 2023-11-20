@@ -60,7 +60,7 @@ public class Program
                 policyBuilder
                     .AllowAnyHeader()
                     .AllowAnyMethod()
-                    .AllowAnyOrigin();
+                    .SetIsOriginAllowed((host) => true);
             });
         });
         builder.Services.AddSignalR();

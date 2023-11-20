@@ -1,10 +1,12 @@
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using VisconSupportAPI.Data;
 using VisconSupportAPI.Models;
 
 namespace VisconSupportAPI.Hubs;
 
+[Authorize]
 public class MessageHub : Hub
 {
     static readonly DatabaseContext DataContext;
