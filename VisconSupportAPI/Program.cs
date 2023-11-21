@@ -1,10 +1,12 @@
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Primitives;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using VisconSupportAPI.Data;
+using VisconSupportAPI.Hubs;
 
 namespace VisconSupportAPI;
 
@@ -59,9 +61,12 @@ public class Program
                 policyBuilder
                     .AllowAnyHeader()
                     .AllowAnyMethod()
-                    .AllowAnyOrigin();
+                    .SetIsOriginAllowed((host) => true)
+                    .AllowCredentials();
             });
         });
+      
+        builder.Services.AddSignalR();
         
         WebApplication app = builder.Build();
         
@@ -85,12 +90,14 @@ public class Program
         app.UseAuthorization();
 
         app.MapControllers();
+        app.MapHub<MessageHub>("/messageHub");
 
         app.Run();
     }
     
     private static void LogRequestHeaders(HttpRequest request)
     {
+        Console.WriteLine(request.Path);
         Console.WriteLine("Request Headers:");
         foreach (KeyValuePair<string, StringValues> header in request.Headers)
         {

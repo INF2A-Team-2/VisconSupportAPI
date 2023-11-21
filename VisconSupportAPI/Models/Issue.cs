@@ -8,4 +8,5 @@ public class Issue
     public DateTime TimeStamp { get; set; }
     public long UserId { get; set; }
     public long MachineId { get; set; }
+    public List<Attachment> Attachments { get; set; }
 }

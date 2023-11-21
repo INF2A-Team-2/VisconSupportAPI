@@ -15,6 +15,7 @@ public class DatabaseContext : DbContext
     public DbSet<Issue> Issues { get; set; }
     public DbSet<Message> Messages { get; set; }
     public DbSet<Attachment> Attachments { get; set; }
+    public DbSet<FileChunk> FileChunks { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -47,8 +48,14 @@ public class DatabaseContext : DbContext
         // foreign keys for attachment
         modelBuilder.Entity<Attachment>()
             .HasOne<Issue>()
-            .WithMany()
+            .WithMany(h => h.Attachments)
             .HasForeignKey(h => h.IssueId)
+            .IsRequired();
+
+        modelBuilder.Entity<Attachment>()
+            .HasMany<FileChunk>(h => h.Chunks)
+            .WithOne()
+            .HasForeignKey(h => h.AttachmentID)
             .IsRequired();
         
         // foreign key for user to machines
