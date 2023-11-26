@@ -9,12 +9,6 @@ namespace VisconSupportAPI.Controllers;
 [Route("api/issues")]
 public class IssueController: BaseController
 {
-    public readonly string[] AllowedAttachmentTypes = new []
-    {
-        "image",
-        "video"
-    };
-    
     public IssueController(ILogger<AuthController> logger, DatabaseContext context, IConfiguration configuration) : base(logger, context, configuration)
     {
     }
@@ -93,7 +87,7 @@ public class IssueController: BaseController
     [Authorize]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    public ActionResult<Issue> CreateIssue([FromBody] NewIssue Ticket, int? userId)
+    public ActionResult<Issue> CreateIssue([FromBody] NewIssue ticket, int? userId)
     {
         User? user = GetUserFromClaims();
         if (user == null)
@@ -108,12 +102,12 @@ public class IssueController: BaseController
 
         Issue issue = new Issue()
         {
-            Actual = Ticket.Actual,
-            Expected = Ticket.Expected,
-            Tried = Ticket.Tried,
-            Headline = Ticket.Headline,
+            Actual = ticket.Actual,
+            Expected = ticket.Expected,
+            Tried = ticket.Tried,
+            Headline = ticket.Headline,
             UserId = newUser ?? user.Id,
-            MachineId = Ticket.MachineId,
+            MachineId = ticket.MachineId,
             TimeStamp = DateTime.UtcNow
         };
         
@@ -194,7 +188,7 @@ public class IssueController: BaseController
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    public ActionResult<List<RetourAttachment>> GetAttachments(int issueId)
+    public ActionResult<List<Attachment>> GetAttachments(int issueId)
     {
         User? user = GetUserFromClaims();
         if (user == null)
@@ -213,23 +207,17 @@ public class IssueController: BaseController
         {
             return Forbid();
         }
-        
-        return Ok(Context.Attachments.Where(a => a.IssueId == selectedIssue.Id).Select(a => new RetourAttachment()
-        {
-            ID = a.Id,
-            MimeType = a.MimeType,
-            Chunks = a.Chunks.Where(c => c.AttachmentID == a.Id).Select(c => c.Id).ToList()
-        }));
-    }
 
+        return Ok(Context.Attachments.Where(a => a.IssueId == issueId));
+    }
+    
     [HttpPost("{issueId:int}/attachments")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public ActionResult<Attachment> CreateAttachment(int issueId, NewAttachment data)
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public ActionResult<int> UploadAttachment(int issueId, NewAttachment attachment)
     {
         User? user = GetUserFromClaims();
         if (user == null)
@@ -248,37 +236,35 @@ public class IssueController: BaseController
         {
             return Forbid();
         }
-        
-        if (!AllowedAttachmentTypes.Contains(data.MimeType.Split("/")[0]))
-        {
-            return BadRequest();
-        }
 
-        Attachment attachment = new Attachment()
+        Attachment newAttachment = new Attachment()
         {
-            IssueId = issueId,
-            MimeType = data.MimeType
+            IssueId = selectedIssue.Id,
+            MimeType = attachment.MimeType
         };
 
-        Context.Attachments.Add(attachment);
+        Context.Attachments.Add(newAttachment);
         Context.SaveChanges();
-        
-        return Ok(attachment);
-    }
 
-    [HttpPost("{issueId:int}/attachments/{attachmentId:int}")]
-    [Authorize]
+        return Ok(new RetourAttachment()
+        {
+            ID = newAttachment.Id
+        });
+    }
+    
+    [HttpGet("{issueId:int}/attachments/{attachmentId:int}")]
+    // [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult> UploadChunk(int issueId, int attachmentId)
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public ActionResult<List<Attachment>> GetAttachment(int issueId, int attachmentId)
     {
-        User? user = GetUserFromClaims();
-        if (user == null)
-        {
-            return Unauthorized();
-        }
+        // User? user = GetUserFromClaims();
+        // if (user == null)
+        // {
+        //     return Unauthorized();
+        // }
 
         Issue? selectedIssue = Context.Issues.FirstOrDefault(i => i.Id == issueId);
 
@@ -287,10 +273,10 @@ public class IssueController: BaseController
             return NotFound();
         }
 
-        if (user.Type is not (AccountType.Admin or AccountType.Helpdesk) && selectedIssue.UserId != user.Id)
-        {
-            return Forbid();
-        }
+        // if (user.Type is not (AccountType.Admin or AccountType.Helpdesk) && selectedIssue.UserId != user.Id)
+        // {
+        //     return Forbid();
+        // }
 
         Attachment? attachment = Context.Attachments.FirstOrDefault(a => a.Id == attachmentId);
 
@@ -298,25 +284,62 @@ public class IssueController: BaseController
         {
             return NotFound();
         }
-        
-        byte[] data;
-        using (MemoryStream ms = new MemoryStream())
+
+        string? ext = Utils.GetFileExtension(attachment.MimeType);
+
+        if (ext == null)
         {
-            await Request.Body.CopyToAsync(ms);
-            data = ms.ToArray();
+            return StatusCode(500, new
+            {
+                Message = "Invalid file mimetype"
+            });
         }
 
-        List<FileChunk> existingChunks = Context.FileChunks.Where(c => c.AttachmentID == attachment.Id).ToList();
+        string path = Path.Join(Configuration["DataPath"], $"{attachment.Id}{ext}");
 
-        FileChunk chunk = new FileChunk()
+        FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read);
+        return File(stream, attachment.MimeType);
+    }
+    
+    [HttpGet("attachments/{attachmentId:int}/authenticate")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public ActionResult AuthenticateAttachment(int attachmentId, string mimeType)
+    {
+        User? user = GetUserFromClaims();
+        
+        if (user == null)
         {
-            AttachmentID = attachment.Id,
-            ChunkNumber = existingChunks.Count,
-            Data = data
-        };
+            return Unauthorized();
+        }
+        
+        Attachment? attachment = Context.Attachments.FirstOrDefault(a => a.Id == attachmentId);
 
-        Context.FileChunks.Add(chunk);
-        await Context.SaveChangesAsync();
+        if (attachment == null)
+        {
+            return NotFound();
+        }
+
+        if (attachment.MimeType != mimeType)
+        {
+            return BadRequest();
+        }
+
+        Issue? selectedIssue = Context.Issues.FirstOrDefault(i => i.Id == attachment.IssueId);
+
+        if (selectedIssue == null)
+        {
+            return NotFound();
+        }
+
+        if (user.Type is not (AccountType.Admin or AccountType.Helpdesk) && selectedIssue.UserId != user.Id)
+        {
+            return Forbid();
+        }
 
         return Ok();
     }
@@ -330,8 +353,6 @@ public class NewAttachment
 public class RetourAttachment
 {
     public long ID { get; set; }
-    public string MimeType { get; set; }
-    public List<long> Chunks { get; set; }
 }
 
 public class NewIssue

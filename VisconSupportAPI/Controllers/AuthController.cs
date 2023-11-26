@@ -60,7 +60,7 @@ public class AuthController : BaseController
             Type = user.Type
         });    
     }
-
+    
     private string GenerateJSONWebToken(User user)
     {
         SymmetricSecurityKey securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Configuration["Jwt:Key"]));
