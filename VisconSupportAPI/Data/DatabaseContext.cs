@@ -51,12 +51,6 @@ public class DatabaseContext : DbContext
             .WithMany(h => h.Attachments)
             .HasForeignKey(h => h.IssueId)
             .IsRequired();
-
-        modelBuilder.Entity<Attachment>()
-            .HasMany<FileChunk>(h => h.Chunks)
-            .WithOne()
-            .HasForeignKey(h => h.AttachmentID)
-            .IsRequired();
         
         // foreign key for user to machines
         modelBuilder.Entity<User>()
