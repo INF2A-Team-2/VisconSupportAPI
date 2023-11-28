@@ -28,17 +28,12 @@ public class AttachmentController : BaseController
             return NotFound();
         }
 
-        string? ext = Utils.GetFileExtension(attachment.MimeType);
+        string path = Path.Join(Configuration["DataPath"], $"{attachment.Id}.{attachment.Name?.Split(".")[^1]}");
 
-        if (ext == null)
+        if (!Path.Exists(path))
         {
-            return StatusCode(500, new
-            {
-                Message = "Invalid file mimetype"
-            });
+            return NotFound();
         }
-
-        string path = Path.Join(Configuration["DataPath"], $"{attachment.Id}{ext}");
 
         FileStream stream = new FileStream(path, FileMode.Open, FileAccess.Read);
         return File(stream, attachment.MimeType);
