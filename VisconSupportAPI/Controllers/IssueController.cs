@@ -239,6 +239,7 @@ public class IssueController: BaseController<IssueController>
 
         Attachment newAttachment = new Attachment()
         {
+            Name = attachment.Name,
             IssueId = selectedIssue.Id,
             MimeType = attachment.MimeType
         };
@@ -255,6 +256,7 @@ public class IssueController: BaseController<IssueController>
 
 public class NewAttachment
 {
+    public string? Name { get; set; }
     public string MimeType { get; set; }
 }
 
