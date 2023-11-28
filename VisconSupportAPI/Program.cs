@@ -6,6 +6,7 @@ using Microsoft.Extensions.Primitives;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using VisconSupportAPI.Data;
+using VisconSupportAPI.Handlers;
 using VisconSupportAPI.Hubs;
 
 namespace VisconSupportAPI;

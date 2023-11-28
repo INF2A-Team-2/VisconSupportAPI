@@ -6,15 +6,15 @@ using VisconSupportAPI.Models;
 namespace VisconSupportAPI.Controllers;
 
 [ApiController]
-public class BaseController : ControllerBase
+public abstract class BaseController<T> : ControllerBase
 {
-    protected readonly ILogger<AuthController> Logger;
+    protected readonly ILogger<T> Logger;
 
     protected readonly DatabaseContext Context;
 
     protected readonly IConfiguration Configuration;
     
-    public BaseController(ILogger<AuthController> logger, DatabaseContext context, IConfiguration configuration)
+    protected BaseController(ILogger<T> logger, DatabaseContext context, IConfiguration configuration)
     {
         Logger = logger;
         Context = context;
