@@ -19,15 +19,8 @@ public class AttachmentController : BaseController
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    public ActionResult<List<Attachment>> GetAttachment(int issueId, int attachmentId)
+    public ActionResult<List<Attachment>> GetAttachment(int attachmentId)
     {
-        Issue? selectedIssue = Context.Issues.FirstOrDefault(i => i.Id == issueId);
-
-        if (selectedIssue == null)
-        {
-            return NotFound();
-        }
-
         Attachment? attachment = Context.Attachments.FirstOrDefault(a => a.Id == attachmentId);
 
         if (attachment == null)
