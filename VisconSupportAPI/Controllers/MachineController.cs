@@ -9,9 +9,9 @@ using CsvHelper;
 [ApiController]
 [Route("api/machines")]
 
-public class MachineController : BaseController
+public class MachineController : BaseController<MachineController>
 {
-    public MachineController(ILogger<AuthController> logger, DatabaseContext context, IConfiguration configuration) 
+    public MachineController(ILogger<MachineController> logger, DatabaseContext context, IConfiguration configuration) 
         : base(logger, context, configuration)
     {
     }

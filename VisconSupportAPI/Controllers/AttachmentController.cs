@@ -7,9 +7,9 @@ namespace VisconSupportAPI.Controllers;
 
 [ApiController]
 [Route("api/attachments")]
-public class AttachmentController : BaseController
+public class AttachmentController : BaseController<AttachmentController>
 {
-    public AttachmentController(ILogger<AuthController> logger, DatabaseContext context, IConfiguration configuration) 
+    public AttachmentController(ILogger<AttachmentController> logger, DatabaseContext context, IConfiguration configuration) 
         : base(logger, context, configuration)
     {
     }

@@ -7,9 +7,9 @@ namespace VisconSupportAPI.Controllers;
 
 [ApiController]
 [Route("api/users")]
-public class UserController : BaseController
+public class UserController : BaseController<UserController>
 {
-    public UserController(ILogger<AuthController> logger, DatabaseContext context, IConfiguration configuration) 
+    public UserController(ILogger<UserController> logger, DatabaseContext context, IConfiguration configuration) 
         : base(logger, context, configuration)
     {
     }

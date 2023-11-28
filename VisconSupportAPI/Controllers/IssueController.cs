@@ -7,9 +7,9 @@ namespace VisconSupportAPI.Controllers;
 
 [ApiController]
 [Route("api/issues")]
-public class IssueController: BaseController
+public class IssueController: BaseController<IssueController>
 {
-    public IssueController(ILogger<AuthController> logger, DatabaseContext context, IConfiguration configuration) : base(logger, context, configuration)
+    public IssueController(ILogger<IssueController> logger, DatabaseContext context, IConfiguration configuration) : base(logger, context, configuration)
     {
     }
 
