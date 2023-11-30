@@ -38,5 +38,4 @@ public abstract class Controller<T, THandler> : ControllerBase
         
         return user;
     }
-
 }
