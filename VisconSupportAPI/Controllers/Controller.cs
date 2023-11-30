@@ -1,24 +1,28 @@
 using System.Security.Claims;
 using Microsoft.AspNetCore.Mvc;
 using VisconSupportAPI.Data;
+using VisconSupportAPI.Handlers;
 using VisconSupportAPI.Models;
 
 namespace VisconSupportAPI.Controllers;
 
 [ApiController]
-public abstract class BaseController<T> : ControllerBase
+public abstract class Controller<T, THandler> : ControllerBase
 {
-    protected readonly ILogger<T> Logger;
+    protected readonly ILogger Logger;
 
     protected readonly DatabaseContext Context;
 
     protected readonly IConfiguration Configuration;
+
+    protected readonly THandler Handler;
     
-    protected BaseController(ILogger<T> logger, DatabaseContext context, IConfiguration configuration)
+    protected Controller(ILogger<T> logger, DatabaseContext context, IConfiguration configuration)
     {
         Logger = logger;
         Context = context;
         Configuration = configuration;
+        Handler = (THandler)Activator.CreateInstance(typeof(THandler), logger, context, configuration)!;
     }
     
     protected User? GetUserFromClaims()
@@ -31,7 +35,7 @@ public abstract class BaseController<T> : ControllerBase
         }
 
         User? user = Context.Users.FirstOrDefault(h => h.Username == userId);
-
+        
         return user;
     }
 

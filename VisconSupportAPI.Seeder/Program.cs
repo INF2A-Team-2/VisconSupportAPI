@@ -4,6 +4,8 @@ using VisconSupportAPI.Data;
 using Bogus;
 using VisconSupportAPI.Models;
 using VisconSupportAPI.Controllers;
+using VisconSupportAPI.Handlers;
+using VisconSupportAPI.Services;
 
 namespace VisconSupportAPI.Seeder;
 
@@ -173,7 +175,7 @@ public static class Program
             {
                 string pass = f.Random.Word();
                 passwords.Add(pass);
-                return AuthController.HashPassword(pass);
+                return AuthService.HashPassword(pass);
             })
             .RuleFor(u => u.Unit, f => f.PickRandom(units))
             .RuleFor(u => u.Machines, f => accType == AccountType.User ? f.Random.ListItems(Context.Machines.ToList(), f.Random.Number(1, 5)) : new List<Machine>());

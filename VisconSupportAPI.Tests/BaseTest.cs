@@ -1,58 +1,31 @@
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging;
+using VisconSupportAPI.Data;
+
 namespace VisconSupportAPI.Tests;
 
 public class BaseTest
 {
     protected readonly IConfiguration Config;
-    protected readonly HttpClient HttpClient;
-    protected readonly ITestOutputHelper TestOutputHelper;
-    
-    public BaseTest(ITestOutputHelper testOutputHelper)
+
+    protected readonly DatabaseContext Context;
+
+    protected readonly ILogger Logger;
+
+    protected BaseTest()
     {
-        this.Config = new ConfigurationBuilder()
+        Config = new ConfigurationBuilder()
             .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("testconfig.json")
+            .AddJsonFile("appsettings.json")
             .Build();
-        
-        WebApplicationFactory<Program> factory = new WebApplicationFactory<Program>();
-        this.HttpClient = factory.CreateDefaultClient();
 
-        this.TestOutputHelper = testOutputHelper;
-    }
-    
-    public async Task SetAccount(AccountType accountType)
-    {
-        UserCredentials credentials = accountType switch
-        {
-            AccountType.User => new UserCredentials()
-            {
-                Username = Config["LoginData:Customer:Username"] ?? "",
-                Password = Config["LoginData:Customer:Password"] ?? ""
-            },
-            AccountType.Helpdesk => new UserCredentials()
-            {
-                Username = Config["LoginData:Employee:Username"] ?? "",
-                Password = Config["LoginData:Employee:Password"] ?? ""
-            },
-            AccountType.Admin => new UserCredentials()
-            {
-                Username = Config["LoginData:Admin:Username"] ?? "",
-                Password = Config["LoginData:Admin:Password"] ?? ""
-            },
-            _ => throw new ArgumentOutOfRangeException(nameof(accountType), accountType, null)
-        };
+        DbContextOptionsBuilder<DatabaseContext> optionsBuilder = new DbContextOptionsBuilder<DatabaseContext>();
+        optionsBuilder.UseNpgsql(Config.GetConnectionString("Database"));
 
-        HttpResponseMessage res = await HttpClient.PostAsync(
-            "/api/login",
-            new StringContent(JsonConvert.SerializeObject(credentials), Encoding.UTF8, "application/json"));
-        
-        Assert.Equal(HttpStatusCode.OK, res.StatusCode);
-        
-        string data = await res.Content.ReadAsStringAsync();
+        Context = new DatabaseContext(optionsBuilder.Options);
 
-        string? token = JsonConvert.DeserializeAnonymousType(data, new { Token = "" })?.Token;
-        
-        Assert.NotNull(token);
+        LoggerFactory loggerFactory = new LoggerFactory();
 
-        HttpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        Logger = loggerFactory.CreateLogger<BaseTest>();
     }
 }

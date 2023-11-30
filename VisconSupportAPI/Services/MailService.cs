@@ -2,14 +2,13 @@ using System.Net;
 using System.Net.Mail;
 using VisconSupportAPI.Data;
 
-namespace VisconSupportAPI.Handlers;
+namespace VisconSupportAPI.Services;
 
-public class MailHandler : Handler<MailHandler>
-{
+public class MailService : Service
+{   
     private readonly SmtpClient _smtpClient;
-    
-    public MailHandler(ILogger<MailHandler> logger, DatabaseContext context, IConfiguration configuration) 
-        : base(logger, context, configuration)
+
+    public MailService(DatabaseContext context, IConfiguration configuration, ServicesList services) : base( context, configuration, services)
     {
         _smtpClient = new SmtpClient(
             configuration["MailCredentials:Server"],
@@ -22,7 +21,7 @@ public class MailHandler : Handler<MailHandler>
         _smtpClient.EnableSsl = true;
     }
 
-    public virtual void Send(string recipient, string subject, string body)
+    public void Send(string recipient, string subject, string body)
     {
         MailMessage message = new MailMessage(
             new MailAddress(Configuration["MailCredentials:Email"], Configuration["MailCredentials:DisplayName"]), 

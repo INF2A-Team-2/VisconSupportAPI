@@ -1,10 +1,14 @@
+using System.Text.Json.Serialization;
+
 namespace VisconSupportAPI.Models;
 
 public class Message
 {
-    public long Id { get; set; }
+    public int Id { get; set; }
     public string Body { get; set; }
     public DateTime TimeStamp { get; set; }
-    public long UserId { get; set; }
-    public long IssueId { get; set; }
+    public int UserId { get; set; }
+    [JsonIgnore] public User User { get; set; }
+    public int IssueId { get; set; }
+    [JsonIgnore] public Issue Issue { get; set; }
 }

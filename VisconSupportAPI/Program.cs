@@ -1,6 +1,6 @@
+using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Primitives;
 using Microsoft.IdentityModel.Tokens;
@@ -8,6 +8,7 @@ using Microsoft.OpenApi.Models;
 using VisconSupportAPI.Data;
 using VisconSupportAPI.Handlers;
 using VisconSupportAPI.Hubs;
+using VisconSupportAPI.Models;
 
 namespace VisconSupportAPI;
 
@@ -35,9 +36,9 @@ public class Program
                 Scheme = "Bearer"
             });
         });
-
+        
         builder.Services.AddDbContextPool<DatabaseContext>(options =>
-            options.UseNpgsql(builder.Configuration.GetConnectionString("Database")));
+            options.UseNpgsql(builder.Configuration.GetConnectionString(builder.Configuration["SelectedConnection"])));
 
         builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             .AddJwtBearer(options =>
@@ -53,6 +54,8 @@ public class Program
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
                 };
             });
+        
+        builder.Services.AddAuthentication();
 
         builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
         builder.Services.AddCors(options =>
