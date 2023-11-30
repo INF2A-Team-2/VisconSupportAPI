@@ -20,7 +20,7 @@ public class BaseTest
             .Build();
 
         DbContextOptionsBuilder<DatabaseContext> optionsBuilder = new DbContextOptionsBuilder<DatabaseContext>();
-        optionsBuilder.UseNpgsql(Config.GetConnectionString("Database"));
+        optionsBuilder.UseNpgsql(Config.GetConnectionString("Testing"));
 
         Context = new DatabaseContext(optionsBuilder.Options);
 
