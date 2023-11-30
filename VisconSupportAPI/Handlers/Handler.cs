@@ -1,19 +1,25 @@
+using System.Security.Claims;
 using VisconSupportAPI.Data;
+using VisconSupportAPI.Models;
+using VisconSupportAPI.Services;
 
 namespace VisconSupportAPI.Handlers;
 
-public abstract class Handler<T>
+public abstract class Handler
 {
-    protected readonly ILogger<T> Logger;
+    protected readonly ILogger Logger;
 
     protected readonly DatabaseContext Context;
 
     protected readonly IConfiguration Configuration;
 
-    protected Handler(ILogger<T> logger, DatabaseContext context, IConfiguration configuration)
+    protected readonly ServicesList Services;
+
+    protected Handler(ILogger logger, DatabaseContext context, IConfiguration configuration)
     {
         Logger = logger;
         Context = context;
         Configuration = configuration;
+        Services = new ServicesList(context, configuration);
     }
 }

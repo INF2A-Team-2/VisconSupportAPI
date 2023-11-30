@@ -1,95 +1,35 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using VisconSupportAPI.Data;
+using VisconSupportAPI.Handlers;
 using VisconSupportAPI.Models;
+using VisconSupportAPI.Types;
 
 namespace VisconSupportAPI.Controllers;
 
 [ApiController]
 [Route("api/users")]
-public class UserController : BaseController<UserController>
+public class UserController : Controller<UserController, UserHandler>
 {
     public UserController(ILogger<UserController> logger, DatabaseContext context, IConfiguration configuration) 
         : base(logger, context, configuration)
     {
     }
-    
+
     [HttpGet]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    public ActionResult<List<User>> GetUsers()
-    {
-        User? user = GetUserFromClaims();
-        
-        if (user == null)
-        {
-            return Unauthorized();
-        }
+    public ActionResult<List<User>> GetUsers() => Handler.GetAllUsers(GetUserFromClaims());
 
-        switch (user.Type)
-        {
-            case AccountType.Admin:
-                return Ok(Context.Users);
-            case AccountType.Helpdesk:
-                return Ok(Context.Users.Where(u => u.Unit == user.Unit && u.Type == AccountType.User));
-            default:
-                return Forbid();
-        }
-    }
-    
     [HttpGet("{userId:int}")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    public ActionResult<User> GetUser(int userId)
-    {
-        User? user = GetUserFromClaims();
-        
-        if (user == null)
-        {
-            return Unauthorized();
-        }
+    public ActionResult<User> GetUser(int userId) => Handler.GetUserById(GetUserFromClaims(), userId);
 
-    if (user.Type == AccountType.Helpdesk)
-    {
-        User? retrievedUser = Context.Users.FirstOrDefault(u => u.Id == userId);
-
-        if (retrievedUser == null || retrievedUser.Unit != user.Unit)
-        {
-            return Forbid();
-        }
-
-        return Ok(retrievedUser);
-    }
-
-        if (user.Type != AccountType.Admin)
-        {
-            return Forbid();
-        }
-
-        User? requestedUser = Context.Users.FirstOrDefault(u => u.Id == userId);
-
-        return requestedUser != null ? requestedUser : NotFound();
-    }
-
-    [HttpGet("/api/users/customers")]
-    [Authorize]
-    public ActionResult<User> GetCustomers()
-    {
-        User? user = GetUserFromClaims();
-        if (user == null)
-        {
-            return Unauthorized();
-        }
-        
-        if (user.Type != AccountType.Helpdesk && user.Type != AccountType.Admin) return Forbid();
-
-        return Ok(Context.Users.Where(u => u.Type == AccountType.User));
-    }
-    
     [HttpPost]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status201Created)]
@@ -97,44 +37,7 @@ public class UserController : BaseController<UserController>
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public ActionResult<User> PostUser(UserCreationData data)
-    {
-        User? user = GetUserFromClaims();
-
-        if (user == null)
-        {
-            return Unauthorized();
-        }
-
-        if (user.Type != AccountType.Admin)
-        {
-            return Forbid();
-        }
-
-        if (data.Username == null || data.Password == null)
-        {
-            return BadRequest();
-        }
-
-        if (Context.Users.Select(u => u.Username).Contains(data.Username))
-        {
-            return Conflict();
-        }
-
-        User createdUser = new User()
-        {
-            Username = data.Username,
-            PasswordHash = AuthController.HashPassword(data.Password),
-            Type = data.Type
-        };
-
-        Context.Users.Add(createdUser);
-        Context.SaveChanges();
-
-        return Created(
-            Url.Action("GetUser", "User", new { userId=createdUser.Id}, Request.Scheme) ?? "",
-            createdUser);
-    }
+    public ActionResult<User> PostUser(NewUser data) => Handler.CreateUser(GetUserFromClaims(), data);
 
     [HttpPut("{userId:int}")]
     [Authorize]
@@ -143,57 +46,7 @@ public class UserController : BaseController<UserController>
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public ActionResult PutUser(int userId, UserCreationData data)
-    {
-        Console.WriteLine("PUTTTTTTTTT");
-        Console.WriteLine(data.Username);
-        User? user = GetUserFromClaims();
-
-        if (user == null)
-        {
-            return Unauthorized();
-        }
-
-        if (user.Type != AccountType.Admin)
-        {
-            return Forbid();
-        }
-
-        User? selectedUser = Context.Users.FirstOrDefault(u => u.Id == userId);
-
-        if (selectedUser == null)
-        {
-            return NotFound();
-        }
-
-        if (data.Username != null && Context.Users.Select(u => u.Username)
-                .Where(u => u != selectedUser.Username)
-                .Contains(data.Username))
-        {
-            return Conflict();
-        }
-
-        selectedUser.Username = data.Username ?? selectedUser.Username;
-        
-        selectedUser.PasswordHash = data.Password != null
-            ? AuthController.HashPassword(data.Password)
-            : selectedUser.PasswordHash;
-        
-        selectedUser.Type = data.Type;
-        selectedUser.PhoneNumber = data.PhoneNumber;
-        selectedUser.Unit = data.Unit;
-        
-        Context.Entry(selectedUser).Collection(u => u.Machines).Load();
-
-        if (selectedUser.Type != AccountType.User)
-        {
-            selectedUser.Machines.Clear();
-        }
-
-        Context.SaveChanges();
-
-        return NoContent();
-    }
+    public ActionResult PutUser(int userId, NewUser data) => Handler.EditUser(GetUserFromClaims(), userId, data);
 
     [HttpDelete("{userId:int}")]
     [Authorize]
@@ -201,62 +54,14 @@ public class UserController : BaseController<UserController>
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult DeleteUser(int userId)
-    {   
-        User? user = GetUserFromClaims();
+    public ActionResult DeleteUser(int userId) => Handler.DeleteUser(GetUserFromClaims(), userId);
 
-        if (user == null)
-        {
-            return Unauthorized();
-        }
-
-        if (user.Type != AccountType.Admin)
-        {
-            return Forbid();
-        }
-
-        User? selectedUser = Context.Users.FirstOrDefault(u => u.Id == userId);
-
-        if (selectedUser == null)
-        {
-            return NotFound();
-        }
-
-        Context.Remove(selectedUser);
-        Context.SaveChanges();
-
-        return Ok();
-    }
-    
     [HttpGet("{userId:int}/machines")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<List<Machine>> GetMachines(int userId){
-        User? user = GetUserFromClaims();
-        
-        if (user == null)
-        {
-            return Unauthorized("Not authorized");
-        }
-
-        if (user.Type == AccountType.User)
-        {
-            Context.Entry(user).Collection(u => u.Machines).Load();
-            return Ok(user.Machines);
-        }
-
-        User? selectedUser = Context.Users.FirstOrDefault(u => u.Id == userId);
-
-        if (selectedUser == null)
-        {
-            return NotFound();
-        }
-            
-        Context.Entry(selectedUser).Collection(u => u.Machines).Load();
-        return Ok(selectedUser.Machines);
-    }
+    public ActionResult<List<Machine>> GetMachines(int userId) => Handler.GetUserMachines(GetUserFromClaims(), userId);
 
     [HttpPut("{userId:int}/machines")]
     [Authorize]
@@ -265,50 +70,5 @@ public class UserController : BaseController<UserController>
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public ActionResult AddMachine(int userId, List<long> machineIds)
-    {
-        User? user = GetUserFromClaims();
-        
-        if (user == null)
-        {
-            return Unauthorized("Not authorized");
-        }
-        
-        if (user.Type != AccountType.Admin)
-        {
-            return Forbid();
-        }
-
-        User? selectedUser = Context.Users.FirstOrDefault(u => u.Id == userId);
-        
-        if (selectedUser == null)
-        {
-            return NotFound();
-        }
-
-        if (selectedUser.Type != AccountType.User)
-        {
-            return BadRequest();
-        }
-        
-        Context.Entry(selectedUser).Collection(u => u.Machines).Load();
-
-        List<Machine> machines = Context.Machines.Where(m => machineIds.Contains(m.Id)).ToList();
-        
-        selectedUser.Machines.Clear();
-        selectedUser.Machines.AddRange(machines);
-        
-        Context.SaveChanges();
-
-        return Ok();
-    }
-}
-
-public class UserCreationData
-{
-    public string? Username { get; set; }
-    public string? Password { get; set; }
-    public AccountType Type { get; set; }
-    public string? PhoneNumber { get; set; }
-    public string? Unit { get; set; }
+    public ActionResult AddMachine(int userId, List<long> machineIds) => Handler.AddUserMachine(GetUserFromClaims(), userId, machineIds);
 }
