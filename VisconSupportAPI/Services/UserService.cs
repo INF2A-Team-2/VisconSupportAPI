@@ -1,4 +1,3 @@
-using System.Linq.Expressions;
 using VisconSupportAPI.Data;
 using VisconSupportAPI.Models;
 using VisconSupportAPI.Types;
@@ -87,13 +86,19 @@ public class UserService : Service
             throw new ArgumentException("User with ID {id} not found", nameof(id));
         }
 
-        Context.Machines.Add(machine);
+        if (!Services.Machines.GetAll().Contains(machine))
+        {
+            Context.Machines.Add(machine);
 
-        Context.SaveChanges();
+            Context.SaveChanges();
+        }
 
         Services.LoadCollection(user, u => u.Machines);
-        
-        user.Machines.Add(machine);
+
+        if (!user.Machines.Contains(machine))
+        {
+            user.Machines.Add(machine);
+        }
         
         Context.SaveChanges();
     }
@@ -110,9 +115,8 @@ public class UserService : Service
         Services.LoadCollection(user, u => u.Machines);
         
         user.Machines.Clear();
-        user.Machines.AddRange(machines);
         
-        Context.SaveChanges();
+        machines.ForEach(m => AddMachine(user.Id, m));
     }
 
     public void Delete(int id)
