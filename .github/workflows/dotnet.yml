@@ -16,7 +16,6 @@ jobs:
 
     env:
         APP_SETTINGS: ${{ secrets.APP_SETTINGS }}
-        TEST_CONFIG: ${{ secrets.TEST_CONFIG }}
 
     steps:
     - uses: actions/checkout@v3
@@ -26,7 +25,7 @@ jobs:
       working-directory: ${{ github.workspace }}
     
     - name: Setup testconfig.json
-      run: echo "$TEST_CONFIG" > VisconSupportAPI.Tests/testconfig.json
+      run: echo "$APP_SETTINGS" > VisconSupportAPI.Tests/appsettings.json
       working-directory: ${{ github.workspace }}
       
     - name: Setup .NET
