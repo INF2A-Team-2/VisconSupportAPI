@@ -1,8 +1,10 @@
 using System.Globalization;
 using CsvHelper;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
 using VisconSupportAPI.Data;
 using VisconSupportAPI.Models;
+using VisconSupportAPI.Services;
 using VisconSupportAPI.Types;
 
 namespace VisconSupportAPI.Handlers;
@@ -28,6 +30,30 @@ public class MachineHandler : Handler
         }
         
         return new OkObjectResult(Context.Machines);
+    }
+
+    public ActionResult<Machine> GetMachine(User? user, int machineId)
+    {
+        if (user == null)
+        {
+            return new UnauthorizedResult();
+        }
+
+        Services.LoadCollection(user, u => u.Machines);
+
+        Machine? machine = Services.Machines.GetById(machineId);
+
+        if (machine == null)
+        {
+            return new NotFoundResult();
+        }
+
+        if (user.Type == AccountType.User && !user.Machines.Contains(machine))
+        {
+            return new ForbidResult();
+        }
+
+        return new OkObjectResult(machine);
     }
     
     public ActionResult ImportMachines(User? user, IFormFile formFile)
