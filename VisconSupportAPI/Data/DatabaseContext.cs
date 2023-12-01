@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 
 using VisconSupportAPI.Models;
+using VisconSupportAPI.Services;
 
 namespace VisconSupportAPI.Data;
 
@@ -15,46 +16,47 @@ public class DatabaseContext : DbContext
     public DbSet<Issue> Issues { get; set; }
     public DbSet<Message> Messages { get; set; }
     public DbSet<Attachment> Attachments { get; set; }
-    public DbSet<FileChunk> FileChunks { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
-        // foreign keys for issue
-        modelBuilder.Entity<User>()
-            .HasMany<Issue>()
-            .WithOne()
-            .HasForeignKey(h => h.UserId)
+        modelBuilder.Entity<Issue>()
+            .HasOne<User>(x => x.User)
+            .WithMany(x => x.Issues)
+            .HasForeignKey(x => x.UserId)
+            .HasPrincipalKey(x => x.Id)
             .IsRequired();
         
-        modelBuilder.Entity<Machine>()
-            .HasMany<Issue>()
-            .WithOne()
-            .HasForeignKey(h => h.MachineId)
-            .IsRequired();
-        
-        // foreign keys for message
-        modelBuilder.Entity<Message>()
-            .HasOne<User>()
-            .WithMany()
-            .HasForeignKey(h => h.UserId)
+        modelBuilder.Entity<Issue>()
+            .HasOne<Machine>(x => x.Machine)
+            .WithMany(x => x.Issues)
+            .HasForeignKey(x => x.MachineId)
+            .HasPrincipalKey(x => x.Id)
             .IsRequired();
         
         modelBuilder.Entity<Message>()
-            .HasOne<Issue>()
-            .WithMany()
-            .HasForeignKey(h => h.IssueId)
+            .HasOne<User>(x => x.User)
+            .WithMany(x => x.Messages)
+            .HasForeignKey(x => x.UserId)
+            .HasPrincipalKey(x => x.Id)
             .IsRequired();
         
-        // foreign keys for attachment
-        modelBuilder.Entity<Attachment>()
-            .HasOne<Issue>()
-            .WithMany(h => h.Attachments)
-            .HasForeignKey(h => h.IssueId)
+        modelBuilder.Entity<Issue>()
+            .HasMany<Message>(x => x.Messages)
+            .WithOne(x => x.Issue)
+            .HasForeignKey(x => x.IssueId)
+            .HasPrincipalKey(x => x.Id)
+            .IsRequired();
+        
+        modelBuilder.Entity<Issue>()
+            .HasMany<Attachment>(x => x.Attachments)
+            .WithOne(x => x.issue)
+            .HasForeignKey(x => x.IssueId)
+            .HasPrincipalKey(x => x.Id)
             .IsRequired();
         
         // foreign key for user to machines
         modelBuilder.Entity<User>()
-            .HasMany(h => h.Machines)
+            .HasMany<Machine>(h => h.Machines)
             .WithMany();
     }
 }

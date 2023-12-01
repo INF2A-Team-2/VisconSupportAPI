@@ -1,7 +1,12 @@
+using System.Text.Json.Serialization;
+
+namespace VisconSupportAPI.Models;
+
 public class Attachment
 {
-    public long Id {get; set;}
+    public int Id {get; set;}
     public string? Name { get; set; }
     public string MimeType { get; set; }
-    public long IssueId {get; set;}
+    public int IssueId {get; set;}
+    [JsonIgnore] public Issue issue { get; set; }
 }

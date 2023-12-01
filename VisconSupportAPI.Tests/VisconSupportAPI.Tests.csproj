@@ -29,9 +29,19 @@
     </ItemGroup>
 
     <ItemGroup>
-        <None Update="testconfig.json">
-            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-        </None>
+      <Content Update="appsettings.json">
+        <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+      </Content>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="HandlerTests\" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Include="bin\Debug\net7.0\appsettings.json" />
     </ItemGroup>
 
 </Project>

@@ -12,7 +12,7 @@ using VisconSupportAPI.Data;
 namespace VisconSupportAPI.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20231121130625_init")]
+    [Migration("20231129213743_init")]
     partial class init
     {
         /// <inheritdoc />
@@ -20,24 +20,42 @@ namespace VisconSupportAPI.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "7.0.11")
+                .HasAnnotation("ProductVersion", "7.0.14")
                 .HasAnnotation("Relational:MaxIdentifierLength", 63);
 
             NpgsqlModelBuilderExtensions.UseIdentityByDefaultColumns(modelBuilder);
 
-            modelBuilder.Entity("Attachment", b =>
+            modelBuilder.Entity("MachineUser", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("MachinesId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("MachinesId", "UserId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("MachineUser");
+                });
+
+            modelBuilder.Entity("VisconSupportAPI.Models.Attachment", b =>
+                {
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<long>("IssueId")
-                        .HasColumnType("bigint");
+                    b.Property<int>("IssueId")
+                        .HasColumnType("integer");
 
                     b.Property<string>("MimeType")
                         .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<string>("Name")
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -47,13 +65,13 @@ namespace VisconSupportAPI.Migrations
                     b.ToTable("Attachments");
                 });
 
-            modelBuilder.Entity("Issue", b =>
+            modelBuilder.Entity("VisconSupportAPI.Models.Issue", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Actual")
                         .IsRequired()
@@ -67,8 +85,8 @@ namespace VisconSupportAPI.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<long>("MachineId")
-                        .HasColumnType("bigint");
+                    b.Property<int>("MachineId")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("TimeStamp")
                         .HasColumnType("timestamp with time zone");
@@ -77,8 +95,8 @@ namespace VisconSupportAPI.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint");
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -89,13 +107,13 @@ namespace VisconSupportAPI.Migrations
                     b.ToTable("Issues");
                 });
 
-            modelBuilder.Entity("Machine", b =>
+            modelBuilder.Entity("VisconSupportAPI.Models.Machine", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -106,41 +124,26 @@ namespace VisconSupportAPI.Migrations
                     b.ToTable("Machines");
                 });
 
-            modelBuilder.Entity("MachineUser", b =>
-                {
-                    b.Property<long>("MachinesId")
-                        .HasColumnType("bigint");
-
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("MachinesId", "UserId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("MachineUser");
-                });
-
             modelBuilder.Entity("VisconSupportAPI.Models.Message", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
+                        .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("Body")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<long>("IssueId")
-                        .HasColumnType("bigint");
+                    b.Property<int>("IssueId")
+                        .HasColumnType("integer");
 
                     b.Property<DateTime>("TimeStamp")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint");
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -153,12 +156,11 @@ namespace VisconSupportAPI.Migrations
 
             modelBuilder.Entity("VisconSupportAPI.Models.User", b =>
                 {
-                    b.Property<long>("Id")
+                    b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint")
-                        .HasColumnName("rowid");
+                        .HasColumnType("integer");
 
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<long>("Id"));
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
@@ -182,33 +184,9 @@ namespace VisconSupportAPI.Migrations
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("Attachment", b =>
-                {
-                    b.HasOne("Issue", null)
-                        .WithMany()
-                        .HasForeignKey("IssueId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("Issue", b =>
-                {
-                    b.HasOne("Machine", null)
-                        .WithMany()
-                        .HasForeignKey("MachineId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("VisconSupportAPI.Models.User", null)
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("MachineUser", b =>
                 {
-                    b.HasOne("Machine", null)
+                    b.HasOne("VisconSupportAPI.Models.Machine", null)
                         .WithMany()
                         .HasForeignKey("MachinesId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -221,19 +199,72 @@ namespace VisconSupportAPI.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("VisconSupportAPI.Models.Message", b =>
+            modelBuilder.Entity("VisconSupportAPI.Models.Attachment", b =>
                 {
-                    b.HasOne("Issue", null)
-                        .WithMany()
+                    b.HasOne("VisconSupportAPI.Models.Issue", "issue")
+                        .WithMany("Attachments")
                         .HasForeignKey("IssueId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("VisconSupportAPI.Models.User", null)
-                        .WithMany()
+                    b.Navigation("issue");
+                });
+
+            modelBuilder.Entity("VisconSupportAPI.Models.Issue", b =>
+                {
+                    b.HasOne("VisconSupportAPI.Models.Machine", "Machine")
+                        .WithMany("Issues")
+                        .HasForeignKey("MachineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VisconSupportAPI.Models.User", "User")
+                        .WithMany("Issues")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Machine");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("VisconSupportAPI.Models.Message", b =>
+                {
+                    b.HasOne("VisconSupportAPI.Models.Issue", "Issue")
+                        .WithMany("Messages")
+                        .HasForeignKey("IssueId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VisconSupportAPI.Models.User", "User")
+                        .WithMany("Messages")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Issue");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("VisconSupportAPI.Models.Issue", b =>
+                {
+                    b.Navigation("Attachments");
+
+                    b.Navigation("Messages");
+                });
+
+            modelBuilder.Entity("VisconSupportAPI.Models.Machine", b =>
+                {
+                    b.Navigation("Issues");
+                });
+
+            modelBuilder.Entity("VisconSupportAPI.Models.User", b =>
+                {
+                    b.Navigation("Issues");
+
+                    b.Navigation("Messages");
                 });
 #pragma warning restore 612, 618
         }

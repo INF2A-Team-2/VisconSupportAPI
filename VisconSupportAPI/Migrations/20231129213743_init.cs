@@ -16,7 +16,7 @@ namespace VisconSupportAPI.Migrations
                 name: "Machines",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Name = table.Column<string>(type: "text", nullable: false)
                 },
@@ -29,7 +29,7 @@ namespace VisconSupportAPI.Migrations
                 name: "Users",
                 columns: table => new
                 {
-                    rowid = table.Column<long>(type: "bigint", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Username = table.Column<string>(type: "text", nullable: false),
                     PasswordHash = table.Column<string>(type: "text", nullable: false),
@@ -39,22 +39,22 @@ namespace VisconSupportAPI.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Users", x => x.rowid);
+                    table.PrimaryKey("PK_Users", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
                 name: "Issues",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Headline = table.Column<string>(type: "text", nullable: false),
                     Actual = table.Column<string>(type: "text", nullable: false),
                     Expected = table.Column<string>(type: "text", nullable: false),
                     Tried = table.Column<string>(type: "text", nullable: false),
                     TimeStamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UserId = table.Column<long>(type: "bigint", nullable: false),
-                    MachineId = table.Column<long>(type: "bigint", nullable: false)
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    MachineId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -69,7 +69,7 @@ namespace VisconSupportAPI.Migrations
                         name: "FK_Issues_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "rowid",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -77,8 +77,8 @@ namespace VisconSupportAPI.Migrations
                 name: "MachineUser",
                 columns: table => new
                 {
-                    MachinesId = table.Column<long>(type: "bigint", nullable: false),
-                    UserId = table.Column<long>(type: "bigint", nullable: false)
+                    MachinesId = table.Column<int>(type: "integer", nullable: false),
+                    UserId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -93,7 +93,7 @@ namespace VisconSupportAPI.Migrations
                         name: "FK_MachineUser_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "rowid",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
@@ -101,10 +101,11 @@ namespace VisconSupportAPI.Migrations
                 name: "Attachments",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: true),
                     MimeType = table.Column<string>(type: "text", nullable: false),
-                    IssueId = table.Column<long>(type: "bigint", nullable: false)
+                    IssueId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -121,12 +122,12 @@ namespace VisconSupportAPI.Migrations
                 name: "Messages",
                 columns: table => new
                 {
-                    Id = table.Column<long>(type: "bigint", nullable: false)
+                    Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Body = table.Column<string>(type: "text", nullable: false),
                     TimeStamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    UserId = table.Column<long>(type: "bigint", nullable: false),
-                    IssueId = table.Column<long>(type: "bigint", nullable: false)
+                    UserId = table.Column<int>(type: "integer", nullable: false),
+                    IssueId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -141,7 +142,7 @@ namespace VisconSupportAPI.Migrations
                         name: "FK_Messages_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "rowid",
+                        principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
 
