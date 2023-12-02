@@ -1,6 +1,7 @@
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using VisconSupportAPI.Data;
+using VisconSupportAPI.Models;
 
 namespace VisconSupportAPI.Services;
 
