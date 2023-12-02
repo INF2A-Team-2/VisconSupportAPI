@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 
 using VisconSupportAPI.Models;
+using VisconSupportAPI.Services;
 
 namespace VisconSupportAPI.Data;
 
@@ -15,7 +16,6 @@ public class DatabaseContext : DbContext
     public DbSet<Issue> Issues { get; set; }
     public DbSet<Message> Messages { get; set; }
     public DbSet<Attachment> Attachments { get; set; }
-    public DbSet<Company> Companies { get; set; }
     public DbSet<Log> Logs { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -55,16 +55,9 @@ public class DatabaseContext : DbContext
             .HasPrincipalKey(x => x.Id)
             .IsRequired();
         
-        modelBuilder.Entity<Company>()
-            .HasMany<User>(x => x.Employees)
-            .WithOne(x => x.Company)
-            .HasForeignKey(x => x.CompanyId)
-            .HasPrincipalKey(x => x.Id)
-            .IsRequired();
-
-        modelBuilder.Entity<Company>()
+        modelBuilder.Entity<User>()
             .HasMany<Machine>(x => x.Machines)
-            .WithMany(x => x.Companies);
+            .WithMany();
 
         modelBuilder.Entity<Log>()
             .HasOne<User>(x => x.Author)
