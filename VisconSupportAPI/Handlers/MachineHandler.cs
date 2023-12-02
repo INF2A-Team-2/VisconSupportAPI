@@ -25,8 +25,8 @@ public class MachineHandler : Handler
 
         if (user.Type == AccountType.User)
         {
-            Services.LoadCollection(user, u => u.Machines);
-            return new OkObjectResult(user.Machines);
+            Services.LoadCollection(user, u => u.Company.Machines);
+            return new OkObjectResult(user.Company.Machines);
         }
         
         return new OkObjectResult(Context.Machines);
@@ -39,7 +39,7 @@ public class MachineHandler : Handler
             return new UnauthorizedResult();
         }
 
-        Services.LoadCollection(user, u => u.Machines);
+        Services.LoadCollection(user, u => u.Company.Machines);
 
         Machine? machine = Services.Machines.GetById(machineId);
 
@@ -48,7 +48,7 @@ public class MachineHandler : Handler
             return new NotFoundResult();
         }
 
-        if (user.Type == AccountType.User && !user.Machines.Contains(machine))
+        if (user.Type == AccountType.User && !user.Company.Machines.Contains(machine))
         {
             return new ForbidResult();
         }
@@ -87,7 +87,7 @@ public class MachineHandler : Handler
                     continue;
                 }
                 
-                Services.LoadCollection(currUser, u => u.Machines);
+                Services.LoadCollection(currUser, u => u.Company.Machines);
                 
                 Machine? exists = Services.Machines.GetByName(machine.Name);
                 
