@@ -17,9 +17,7 @@ public class MachineService : Service
 
     public List<Machine> GetAllForUser(User user)
     {
-        Context.Entry(user).Collection(u => u.Machines).Load();
-        
-        return user.Machines;
+        return user.Company.Machines;
     }
 
     public Machine Create(NewMachine data)

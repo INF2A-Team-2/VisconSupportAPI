@@ -2,10 +2,10 @@ using System.Text.Json.Serialization;
 
 namespace VisconSupportAPI.Models;
 
-public class Machine
+public class Company
 {
     public int Id { get; set; }
     public string Name { get; set; }
-    [JsonIgnore] public List<Issue> Issues { get; set; }
-    [JsonIgnore] public List<Company> Companies { get; set; }
+    [JsonIgnore]public List<User> Employees { get; set; }
+    [JsonIgnore]public List<Machine> Machines { get; set; }
 }

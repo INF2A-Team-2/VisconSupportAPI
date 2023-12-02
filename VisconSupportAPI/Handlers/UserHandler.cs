@@ -109,8 +109,8 @@ public class UserHandler : Handler
 
         if (user.Type == AccountType.User)
         {
-            Context.Entry(user).Collection(u => u.Machines).Load();
-            return new OkObjectResult(user.Machines);
+            Context.Entry(user).Collection(u => u.Company.Machines).Load();
+            return new OkObjectResult(user.Company.Machines);
         }
 
         User? selectedUser = Context.Users.FirstOrDefault(u => u.Id == userId);
