@@ -19,6 +19,7 @@ public class ServicesList
     public readonly AuthService Auth;
     public readonly AttachmentService Attachments;
     public readonly LogService Logs;
+    
     public ServicesList(DatabaseContext context, IConfiguration configuration)
     {
         Context = context;
