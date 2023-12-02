@@ -101,7 +101,7 @@ public class Program
     
     private static void LogRequestHeaders(HttpRequest request)
     {
-        Console.WriteLine(request.Path);
+        Console.WriteLine($"{request.Method} {request.Path}");
         Console.WriteLine("Request Headers:");
         foreach (KeyValuePair<string, StringValues> header in request.Headers)
         {
