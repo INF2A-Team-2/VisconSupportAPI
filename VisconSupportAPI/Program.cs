@@ -78,13 +78,13 @@ public class Program
         {
             app.UseSwagger();
             app.UseSwaggerUI();
-            
-            app.Use((context, next) =>
-            {
-                LogRequestHeaders(context.Request);
-                return next();
-            });
         }
+
+        app.Use((context, next) =>
+        {
+            LogRequestHeaders(context.Request);
+            return next();
+        });
 
         app.UseCors("Default");
 
