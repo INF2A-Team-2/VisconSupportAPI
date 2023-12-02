@@ -119,7 +119,9 @@ public class MachineHandler : Handler
         
         Machine? exists = Services.Machines.GetByName(machine.Name);
         
-        Services.Users.AddMachine(currUser.Id, exists ?? new Machine() { Name = machine.Name });
+        Machine createdMachine = Services.Users.AddMachine(currUser.Id, exists ?? new Machine() { Name = machine.Name });
+
+        Services.Logs.Create(user, "Machine added", user: currUser, machine: createdMachine);
         
         return new OkResult();
     }
