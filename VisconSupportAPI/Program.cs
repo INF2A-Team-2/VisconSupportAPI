@@ -107,6 +107,6 @@ public class Program
         {
             Console.WriteLine($"{header.Key}: {string.Join(", ", header.Value)}");
         }
-        Console.WriteLine();
+        Console.WriteLine("\n\n\n");
     }
 }
