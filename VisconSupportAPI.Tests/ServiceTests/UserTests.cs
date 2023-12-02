@@ -19,7 +19,8 @@ public class UserTests : ServiceTest
         return Services.Users.GetByUsername("testuser") ?? Services.Users.Create(new NewUser()
         {
             Username = "testuser",
-            Password = "test"
+            Password = "test",
+            CompanyId = 1
         });
     }
     

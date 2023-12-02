@@ -29,7 +29,8 @@ public class UserService : Service
             PasswordHash = AuthService.HashPassword(data.Password),
             Type = data.Type,
             PhoneNumber = data.PhoneNumber,
-            Unit = data.Unit
+            Unit = data.Unit,
+            CompanyId = data.CompanyId
         };
         
 
