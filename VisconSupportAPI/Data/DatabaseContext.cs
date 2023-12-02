@@ -65,5 +65,47 @@ public class DatabaseContext : DbContext
         modelBuilder.Entity<Company>()
             .HasMany<Machine>(x => x.Machines)
             .WithMany(x => x.Companies);
+
+        modelBuilder.Entity<Log>()
+            .HasOne<User>(x => x.Author)
+            .WithMany()
+            .HasForeignKey(x => x.AuthorId)
+            .HasPrincipalKey(x => x.Id)
+            .IsRequired();
+
+        modelBuilder.Entity<Log>()
+            .HasOne<User>(x => x.User)
+            .WithMany()
+            .HasForeignKey(x => x.UserId)
+            .HasPrincipalKey(x => x.Id)
+            .IsRequired();
+        
+        modelBuilder.Entity<Log>()
+            .HasOne<Issue>(x => x.Issue)
+            .WithMany()
+            .HasForeignKey(x => x.IssueId)
+            .HasPrincipalKey(x => x.Id)
+            .IsRequired();
+        
+        modelBuilder.Entity<Log>()
+            .HasOne<Machine>(x => x.Machine)
+            .WithMany()
+            .HasForeignKey(x => x.MachineId)
+            .HasPrincipalKey(x => x.Id)
+            .IsRequired();
+        
+        modelBuilder.Entity<Log>()
+            .HasOne<Message>(x => x.Message)
+            .WithMany()
+            .HasForeignKey(x => x.MessageId)
+            .HasPrincipalKey(x => x.Id)
+            .IsRequired();
+        
+        modelBuilder.Entity<Log>()
+            .HasOne<Attachment>(x => x.Attachment)
+            .WithMany()
+            .HasForeignKey(x => x.AttachmentId)
+            .HasPrincipalKey(x => x.Id)
+            .IsRequired();
     }
 }
