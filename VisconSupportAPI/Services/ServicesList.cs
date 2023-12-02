@@ -2,6 +2,7 @@ using System.Collections;
 using System.Linq.Expressions;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using VisconSupportAPI.Data;
+using VisconSupportAPI.Models;
 
 namespace VisconSupportAPI.Services;
 
@@ -17,7 +18,7 @@ public class ServicesList
     public readonly MachineService Machines;
     public readonly AuthService Auth;
     public readonly AttachmentService Attachments;
-    
+    public readonly LogService Logs;
     public ServicesList(DatabaseContext context, IConfiguration configuration)
     {
         Context = context;
@@ -29,6 +30,7 @@ public class ServicesList
         Machines = new MachineService(context, configuration, this);
         Auth = new AuthService(context, configuration, this);
         Attachments = new AttachmentService(context, configuration, this);
+        Logs = new LogService(context, configuration, this);
     }
     
     public IEnumerable<TProperty> LoadCollection<TEntity, TProperty>(TEntity entity, Expression<Func<TEntity, IEnumerable<TProperty>>> selector) 

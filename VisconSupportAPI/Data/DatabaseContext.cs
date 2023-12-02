@@ -16,6 +16,7 @@ public class DatabaseContext : DbContext
     public DbSet<Message> Messages { get; set; }
     public DbSet<Attachment> Attachments { get; set; }
     public DbSet<Company> Companies { get; set; }
+    public DbSet<Log> Logs { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
