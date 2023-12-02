@@ -54,15 +54,15 @@ public class DatabaseContext : DbContext
             .HasPrincipalKey(x => x.Id)
             .IsRequired();
         
-        // foreign key for user to company
-        modelBuilder.Entity<User>()
-            .HasOne<Company>(h => h.Company)
-            .WithMany(h => h.Employees)
-            .HasForeignKey(h => h.CompanyId)
+        modelBuilder.Entity<Company>()
+            .HasMany<User>(x => x.Employees)
+            .WithOne(x => x.Company)
+            .HasForeignKey(x => x.CompanyId)
+            .HasPrincipalKey(x => x.Id)
             .IsRequired();
 
         modelBuilder.Entity<Company>()
-            .HasMany<Machine>(h => h.Machines)
-            .WithMany(h => h.Companies);
+            .HasMany<Machine>(x => x.Machines)
+            .WithMany(x => x.Companies);
     }
 }

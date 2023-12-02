@@ -4,8 +4,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisconSupportAPI", "VisconS
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisconSupportAPI.Tests", "VisconSupportAPI.Tests\VisconSupportAPI.Tests.csproj", "{606D21C3-5957-4FC2-BAEA-9051E999409E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VisconSupportAPI.Seeder", "VisconSupportAPI.Seeder\VisconSupportAPI.Seeder.csproj", "{2ABB9FCB-FC81-48CA-948E-A9356CF606D5}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

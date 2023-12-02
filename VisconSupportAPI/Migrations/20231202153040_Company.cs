@@ -7,11 +7,24 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace VisconSupportAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class Company : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.CreateTable(
+                name: "Companies",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Name = table.Column<string>(type: "text", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Companies", x => x.Id);
+                });
+
             migrationBuilder.CreateTable(
                 name: "Machines",
                 columns: table => new
@@ -35,11 +48,42 @@ namespace VisconSupportAPI.Migrations
                     PasswordHash = table.Column<string>(type: "text", nullable: false),
                     Type = table.Column<int>(type: "integer", nullable: false),
                     PhoneNumber = table.Column<string>(type: "text", nullable: true),
-                    Unit = table.Column<string>(type: "text", nullable: true)
+                    Unit = table.Column<string>(type: "text", nullable: true),
+                    CompanyId = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Users", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Users_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CompanyMachine",
+                columns: table => new
+                {
+                    CompaniesId = table.Column<int>(type: "integer", nullable: false),
+                    MachinesId = table.Column<int>(type: "integer", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CompanyMachine", x => new { x.CompaniesId, x.MachinesId });
+                    table.ForeignKey(
+                        name: "FK_CompanyMachine_Companies_CompaniesId",
+                        column: x => x.CompaniesId,
+                        principalTable: "Companies",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CompanyMachine_Machines_MachinesId",
+                        column: x => x.MachinesId,
+                        principalTable: "Machines",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -67,30 +111,6 @@ namespace VisconSupportAPI.Migrations
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Issues_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "MachineUser",
-                columns: table => new
-                {
-                    MachinesId = table.Column<int>(type: "integer", nullable: false),
-                    UserId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_MachineUser", x => new { x.MachinesId, x.UserId });
-                    table.ForeignKey(
-                        name: "FK_MachineUser_Machines_MachinesId",
-                        column: x => x.MachinesId,
-                        principalTable: "Machines",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_MachineUser_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -152,6 +172,11 @@ namespace VisconSupportAPI.Migrations
                 column: "IssueId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_CompanyMachine_MachinesId",
+                table: "CompanyMachine",
+                column: "MachinesId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Issues_MachineId",
                 table: "Issues",
                 column: "MachineId");
@@ -159,11 +184,6 @@ namespace VisconSupportAPI.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_Issues_UserId",
                 table: "Issues",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_MachineUser_UserId",
-                table: "MachineUser",
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
@@ -175,6 +195,11 @@ namespace VisconSupportAPI.Migrations
                 name: "IX_Messages_UserId",
                 table: "Messages",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Users_CompanyId",
+                table: "Users",
+                column: "CompanyId");
         }
 
         /// <inheritdoc />
@@ -184,7 +209,7 @@ namespace VisconSupportAPI.Migrations
                 name: "Attachments");
 
             migrationBuilder.DropTable(
-                name: "MachineUser");
+                name: "CompanyMachine");
 
             migrationBuilder.DropTable(
                 name: "Messages");
@@ -197,6 +222,9 @@ namespace VisconSupportAPI.Migrations
 
             migrationBuilder.DropTable(
                 name: "Users");
+
+            migrationBuilder.DropTable(
+                name: "Companies");
         }
     }
 }
