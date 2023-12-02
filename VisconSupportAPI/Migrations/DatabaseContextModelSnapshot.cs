@@ -121,6 +121,61 @@ namespace VisconSupportAPI.Migrations
                     b.ToTable("Issues");
                 });
 
+            modelBuilder.Entity("VisconSupportAPI.Models.Log", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<int?>("AttachmentId")
+                        .IsRequired()
+                        .HasColumnType("integer");
+
+                    b.Property<int>("AuthorId")
+                        .HasColumnType("integer");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int?>("IssueId")
+                        .IsRequired()
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("MachineId")
+                        .IsRequired()
+                        .HasColumnType("integer");
+
+                    b.Property<int?>("MessageId")
+                        .IsRequired()
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("TimeStamp")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<int?>("UserId")
+                        .IsRequired()
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AttachmentId");
+
+                    b.HasIndex("AuthorId");
+
+                    b.HasIndex("IssueId");
+
+                    b.HasIndex("MachineId");
+
+                    b.HasIndex("MessageId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("Logs");
+                });
+
             modelBuilder.Entity("VisconSupportAPI.Models.Machine", b =>
                 {
                     b.Property<int>("Id")
@@ -244,6 +299,57 @@ namespace VisconSupportAPI.Migrations
                         .IsRequired();
 
                     b.Navigation("Machine");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("VisconSupportAPI.Models.Log", b =>
+                {
+                    b.HasOne("VisconSupportAPI.Models.Attachment", "Attachment")
+                        .WithMany()
+                        .HasForeignKey("AttachmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VisconSupportAPI.Models.User", "Author")
+                        .WithMany()
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VisconSupportAPI.Models.Issue", "Issue")
+                        .WithMany()
+                        .HasForeignKey("IssueId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VisconSupportAPI.Models.Machine", "Machine")
+                        .WithMany()
+                        .HasForeignKey("MachineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VisconSupportAPI.Models.Message", "Message")
+                        .WithMany()
+                        .HasForeignKey("MessageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VisconSupportAPI.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Attachment");
+
+                    b.Navigation("Author");
+
+                    b.Navigation("Issue");
+
+                    b.Navigation("Machine");
+
+                    b.Navigation("Message");
 
                     b.Navigation("User");
                 });
