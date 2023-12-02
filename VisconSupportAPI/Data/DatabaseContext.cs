@@ -1,7 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 
 using VisconSupportAPI.Models;
-using VisconSupportAPI.Services;
 
 namespace VisconSupportAPI.Data;
 
@@ -54,10 +53,6 @@ public class DatabaseContext : DbContext
             .HasForeignKey(x => x.IssueId)
             .HasPrincipalKey(x => x.Id)
             .IsRequired();
-        
-        modelBuilder.Entity<User>()
-            .HasMany<Machine>(x => x.Machines)
-            .WithMany();
 
         modelBuilder.Entity<Log>()
             .HasOne<User>(x => x.Author)
