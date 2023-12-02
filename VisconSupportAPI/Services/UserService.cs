@@ -78,7 +78,7 @@ public class UserService : Service
         Context.SaveChanges();
     }
 
-    public void AddMachine(int id, Machine machine)
+    public Machine AddMachine(int id, Machine machine)
     {
         User? user = GetById(id);
 
@@ -102,6 +102,8 @@ public class UserService : Service
         }
         
         Context.SaveChanges();
+
+        return machine;
     }
 
     public void EditMachines(int id, List<Machine> machines)
