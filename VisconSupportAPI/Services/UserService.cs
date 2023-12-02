@@ -70,8 +70,8 @@ public class UserService : Service
         
         if (user.Type != AccountType.User)
         {
-            Context.Entry(user).Collection(u => u.Machines).Load();
-            user.Machines.Clear();
+            Context.Entry(user).Collection(u => u.Company.Machines).Load();
+            user.Company.Machines.Clear();
         }
 
         Context.SaveChanges();
@@ -93,11 +93,11 @@ public class UserService : Service
             Context.SaveChanges();
         }
 
-        Services.LoadCollection(user, u => u.Machines);
+        Services.LoadCollection(user, u => u.Company.Machines);
 
-        if (!user.Machines.Contains(machine))
+        if (!user.Company.Machines.Contains(machine))
         {
-            user.Machines.Add(machine);
+            user.Company.Machines.Add(machine);
         }
         
         Context.SaveChanges();
@@ -112,9 +112,9 @@ public class UserService : Service
             throw new ArgumentException("User with ID {id} not found", nameof(id));
         }
 
-        Services.LoadCollection(user, u => u.Machines);
+        Services.LoadCollection(user, u => u.Company.Machines);
         
-        user.Machines.Clear();
+        user.Company.Machines.Clear();
         
         machines.ForEach(m => AddMachine(user.Id, m));
     }
