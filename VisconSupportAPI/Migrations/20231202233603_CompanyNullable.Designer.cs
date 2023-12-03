@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using VisconSupportAPI.Data;
@@ -11,9 +12,11 @@ using VisconSupportAPI.Data;
 namespace VisconSupportAPI.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20231202233603_CompanyNullable")]
+    partial class CompanyNullable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -177,6 +180,7 @@ namespace VisconSupportAPI.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("CompanyId")
+                        .IsRequired()
                         .HasColumnType("integer");
 
                     b.Property<string>("PasswordHash")
@@ -271,7 +275,9 @@ namespace VisconSupportAPI.Migrations
                 {
                     b.HasOne("VisconSupportAPI.Models.Company", "Company")
                         .WithMany("Employees")
-                        .HasForeignKey("CompanyId");
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Company");
                 });

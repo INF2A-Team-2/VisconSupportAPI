@@ -17,8 +17,8 @@ public class User
     public AccountType Type { get; set; }
     public string? PhoneNumber { get; set; }
     public string? Unit { get; set; }
-    public int CompanyId { get; set; }
-    [JsonIgnore]public Company Company { get; set; }
+    public int? CompanyId { get; set; }
+    [JsonIgnore] public Company? Company { get; set; }
     [JsonIgnore] public List<Issue> Issues { get; set; }
     [JsonIgnore] public List<Message> Messages { get; set; }
 }

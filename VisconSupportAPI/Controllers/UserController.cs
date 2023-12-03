@@ -55,20 +55,4 @@ public class UserController : Controller<UserController, UserHandler>
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult DeleteUser(int userId) => Handler.DeleteUser(GetUserFromClaims(), userId);
-
-    [HttpGet("{userId:int}/machines")]
-    [Authorize]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<List<Machine>> GetMachines(int userId) => Handler.GetUserMachines(GetUserFromClaims(), userId);
-
-    [HttpPut("{userId:int}/machines")]
-    [Authorize]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public ActionResult AddMachine(int userId, List<long> machineIds) => Handler.AddUserMachine(GetUserFromClaims(), userId, machineIds);
 }

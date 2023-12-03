@@ -9,5 +9,5 @@ public class NewUser
     public AccountType Type { get; set; }
     public string? PhoneNumber { get; set; }
     public string? Unit { get; set; }
-    public int CompanyId { get; set; } = 1;
+    public int? CompanyId { get; set; }
 }

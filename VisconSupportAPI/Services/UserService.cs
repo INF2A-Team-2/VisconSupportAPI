@@ -68,56 +68,8 @@ public class UserService : Service
         user.Type = data.Type;
         user.PhoneNumber = data.PhoneNumber;
         user.Unit = data.Unit;
-        
-        if (user.Type != AccountType.User)
-        {
-            Context.Entry(user).Collection(u => u.Company.Machines).Load();
-            user.Company.Machines.Clear();
-        }
 
         Context.SaveChanges();
-    }
-
-    public void AddMachine(int id, Machine machine)
-    {
-        User? user = GetById(id);
-
-        if (user == null)
-        {
-            throw new ArgumentException("User with ID {id} not found", nameof(id));
-        }
-
-        if (!Services.Machines.GetAll().Contains(machine))
-        {
-            Context.Machines.Add(machine);
-
-            Context.SaveChanges();
-        }
-
-        Services.LoadCollection(user, u => u.Company.Machines);
-
-        if (!user.Company.Machines.Contains(machine))
-        {
-            user.Company.Machines.Add(machine);
-        }
-        
-        Context.SaveChanges();
-    }
-
-    public void EditMachines(int id, List<Machine> machines)
-    {
-        User? user = GetById(id);
-
-        if (user == null)
-        {
-            throw new ArgumentException("User with ID {id} not found", nameof(id));
-        }
-
-        Services.LoadCollection(user, u => u.Company.Machines);
-        
-        user.Company.Machines.Clear();
-        
-        machines.ForEach(m => AddMachine(user.Id, m));
     }
 
     public void Delete(int id)

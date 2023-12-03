@@ -23,13 +23,21 @@ public class MachineHandler : Handler
             return new UnauthorizedResult();
         }
 
-        if (user.Type == AccountType.User)
+        if (user.Type != AccountType.User)
         {
-            Services.LoadCollection(user, u => u.Company.Machines);
-            return new OkObjectResult(user.Company.Machines);
+            return new OkObjectResult(Context.Machines);
         }
-        
-        return new OkObjectResult(Context.Machines);
+
+        Services.LoadReference(user, u => u.Company);
+
+        if (user.Company == null)
+        {
+            return new OkObjectResult(new List<Machine>());
+        }
+
+        Services.LoadCollection(user.Company, c => c.Machines);
+
+        return new OkObjectResult(user.Company.Machines);
     }
 
     public ActionResult<Machine> GetMachine(User? user, int machineId)
@@ -38,9 +46,7 @@ public class MachineHandler : Handler
         {
             return new UnauthorizedResult();
         }
-
-        Services.LoadCollection(user, u => u.Company.Machines);
-
+        
         Machine? machine = Services.Machines.GetById(machineId);
 
         if (machine == null)
@@ -48,7 +54,21 @@ public class MachineHandler : Handler
             return new NotFoundResult();
         }
 
-        if (user.Type == AccountType.User && !user.Company.Machines.Contains(machine))
+        if (user.Type != AccountType.User)
+        {
+            return new OkObjectResult(machine);
+        }
+
+        Services.LoadReference(user, u=> u.Company);
+
+        if (user.Company == null)
+        {
+            return new BadRequestResult();
+        }
+
+        Services.LoadCollection(user.Company, c => c.Machines);
+
+        if (!user.Company.Machines.Contains(machine))
         {
             return new ForbidResult();
         }
@@ -56,71 +76,45 @@ public class MachineHandler : Handler
         return new OkObjectResult(machine);
     }
     
-    public ActionResult ImportMachines(User? user, IFormFile formFile)
-    {
-        if (user == null)
-        {
-            return new UnauthorizedResult();
-        }
-
-        if (user.Type != AccountType.Admin)
-        {
-            return new ForbidResult();
-        }
-
-        if (formFile.Length <= 0 || !formFile.FileName.EndsWith(".csv"))
-        {
-             return new BadRequestResult();
-        }
-
-        using (StreamReader reader = new StreamReader(formFile.OpenReadStream())) 
-        {
-            CsvReader csv = new CsvReader(reader, CultureInfo.InvariantCulture);
-            List<ImportedMachine> readMachines = csv.GetRecords<ImportedMachine>().ToList();
-
-            foreach (ImportedMachine machine in readMachines)
-            {
-                User? currUser = Services.Users.GetById(machine.UserId);
-
-                if (currUser == null)
-                {
-                    continue;
-                }
-                
-                Services.LoadCollection(currUser, u => u.Company.Machines);
-                
-                Machine? exists = Services.Machines.GetByName(machine.Name);
-                
-                Services.Users.AddMachine(currUser.Id, exists ?? new Machine() { Name = machine.Name });
-            }
-        }
-
-        return new OkResult();
-    }
-
-    public ActionResult AddMachine(User? user, ImportedMachine machine)
-    {
-        if (user == null)
-        {
-            return new UnauthorizedResult();
-        }
-
-        if (user.Type != AccountType.Admin)
-        {
-            return new ForbidResult();
-        }
-        
-        User? currUser = Services.Users.GetById(machine.UserId);
-
-        if (currUser == null)
-        {
-            return new NotFoundResult();
-        }
-        
-        Machine? exists = Services.Machines.GetByName(machine.Name);
-        
-        Services.Users.AddMachine(currUser.Id, exists ?? new Machine() { Name = machine.Name });
-        
-        return new OkResult();
-    }
+    // public ActionResult ImportMachines(User? user, IFormFile formFile)
+    // {
+    //     if (user == null)
+    //     {
+    //         return new UnauthorizedResult();
+    //     }
+    //
+    //     if (user.Type != AccountType.Admin)
+    //     {
+    //         return new ForbidResult();
+    //     }
+    //
+    //     if (formFile.Length <= 0 || !formFile.FileName.EndsWith(".csv"))
+    //     {
+    //          return new BadRequestResult();
+    //     }
+    //
+    //     using (StreamReader reader = new StreamReader(formFile.OpenReadStream())) 
+    //     {
+    //         CsvReader csv = new CsvReader(reader, CultureInfo.InvariantCulture);
+    //         List<ImportedMachine> readMachines = csv.GetRecords<ImportedMachine>().ToList();
+    //
+    //         foreach (ImportedMachine machine in readMachines)
+    //         {
+    //             User? currUser = Services.Users.GetById(machine.UserId);
+    //
+    //             if (currUser == null)
+    //             {
+    //                 continue;
+    //             }
+    //             
+    //             Services.LoadCollection(currUser, u => u.Company.Machines);
+    //             
+    //             Machine? exists = Services.Machines.GetByName(machine.Name);
+    //             
+    //             Services.Users.AddMachine(currUser.Id, exists ?? new Machine() { Name = machine.Name });
+    //         }
+    //     }
+    //
+    //     return new OkResult();
+    // }
 }

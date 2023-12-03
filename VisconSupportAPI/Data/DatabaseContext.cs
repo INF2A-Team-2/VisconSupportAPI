@@ -53,13 +53,12 @@ public class DatabaseContext : DbContext
             .HasForeignKey(x => x.IssueId)
             .HasPrincipalKey(x => x.Id)
             .IsRequired();
-        
+
         modelBuilder.Entity<Company>()
             .HasMany<User>(x => x.Employees)
             .WithOne(x => x.Company)
             .HasForeignKey(x => x.CompanyId)
-            .HasPrincipalKey(x => x.Id)
-            .IsRequired();
+            .HasPrincipalKey(x => x.Id);
 
         modelBuilder.Entity<Company>()
             .HasMany<Machine>(x => x.Machines)
