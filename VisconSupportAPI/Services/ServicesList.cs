@@ -12,6 +12,7 @@ public class ServicesList
     protected readonly IConfiguration Configuration;
 
     public readonly UserService Users;
+    public readonly CompanyService Companies;
     public readonly IssueService Issues;
     public readonly MessageService Messages;
     public readonly MachineService Machines;
@@ -24,6 +25,7 @@ public class ServicesList
         Configuration = configuration;
 
         Users = new UserService(context, configuration, this);
+        Companies = new CompanyService(context, configuration, this);
         Issues = new IssueService(context, configuration, this);
         Messages = new MessageService(context, configuration, this);
         Machines = new MachineService(context, configuration, this);

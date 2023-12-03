@@ -68,6 +68,7 @@ public class UserService : Service
         user.Type = data.Type;
         user.PhoneNumber = data.PhoneNumber;
         user.Unit = data.Unit;
+        user.CompanyId = data.CompanyId;
 
         Context.SaveChanges();
     }
