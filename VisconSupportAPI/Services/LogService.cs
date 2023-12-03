@@ -12,7 +12,7 @@ public class LogService : Service
     
     public Log? GetById(int id) => Context.Logs.FirstOrDefault(i => i.Id == id);
     
-    public List<Log> GetAll() => Context.Logs.ToList();
+    public List<Log> GetAll() => Context.Logs.OrderBy(x => x.TimeStamp).ToList();
 
     public Log Create(User author, string description, 
         Issue? issue = null,
