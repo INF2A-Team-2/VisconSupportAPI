@@ -18,7 +18,9 @@ public class CompanyService : Service
     {
         Company company = new Company()
         {
-            Name = data.Name
+            Name = data.Name,
+            Latitude = data.Latitude,
+            Longitude = data.Longitude
         };
         
         Context.Companies.Add(company);
