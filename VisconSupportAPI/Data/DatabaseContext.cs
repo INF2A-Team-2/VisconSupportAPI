@@ -66,9 +66,6 @@ public class DatabaseContext : DbContext
             .HasMany<Machine>(x => x.Machines)
             .WithMany(x => x.Companies);
 
-        modelBuilder.Entity<Unit>()
-        .Property(u => u.Description)
-        .HasMaxLength(512); // We kunnen altijd de max length aanpassen, maar dit is wel netjes om te doen.
     }
 
 }
