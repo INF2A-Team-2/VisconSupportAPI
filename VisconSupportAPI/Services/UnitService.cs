@@ -14,18 +14,14 @@ public class UnitService : Service
 
     public Unit Create(Unit data)
     {
-        Console.WriteLine("Creating unit");
         Unit unit = new Unit()
         {
             Name = data.Name,
             Description = data.Description
         };
-        Console.WriteLine("Created unit");
         
         Context.Units.Add(unit);
-        Console.WriteLine("Added unit to context");
         Context.SaveChanges();
-        Console.WriteLine("Saved changes");
 
         return unit;
     }
