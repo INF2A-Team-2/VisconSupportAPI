@@ -66,6 +66,10 @@ public class DatabaseContext : DbContext
             .HasMany<Machine>(x => x.Machines)
             .WithMany(x => x.Companies);
 
+        modelBuilder.Entity<Unit>()
+        .Property(u => u.Description)
+        .HasMaxLength(512);
+
     }
 
 }
