@@ -29,7 +29,7 @@ public class UserService : Service
             PasswordHash = AuthService.HashPassword(data.Password),
             Type = data.Type,
             PhoneNumber = data.PhoneNumber,
-            Unit = data.Unit,
+            UnitId = data.UnitId,
             CompanyId = data.CompanyId
         };
         
@@ -67,7 +67,7 @@ public class UserService : Service
 
         user.Type = data.Type;
         user.PhoneNumber = data.PhoneNumber;
-        user.Unit = data.Unit;
+        user.UnitId = data.UnitId;
         user.CompanyId = data.CompanyId;
 
         Context.SaveChanges();

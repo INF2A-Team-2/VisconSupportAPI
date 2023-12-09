@@ -17,6 +17,8 @@ public class DatabaseContext : DbContext
     public DbSet<Attachment> Attachments { get; set; }
     public DbSet<Company> Companies { get; set; }
 
+    public DbSet<Unit> Units { get; set; } 
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Issue>()
@@ -63,5 +65,10 @@ public class DatabaseContext : DbContext
         modelBuilder.Entity<Company>()
             .HasMany<Machine>(x => x.Machines)
             .WithMany(x => x.Companies);
+
+        modelBuilder.Entity<Unit>()
+        .Property(u => u.Description)
+        .HasMaxLength(512); // We kunnen altijd de max length aanpassen, maar dit is wel netjes om te doen.
     }
+
 }

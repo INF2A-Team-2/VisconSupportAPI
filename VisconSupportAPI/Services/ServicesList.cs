@@ -18,6 +18,8 @@ public class ServicesList
     public readonly MachineService Machines;
     public readonly AuthService Auth;
     public readonly AttachmentService Attachments;
+
+    public readonly UnitService Units;
     
     public ServicesList(DatabaseContext context, IConfiguration configuration)
     {
