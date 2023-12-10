@@ -14,20 +14,9 @@ public class UserService : Service
 
     public User? GetByUsername(string username) => Context.Users.FirstOrDefault(u => u.Username == username);
 
-    public List<User> GetAll(User? user)
+    public List<User> GetAll()
     {
-        if (user.Type == AccountType.Admin)
-        {
-            return Context.Users.ToList();
-        }
-        else if (user.Type == AccountType.Helpdesk)
-        {
-            return Context.Users.Where(u => u.UnitId == user.UnitId).ToList();
-        }
-        else
-        {
-            return new List<User>();
-        }
+        return Context.Users.ToList();
     }
 
 
