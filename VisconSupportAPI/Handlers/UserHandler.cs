@@ -20,7 +20,7 @@ public class UserHandler : Handler
             return new UnauthorizedResult();
         }
 
-        return new OkObjectResult(Services.Users.GetAll());
+        return new OkObjectResult(Services.Users.GetAll(user));
     }
     
     public ActionResult<User> GetUserById(User? user, int userId)
