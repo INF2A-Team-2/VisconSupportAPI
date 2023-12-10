@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using VisconSupportAPI.Data;
 using VisconSupportAPI.Models;
@@ -20,6 +21,10 @@ public class UserHandler : Handler
             return new UnauthorizedResult();
         }
 
+        if (user.Type == AccountType.Helpdesk)
+        {
+            return new OkObjectResult(Context.Users.Where(u => u.UnitId == user.UnitId).ToList());
+        }
         return new OkObjectResult(Services.Users.GetAll());
     }
     

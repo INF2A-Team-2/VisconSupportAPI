@@ -14,10 +14,7 @@ public class UserService : Service
 
     public User? GetByUsername(string username) => Context.Users.FirstOrDefault(u => u.Username == username);
 
-    public List<User> GetAll()
-    {
-        return Context.Users.ToList();
-    }
+    public List<User> GetAll() => Context.Users.ToList();
 
 
     public User Create(NewUser data)
