@@ -46,7 +46,8 @@ public class UserTests : ServiceTest
     [Fact]
     public void TestGetAll()
     {
-        List<User> users = Services.Users.GetAll();
+        User user = CreateTestUser();
+        List<User> users = Services.Users.GetAll(user);
         
         Assert.Equal(3, users.Count);
     }
@@ -118,6 +119,6 @@ public class UserTests : ServiceTest
         
         Services.Users.Delete(user.Id);
         
-        Assert.DoesNotContain(user, Services.Users.GetAll());
+        Assert.DoesNotContain(user, Services.Users.GetAll(user));
     }
 }
