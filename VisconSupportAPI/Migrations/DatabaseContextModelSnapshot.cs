@@ -102,6 +102,9 @@ namespace VisconSupportAPI.Migrations
                     b.Property<int>("MachineId")
                         .HasColumnType("integer");
 
+                    b.Property<int>("Priority")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("TimeStamp")
                         .HasColumnType("timestamp with time zone");
 
