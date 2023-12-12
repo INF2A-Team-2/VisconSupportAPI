@@ -19,6 +19,7 @@ public class IssueService : Service
     {
         Issue issue = new Issue()
         {
+            Priority = data.Priority,
             Actual = data.Actual,
             Expected = data.Expected,
             Tried = data.Tried,
@@ -44,6 +45,7 @@ public class IssueService : Service
             throw new ArgumentException($"Issue with ID {id} not found", nameof(id));
         }
 
+        issue.Priority = data.Priority;
         issue.Actual = data.Actual;
         issue.Expected = data.Expected;
         issue.Tried = data.Tried;
