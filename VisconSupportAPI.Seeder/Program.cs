@@ -6,7 +6,6 @@ using VisconSupportAPI.Models;
 using VisconSupportAPI.Controllers;
 using VisconSupportAPI.Handlers;
 using VisconSupportAPI.Services;
-
 namespace VisconSupportAPI.Seeder;
 
 public static class Program
@@ -135,14 +134,12 @@ public static class Program
     {
         Console.WriteLine("Seeding Users...");
 
-        string[] units = new[]
+        Unit[] units =
         {
-            "Flowers & Plants",
-            "Fruit & Vegetables",
-            "Poultry",
-            "Production Logistics",
-            "Insects",
-            "Warehousing & Fulfillment"
+            new Unit() { Name = "Development", Description = "Development unit" },
+            new Unit() { Name = "Sales", Description = "Sales unit" },
+            new Unit() { Name = "Support", Description = "Support unit" },
+            new Unit() { Name = "Management", Description = "Management unit" }
         };
         
         List<string> usernames = new List<string>();
