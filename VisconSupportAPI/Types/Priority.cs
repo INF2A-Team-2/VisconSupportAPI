@@ -2,8 +2,8 @@ namespace VisconSupportAPI.Types;
 
 public enum Priority
 {
-    Critical,
-    High,
+    Low,
     Medium,
-    Low
+    High,
+    Critical
 }
