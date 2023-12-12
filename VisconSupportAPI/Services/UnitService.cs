@@ -1,5 +1,6 @@
 using VisconSupportAPI.Data;
 using VisconSupportAPI.Models;
+using VisconSupportAPI.Types;
 namespace VisconSupportAPI.Services;
 
 public class UnitService : Service
@@ -8,25 +9,25 @@ public class UnitService : Service
     {
     }
 
-    public Unit? GetById(int id) => Context.Units.FirstOrDefault(u => u.Id == id); 
-    
+    public Unit? GetById(int id) => Context.Units.FirstOrDefault(u => u.Id == id);
+
     public List<Unit> GetAll() => Context.Units.ToList();
 
-    public Unit Create(Unit data)
+    public Unit Create(NewUnit data)
     {
         Unit unit = new Unit()
         {
             Name = data.Name,
             Description = data.Description
         };
-        
+
         Context.Units.Add(unit);
         Context.SaveChanges();
 
         return unit;
     }
 
-    public Boolean Edit(int id, Unit data)
+    public Boolean Edit(int id, NewUnit data)
     {
         Unit? unit = GetById(id);
 

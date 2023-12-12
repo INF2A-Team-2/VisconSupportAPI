@@ -11,7 +11,7 @@ namespace VisconSupportAPI.Controllers;
 [Route("api/units")]
 public class UnitController : Controller<UnitController, UnitHandler>
 {
-    public UnitController(ILogger<UnitController> logger, DatabaseContext context, IConfiguration configuration) 
+    public UnitController(ILogger<UnitController> logger, DatabaseContext context, IConfiguration configuration)
         : base(logger, context, configuration)
     {
     }
@@ -36,7 +36,7 @@ public class UnitController : Controller<UnitController, UnitHandler>
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public ActionResult<Unit> PostUnit(Unit data) => Handler.CreateUnit(data);
+    public ActionResult<Unit> PostUnit(NewUnit data) => Handler.CreateUnit(data);
 
     [HttpPut("{unitId:int}")]
     [Authorize]
@@ -44,7 +44,7 @@ public class UnitController : Controller<UnitController, UnitHandler>
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult PutUnit(int unitId, Unit data) => Handler.EditUnit(unitId, data);
+    public ActionResult PutUnit(int unitId, NewUnit data) => Handler.EditUnit(unitId, data);
 
     [HttpDelete("{unitId:int}")]
     [Authorize]

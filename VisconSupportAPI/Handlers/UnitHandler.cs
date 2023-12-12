@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using VisconSupportAPI.Data;
 using VisconSupportAPI.Models;
+using VisconSupportAPI.Types;
 using VisconSupportAPI.Services;
 
 namespace VisconSupportAPI.Handlers;
@@ -27,7 +28,7 @@ public class UnitHandler : Handler
         return new OkObjectResult(unit);
     }
 
-    public ActionResult<Unit> CreateUnit(Unit data)
+    public ActionResult<Unit> CreateUnit(NewUnit data)
     {
         Unit createdUnit = Services.Units.Create(data);
         return new CreatedAtActionResult(
@@ -37,7 +38,7 @@ public class UnitHandler : Handler
             createdUnit);
     }
 
-    public ActionResult EditUnit(int unitId, Unit data)
+    public ActionResult EditUnit(int unitId, NewUnit data)
     {
         bool isEdited = Services.Units.Edit(unitId, data);
         if (!isEdited)
