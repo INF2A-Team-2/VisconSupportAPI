@@ -40,6 +40,8 @@ public class CompanyService : Service
         }
 
         company.Name = data.Name;
+        company.Latitude = data.Latitude;
+        company.Longitude = data.Longitude;
 
         Context.SaveChanges();
     }
