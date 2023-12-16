@@ -2,6 +2,7 @@ using Microsoft.EntityFrameworkCore;
 using VisconSupportAPI.Controllers;
 using VisconSupportAPI.Data;
 using VisconSupportAPI.Models;
+using VisconSupportAPI.Types;
 
 namespace VisconSupportAPI.Services;
 
@@ -20,6 +21,7 @@ public class IssueService : Service
         Issue issue = new Issue()
         {
             Priority = data.Priority,
+            Status = data.Status,
             Actual = data.Actual,
             Expected = data.Expected,
             Tried = data.Tried,
@@ -46,6 +48,7 @@ public class IssueService : Service
         }
 
         issue.Priority = data.Priority;
+        issue.Status = data.Status;
         issue.Actual = data.Actual;
         issue.Expected = data.Expected;
         issue.Tried = data.Tried;

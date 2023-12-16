@@ -1,13 +1,7 @@
 using System.Text.Json.Serialization;
+using VisconSupportAPI.Types;
 
 namespace VisconSupportAPI.Models;
-
-public enum AccountType
-{
-    User,
-    Helpdesk,
-    Admin
-}
 
 public class User
 {
