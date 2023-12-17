@@ -16,8 +16,8 @@ public class DatabaseContext : DbContext
     public DbSet<Message> Messages { get; set; }
     public DbSet<Attachment> Attachments { get; set; }
     public DbSet<Company> Companies { get; set; }
-
     public DbSet<Unit> Units { get; set; } 
+    public DbSet<Report> Reports { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -67,9 +67,22 @@ public class DatabaseContext : DbContext
             .WithMany(x => x.Companies);
 
         modelBuilder.Entity<Unit>()
-        .Property(u => u.Description)
-        .HasMaxLength(512);
+            .Property(u => u.Description)
+            .HasMaxLength(512);
 
+        modelBuilder.Entity<Report>()
+            .HasOne<User>(x => x.User)
+            .WithMany()
+            .HasForeignKey(x => x.UserId)
+            .HasPrincipalKey(x => x.Id)
+            .IsRequired();
+        
+        modelBuilder.Entity<Report>()
+            .HasOne<Machine>(x => x.Machine)
+            .WithMany()
+            .HasForeignKey(x => x.MachineId)
+            .HasPrincipalKey(x => x.Id)
+            .IsRequired();
     }
 
 }

@@ -19,6 +19,7 @@ public class ServicesList
     public readonly AuthService Auth;
     public readonly AttachmentService Attachments;
     public readonly UnitService Units;
+    public readonly ReportService Reports;
     
     public ServicesList(DatabaseContext context, IConfiguration configuration)
     {
@@ -33,6 +34,7 @@ public class ServicesList
         Auth = new AuthService(context, configuration, this);
         Attachments = new AttachmentService(context, configuration, this);
         Units = new UnitService(context, configuration, this);
+        Reports = new ReportService(context, configuration, this);
     }
     
     public IEnumerable<TProperty> LoadCollection<TEntity, TProperty>(TEntity entity, Expression<Func<TEntity, IEnumerable<TProperty>>> selector) 
