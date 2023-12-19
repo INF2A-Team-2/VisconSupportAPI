@@ -32,21 +32,12 @@ public class MachineController : Controller<MachineController, MachineHandler>
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult<Machine> GetMachine(int machineId) => Handler.GetMachine(GetUserFromClaims(), machineId);
 
-    [HttpPost("import")]
-    [Authorize]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public ActionResult ImportMachines([FromForm] IFormFile formFile) => Handler.ImportMachines(GetUserFromClaims(), formFile);
-
-    [HttpPost]
-    [Authorize]
-    [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public ActionResult AddMachine(ImportedMachine machine) => Handler.AddMachine(GetUserFromClaims(), machine);
+    // [HttpPost("import")]
+    // [Authorize]
+    // [ProducesResponseType(StatusCodes.Status200OK)]
+    // [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    // [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    // [ProducesResponseType(StatusCodes.Status204NoContent)]
+    // [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    // public ActionResult ImportMachines([FromForm] IFormFile formFile) => Handler.ImportMachines(GetUserFromClaims(), formFile);
 }

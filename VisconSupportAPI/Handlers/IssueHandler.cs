@@ -4,6 +4,7 @@ using VisconSupportAPI.Controllers;
 using VisconSupportAPI.Data;
 using VisconSupportAPI.Models;
 using VisconSupportAPI.Services;
+using VisconSupportAPI.Types;
 
 namespace VisconSupportAPI.Handlers;
 
@@ -32,7 +33,7 @@ public class IssueHandler : Handler
             case AccountType.Helpdesk:
                 issues = (from issue in Services.Issues.GetAll()
                     join newUser in Services.Users.GetAll() on issue.UserId equals newUser.Id
-                    where newUser.Unit == user.Unit
+                    where newUser.UnitId == user.UnitId
                     select issue).ToList();
                 break;
             

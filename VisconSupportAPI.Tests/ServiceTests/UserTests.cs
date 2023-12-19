@@ -20,7 +20,6 @@ public class UserTests : ServiceTest
         {
             Username = "testuser",
             Password = "test",
-            CompanyId = 1
         });
     }
     
@@ -110,78 +109,6 @@ public class UserTests : ServiceTest
         {
             Services.Users.Delete(user.Id);
         }
-    }
-    
-    [Theory]
-    [InlineData(true, 0, false)]
-    [InlineData(false, 4, true)]
-    [InlineData(false, 0, true)]
-    public void TestAddMachine(bool isUserNull, int machineId, bool valid)
-    {
-        User? user = isUserNull ? null : CreateTestUser();
-
-        Machine? machine = machineId > 0 ? Services.Machines.GetById(machineId) : new Machine(){ Name = "testmachine" };
-
-        if (machine == null)
-        {
-            Assert.Fail($"Machine with ID {machineId} doesn't exist");
-        }
-
-        bool passed = true;
-
-        try
-        {
-            Services.Users.AddMachine(user?.Id ?? -1, machine);
-        }
-        catch (Exception)
-        {
-            passed = false;
-        }
-        
-        Assert.Equal(valid, passed);
-        
-        if (user != null)
-        {
-            Services.Users.Delete(user.Id);
-        }
-
-        if (machineId <= 0)
-        {
-            Services.Machines.Delete(machine.Id);
-        }
-    }
-    
-    [Theory]
-    [InlineData(true, false)]
-    public void TestEditMachines(bool isUserNull, bool valid)
-    {
-        User? user = isUserNull ? null : CreateTestUser();
-
-        List<Machine> machines = new List<Machine>()
-        {
-            new Machine() { Name = "machine1" },
-            new Machine() { Name = "machine2" },
-        };
-
-        bool passed = true;
-
-        try
-        {
-            Services.Users.EditMachines(user?.Id ?? -1, machines);
-        }
-        catch (Exception)
-        {
-            passed = false;
-        }
-        
-        Assert.Equal(valid, passed);
-        
-        if (user != null)
-        {
-            Services.Users.Delete(user.Id);
-        }
-
-        machines.ForEach(m => Services.Machines.Delete(m.Id));
     }
     
     [Fact]

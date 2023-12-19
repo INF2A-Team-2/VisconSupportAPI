@@ -8,10 +8,10 @@ using VisconSupportAPI.Types;
 namespace VisconSupportAPI.Controllers;
 
 [ApiController]
-[Route("api/users")]
-public class UserController : Controller<UserController, UserHandler>
+[Route("api/units")]
+public class UnitController : Controller<UnitController, UnitHandler>
 {
-    public UserController(ILogger<UserController> logger, DatabaseContext context, IConfiguration configuration) 
+    public UnitController(ILogger<UnitController> logger, DatabaseContext context, IConfiguration configuration)
         : base(logger, context, configuration)
     {
     }
@@ -21,14 +21,14 @@ public class UserController : Controller<UserController, UserHandler>
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    public ActionResult<List<User>> GetUsers() => Handler.GetAllUsers(GetUserFromClaims());
+    public ActionResult<List<Unit>> GetUnits() => Handler.GetAllUnits();
 
-    [HttpGet("{userId:int}")]
+    [HttpGet("{unitId:int}")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    public ActionResult<User> GetUser(int userId) => Handler.GetUserById(GetUserFromClaims(), userId);
+    public ActionResult<Unit> GetUnit(int unitId) => Handler.GetUnitById(unitId);
 
     [HttpPost]
     [Authorize]
@@ -36,23 +36,21 @@ public class UserController : Controller<UserController, UserHandler>
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public ActionResult<User> PostUser(NewUser data) => Handler.CreateUser(GetUserFromClaims(), data);
+    public ActionResult<Unit> PostUnit(NewUnit data) => Handler.CreateUnit(data);
 
-    [HttpPut("{userId:int}")]
+    [HttpPut("{unitId:int}")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public ActionResult PutUser(int userId, NewUser data) => Handler.EditUser(GetUserFromClaims(), userId, data);
+    public ActionResult PutUnit(int unitId, NewUnit data) => Handler.EditUnit(unitId, data);
 
-    [HttpDelete("{userId:int}")]
+    [HttpDelete("{unitId:int}")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult DeleteUser(int userId) => Handler.DeleteUser(GetUserFromClaims(), userId);
+    public ActionResult DeleteUnit(int unitId) => Handler.DeleteUnit(unitId);
 }

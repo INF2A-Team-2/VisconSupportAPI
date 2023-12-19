@@ -12,12 +12,14 @@ public class ServicesList
     protected readonly IConfiguration Configuration;
 
     public readonly UserService Users;
+    public readonly CompanyService Companies;
     public readonly IssueService Issues;
     public readonly MessageService Messages;
     public readonly MachineService Machines;
     public readonly AuthService Auth;
     public readonly AttachmentService Attachments;
     public readonly LogService Logs;
+    public readonly UnitService Units;
     
     public ServicesList(DatabaseContext context, IConfiguration configuration)
     {
@@ -25,12 +27,14 @@ public class ServicesList
         Configuration = configuration;
 
         Users = new UserService(context, configuration, this);
+        Companies = new CompanyService(context, configuration, this);
         Issues = new IssueService(context, configuration, this);
         Messages = new MessageService(context, configuration, this);
         Machines = new MachineService(context, configuration, this);
         Auth = new AuthService(context, configuration, this);
         Attachments = new AttachmentService(context, configuration, this);
         Logs = new LogService(context, configuration, this);
+        Units = new UnitService(context, configuration, this);
     }
     
     public IEnumerable<TProperty> LoadCollection<TEntity, TProperty>(TEntity entity, Expression<Func<TEntity, IEnumerable<TProperty>>> selector) 

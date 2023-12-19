@@ -16,6 +16,7 @@ public class UserService : Service
 
     public List<User> GetAll() => Context.Users.ToList();
 
+
     public User Create(NewUser data)
     {
         if (data.Username == null || data.Password == null)
@@ -29,7 +30,7 @@ public class UserService : Service
             PasswordHash = AuthService.HashPassword(data.Password),
             Type = data.Type,
             PhoneNumber = data.PhoneNumber,
-            Unit = data.Unit,
+            UnitId = data.UnitId,
             CompanyId = data.CompanyId
         };
         
@@ -67,13 +68,8 @@ public class UserService : Service
 
         user.Type = data.Type;
         user.PhoneNumber = data.PhoneNumber;
-        user.Unit = data.Unit;
-        
-        if (user.Type != AccountType.User)
-        {
-            Context.Entry(user).Collection(u => u.Company.Machines).Load();
-            user.Company.Machines.Clear();
-        }
+        user.UnitId = data.UnitId;
+        user.CompanyId = data.CompanyId;
 
         Context.SaveChanges();
     }
@@ -104,22 +100,6 @@ public class UserService : Service
         Context.SaveChanges();
 
         return machine;
-    }
-
-    public void EditMachines(int id, List<Machine> machines)
-    {
-        User? user = GetById(id);
-
-        if (user == null)
-        {
-            throw new ArgumentException("User with ID {id} not found", nameof(id));
-        }
-
-        Services.LoadCollection(user, u => u.Company.Machines);
-        
-        user.Company.Machines.Clear();
-        
-        machines.ForEach(m => AddMachine(user.Id, m));
     }
 
     public void Delete(int id)

@@ -1,10 +1,13 @@
 using System.Text.Json.Serialization;
+using VisconSupportAPI.Types;
 
 namespace VisconSupportAPI.Models;
 
 public class Issue
 {
     public int Id {get; set;}
+    public Priority Priority { get; set; }
+    public Status Status { get; set; }
     public string Headline {get; set;}
     public string Actual {get; set;}
     public string Expected {get; set;}

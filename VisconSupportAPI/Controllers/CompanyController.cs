@@ -8,10 +8,10 @@ using VisconSupportAPI.Types;
 namespace VisconSupportAPI.Controllers;
 
 [ApiController]
-[Route("api/users")]
-public class UserController : Controller<UserController, UserHandler>
+[Route("api/companies")]
+public class CompanyController : Controller<CompanyController, CompanyHandler>
 {
-    public UserController(ILogger<UserController> logger, DatabaseContext context, IConfiguration configuration) 
+    public CompanyController(ILogger<CompanyController> logger, DatabaseContext context, IConfiguration configuration) 
         : base(logger, context, configuration)
     {
     }
@@ -21,14 +21,14 @@ public class UserController : Controller<UserController, UserHandler>
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    public ActionResult<List<User>> GetUsers() => Handler.GetAllUsers(GetUserFromClaims());
+    public ActionResult<List<Company>> GetCompanies() => Handler.GetAllCompanies(GetUserFromClaims());
 
-    [HttpGet("{userId:int}")]
+    [HttpGet("{companyId:int}")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    public ActionResult<User> GetUser(int userId) => Handler.GetUserById(GetUserFromClaims(), userId);
+    public ActionResult<Company> GetCompany(int companyId) => Handler.GetCompanyById(GetUserFromClaims(), companyId);
 
     [HttpPost]
     [Authorize]
@@ -37,22 +37,22 @@ public class UserController : Controller<UserController, UserHandler>
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public ActionResult<User> PostUser(NewUser data) => Handler.CreateUser(GetUserFromClaims(), data);
+    public ActionResult<Company> PostCompany(NewCompany data) => Handler.CreateCompany(GetUserFromClaims(), data);
 
-    [HttpPut("{userId:int}")]
+    [HttpPut("{companyId:int}")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status409Conflict)]
-    public ActionResult PutUser(int userId, NewUser data) => Handler.EditUser(GetUserFromClaims(), userId, data);
+    public ActionResult PutCompany(int companyId, NewCompany data) => Handler.EditCompany(GetUserFromClaims(), companyId, data);
 
-    [HttpDelete("{userId:int}")]
+    [HttpDelete("{companyId:int}")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult DeleteUser(int userId) => Handler.DeleteUser(GetUserFromClaims(), userId);
+    public ActionResult DeleteCompany(int companyId) => Handler.DeleteCompany(GetUserFromClaims(), companyId);
 }

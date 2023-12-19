@@ -18,6 +18,8 @@ public class DatabaseContext : DbContext
     public DbSet<Company> Companies { get; set; }
     public DbSet<Log> Logs { get; set; }
 
+    public DbSet<Unit> Units { get; set; } 
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<Issue>()
@@ -69,15 +71,21 @@ public class DatabaseContext : DbContext
             .HasPrincipalKey(x => x.Id)
             .IsRequired();
         
+
         modelBuilder.Entity<Company>()
             .HasMany<User>(x => x.Employees)
             .WithOne(x => x.Company)
             .HasForeignKey(x => x.CompanyId)
-            .HasPrincipalKey(x => x.Id)
-            .IsRequired();
+            .HasPrincipalKey(x => x.Id);
 
         modelBuilder.Entity<Company>()
             .HasMany<Machine>(x => x.Machines)
             .WithMany(x => x.Companies);
+
+        modelBuilder.Entity<Unit>()
+        .Property(u => u.Description)
+        .HasMaxLength(512);
+
     }
+
 }
