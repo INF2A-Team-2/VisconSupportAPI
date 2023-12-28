@@ -104,6 +104,21 @@ public class IssueHandler : Handler
             new { issueId = issue.Id },
             issue);
     }
+
+    public ActionResult ChangeIssuePriority(User? user, Priority priority, int issueId)
+    {
+        if (user == null)
+        {
+            return new UnauthorizedResult();
+        }
+
+        if (user.Type is AccountType.User) return new ForbidResult();
+
+        var oldIssue = Services.Issues.GetById(issueId);
+        if (oldIssue == null) return new BadRequestResult();
+        oldIssue.Priority = priority;
+        return Services.Issues.Edit(issueId, oldIssue, user) ? new OkResult() : new BadRequestResult();
+    }
     
     public ActionResult<List<Message>> GetAllIssueMessages(User? user, int issueId)
     {

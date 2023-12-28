@@ -38,7 +38,7 @@ public class IssueService : Service
         return issue;
     }
 
-    public void Edit(int id, NewIssue data, User user)
+    public bool Edit(int id, Issue data, User user)
     {
         Issue? issue = GetById(id);
 
@@ -56,7 +56,7 @@ public class IssueService : Service
         issue.MachineId = data.MachineId;
         issue.UserId = user.Id;
 
-        Context.SaveChanges();
+        return Context.SaveChanges() > 0;
     }
 
     public void Delete(int id)
