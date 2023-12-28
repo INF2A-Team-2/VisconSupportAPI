@@ -49,6 +49,8 @@ public class CompanyHandler : Handler
         }
 
         Company createdCompany = Services.Companies.Create(data);
+        
+        //Services.Logs.Create(user, $"User: {createdCompany.Name} has been created", company : createdCompany); 
 
         return new CreatedAtActionResult(
             "GetCompany",
@@ -70,7 +72,7 @@ public class CompanyHandler : Handler
         }
 
         Services.Companies.Edit(companyId, data);
-
+        
         return new NoContentResult();
     }
     

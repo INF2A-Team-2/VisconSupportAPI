@@ -81,6 +81,8 @@ public class MachineHandler : Handler
         Machine? exists = Services.Machines.GetByName(machine.Name);
         
         Machine createdMachine = Services.Users.AddMachine(user.Id, exists ?? new Machine() { Name = machine.Name });
+
+        
         
         return new OkResult();
     }
