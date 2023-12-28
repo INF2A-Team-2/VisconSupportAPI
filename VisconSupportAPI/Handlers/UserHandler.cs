@@ -63,6 +63,8 @@ public class UserHandler : Handler
 
         User createdUser = Services.Users.Create(data);
 
+        Services.Logs.Create(user, $"User: {createdUser.Username} has been added", user: createdUser);    
+        
         return new CreatedAtActionResult(
             "GetUser",
             "User",
@@ -83,6 +85,10 @@ public class UserHandler : Handler
         }
 
         Services.Users.Edit(userId, data);
+        
+        User editedUser = Services.Users.Create(data);
+
+        Services.Logs.Create(user, $"User: {editedUser.Username} has been edited", user: editedUser); 
 
         return new NoContentResult();
     }
@@ -99,8 +105,10 @@ public class UserHandler : Handler
             return new ForbidResult();
         }
 
+        Services.Logs.Create(user, $"User: {user.Username} has been edited", user: user);
+        
         Services.Users.Delete(userId);
-
+        
         return new OkResult();
     }
 }

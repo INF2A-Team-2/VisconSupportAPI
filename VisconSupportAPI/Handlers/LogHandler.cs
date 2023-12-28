@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using VisconSupportAPI.Data;
 using VisconSupportAPI.Models;
+using VisconSupportAPI.Types;
 
 namespace VisconSupportAPI.Handlers;
 

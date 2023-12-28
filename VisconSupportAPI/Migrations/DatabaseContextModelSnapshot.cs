@@ -82,7 +82,7 @@ namespace VisconSupportAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Company");
+                    b.ToTable("Companies");
                 });
 
             modelBuilder.Entity("VisconSupportAPI.Models.Issue", b =>
@@ -142,7 +142,6 @@ namespace VisconSupportAPI.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("AttachmentId")
-                        .IsRequired()
                         .HasColumnType("integer");
 
                     b.Property<int>("AuthorId")
@@ -153,15 +152,12 @@ namespace VisconSupportAPI.Migrations
                         .HasColumnType("text");
 
                     b.Property<int?>("IssueId")
-                        .IsRequired()
                         .HasColumnType("integer");
 
                     b.Property<int?>("MachineId")
-                        .IsRequired()
                         .HasColumnType("integer");
 
                     b.Property<int?>("MessageId")
-                        .IsRequired()
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("TimeStamp")
@@ -341,9 +337,7 @@ namespace VisconSupportAPI.Migrations
                 {
                     b.HasOne("VisconSupportAPI.Models.Attachment", "Attachment")
                         .WithMany()
-                        .HasForeignKey("AttachmentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("AttachmentId");
 
                     b.HasOne("VisconSupportAPI.Models.User", "Author")
                         .WithMany()
@@ -353,21 +347,15 @@ namespace VisconSupportAPI.Migrations
 
                     b.HasOne("VisconSupportAPI.Models.Issue", "Issue")
                         .WithMany()
-                        .HasForeignKey("IssueId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("IssueId");
 
                     b.HasOne("VisconSupportAPI.Models.Machine", "Machine")
                         .WithMany()
-                        .HasForeignKey("MachineId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("MachineId");
 
                     b.HasOne("VisconSupportAPI.Models.Message", "Message")
                         .WithMany()
-                        .HasForeignKey("MessageId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("MessageId");
 
                     b.HasOne("VisconSupportAPI.Models.User", "User")
                         .WithMany()
