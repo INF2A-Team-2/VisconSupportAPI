@@ -16,6 +16,7 @@ public class DatabaseContext : DbContext
     public DbSet<Message> Messages { get; set; }
     public DbSet<Attachment> Attachments { get; set; }
     public DbSet<Company> Companies { get; set; }
+    public DbSet<Log> Logs { get; set; }
 
     public DbSet<Unit> Units { get; set; } 
 
@@ -55,6 +56,21 @@ public class DatabaseContext : DbContext
             .HasForeignKey(x => x.IssueId)
             .HasPrincipalKey(x => x.Id)
             .IsRequired();
+
+        modelBuilder.Entity<Log>()
+            .HasOne<User>(x => x.Author)
+            .WithMany()
+            .HasForeignKey(x => x.AuthorId)
+            .HasPrincipalKey(x => x.Id)
+            .IsRequired();
+
+        modelBuilder.Entity<Log>()
+            .HasOne<User>(x => x.User)
+            .WithMany()
+            .HasForeignKey(x => x.UserId)
+            .HasPrincipalKey(x => x.Id)
+            .IsRequired();
+        
 
         modelBuilder.Entity<Company>()
             .HasMany<User>(x => x.Employees)

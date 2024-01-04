@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using VisconSupportAPI.Data;
@@ -11,9 +12,11 @@ using VisconSupportAPI.Data;
 namespace VisconSupportAPI.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20231202155822_Logging")]
+    partial class Logging
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -70,19 +73,13 @@ namespace VisconSupportAPI.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<double>("Latitude")
-                        .HasColumnType("double precision");
-
-                    b.Property<double>("Longitude")
-                        .HasColumnType("double precision");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Companies");
+                    b.ToTable("Company");
                 });
 
             modelBuilder.Entity("VisconSupportAPI.Models.Issue", b =>
@@ -106,12 +103,6 @@ namespace VisconSupportAPI.Migrations
                         .HasColumnType("text");
 
                     b.Property<int>("MachineId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Priority")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("Status")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("TimeStamp")
@@ -142,6 +133,7 @@ namespace VisconSupportAPI.Migrations
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
                     b.Property<int?>("AttachmentId")
+                        .IsRequired()
                         .HasColumnType("integer");
 
                     b.Property<int>("AuthorId")
@@ -152,12 +144,15 @@ namespace VisconSupportAPI.Migrations
                         .HasColumnType("text");
 
                     b.Property<int?>("IssueId")
+                        .IsRequired()
                         .HasColumnType("integer");
 
                     b.Property<int?>("MachineId")
+                        .IsRequired()
                         .HasColumnType("integer");
 
                     b.Property<int?>("MessageId")
+                        .IsRequired()
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("TimeStamp")
@@ -231,28 +226,6 @@ namespace VisconSupportAPI.Migrations
                     b.ToTable("Messages");
                 });
 
-            modelBuilder.Entity("VisconSupportAPI.Models.Unit", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasMaxLength(512)
-                        .HasColumnType("character varying(512)");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Units");
-                });
-
             modelBuilder.Entity("VisconSupportAPI.Models.User", b =>
                 {
                     b.Property<int>("Id")
@@ -261,7 +234,7 @@ namespace VisconSupportAPI.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("CompanyId")
+                    b.Property<int>("CompanyId")
                         .HasColumnType("integer");
 
                     b.Property<string>("PasswordHash")
@@ -274,8 +247,8 @@ namespace VisconSupportAPI.Migrations
                     b.Property<int>("Type")
                         .HasColumnType("integer");
 
-                    b.Property<int?>("UnitId")
-                        .HasColumnType("integer");
+                    b.Property<string>("Unit")
+                        .HasColumnType("text");
 
                     b.Property<string>("Username")
                         .IsRequired()
@@ -337,7 +310,9 @@ namespace VisconSupportAPI.Migrations
                 {
                     b.HasOne("VisconSupportAPI.Models.Attachment", "Attachment")
                         .WithMany()
-                        .HasForeignKey("AttachmentId");
+                        .HasForeignKey("AttachmentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("VisconSupportAPI.Models.User", "Author")
                         .WithMany()
@@ -347,15 +322,21 @@ namespace VisconSupportAPI.Migrations
 
                     b.HasOne("VisconSupportAPI.Models.Issue", "Issue")
                         .WithMany()
-                        .HasForeignKey("IssueId");
+                        .HasForeignKey("IssueId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("VisconSupportAPI.Models.Machine", "Machine")
                         .WithMany()
-                        .HasForeignKey("MachineId");
+                        .HasForeignKey("MachineId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("VisconSupportAPI.Models.Message", "Message")
                         .WithMany()
-                        .HasForeignKey("MessageId");
+                        .HasForeignKey("MessageId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.HasOne("VisconSupportAPI.Models.User", "User")
                         .WithMany()
@@ -399,7 +380,9 @@ namespace VisconSupportAPI.Migrations
                 {
                     b.HasOne("VisconSupportAPI.Models.Company", "Company")
                         .WithMany("Employees")
-                        .HasForeignKey("CompanyId");
+                        .HasForeignKey("CompanyId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
                     b.Navigation("Company");
                 });
