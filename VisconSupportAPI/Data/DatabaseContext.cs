@@ -68,8 +68,7 @@ public class DatabaseContext : DbContext
             .HasOne<User>(x => x.User)
             .WithMany()
             .HasForeignKey(x => x.UserId)
-            .HasPrincipalKey(x => x.Id)
-            .IsRequired();
+            .HasPrincipalKey(x => x.Id);
         
 
         modelBuilder.Entity<Company>()
