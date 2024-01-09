@@ -1,5 +1,3 @@
-using VisconSupportAPI.Models;
-
 namespace VisconSupportAPI.Types;
 
 public class NewUser
