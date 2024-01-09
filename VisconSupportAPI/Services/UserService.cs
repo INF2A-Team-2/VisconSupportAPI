@@ -74,6 +74,34 @@ public class UserService : Service
         Context.SaveChanges();
     }
 
+    public Machine AddMachine(int id, Machine machine)
+    {
+        User? user = GetById(id);
+
+        if (user == null)
+        {
+            throw new ArgumentException("User with ID {id} not found", nameof(id));
+        }
+
+        if (!Services.Machines.GetAll().Contains(machine))
+        {
+            Context.Machines.Add(machine);
+
+            Context.SaveChanges();
+        }
+
+        Services.LoadCollection(user, u => u.Company.Machines);
+
+        if (!user.Company.Machines.Contains(machine))
+        {
+            user.Company.Machines.Add(machine);
+        }
+        
+        Context.SaveChanges();
+
+        return machine;
+    }
+
     public void Delete(int id)
     {
         User? user = GetById(id);

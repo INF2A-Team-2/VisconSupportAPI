@@ -73,7 +73,20 @@ public class MachineHandler : Handler
             return new ForbidResult();
         }
 
-        return new OkObjectResult(machine);
+        if (user == null)
+        {
+            return new NotFoundResult();
+        }
+        
+        Machine? exists = Services.Machines.GetByName(machine.Name);
+        
+        Machine createdMachine = Services.Users.AddMachine(user.Id, exists ?? new Machine() { Name = machine.Name });
+
+        
+        
+        return new OkResult();
+    }
+    
     }
     
     // public ActionResult ImportMachines(User? user, IFormFile formFile)
@@ -117,4 +130,3 @@ public class MachineHandler : Handler
     //
     //     return new OkResult();
     // }
-}

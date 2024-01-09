@@ -97,6 +97,8 @@ public class IssueHandler : Handler
         }
 
         Issue issue = Services.Issues.Create(ticket, issueUser);
+
+        Services.Logs.Create(user, $"Ticket: {ticket.Headline} has been created", issue : issue); 
         
             return new CreatedAtActionResult(
             "GetIssue",
@@ -169,6 +171,8 @@ public class IssueHandler : Handler
 
         Message createdMessage = Services.Messages.Create(message, selectedIssue, user);
 
+        Services.Logs.Create(user, $"Ticket: {selectedIssue.Headline} has been created", issue : selectedIssue); 
+        
         return new CreatedAtActionResult(
             "GetMessage",
             "Issue",
