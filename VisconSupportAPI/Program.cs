@@ -79,10 +79,14 @@ public class Program
             app.UseSwagger();
             app.UseSwaggerUI();
         }
+        
+        var path = DateTime.Now + ".log.txt";
+        
+        File.Create(path).Close();
 
         app.Use((context, next) =>
         {
-            LogRequestHeaders(context.Request);
+            LogRequestHeaders(path, context.Request);
             return next();
         });
 
@@ -99,14 +103,14 @@ public class Program
         app.Run();
     }
     
-    private static void LogRequestHeaders(HttpRequest request)
+    private static void LogRequestHeaders(string path, HttpRequest request)
     {
-        Console.WriteLine($"{request.Method} {request.Path}");
-        Console.WriteLine("Request Headers:");
+        File.AppendText(path).WriteLine($"{request.Method} {request.Path}");
+        File.AppendText(path).WriteLine("Request Headers:");
         foreach (KeyValuePair<string, StringValues> header in request.Headers)
         {
-            Console.WriteLine($"{header.Key}: {string.Join(", ", header.Value)}");
+            File.AppendText(path).WriteLine($"{header.Key}: {string.Join(", ", header.Value)}");
         }
-        Console.WriteLine("\n\n\n");
+        File.AppendText(path).WriteLine("\n\n\n");
     }
 }

@@ -16,11 +16,15 @@ public class ReportService : Service
 
     public Report Create(NewReport data)
     {
+        if(data.CompanyIds.Count == 0)
+        {
+            throw new ArgumentException("No companies selected", nameof(data.CompanyIds));
+        }
         Report report = new Report()
         {
             Title = data.Title,
             Body = data.Body,
-            UserId = data.UserId,
+            Companies = data.CompanyIds.Select(id => Context.Companies.FirstOrDefault(c => c.Id == id)).ToList(), 
             MachineId = data.MachineId,
             TimeStamp = DateTime.UtcNow
         };
@@ -33,6 +37,10 @@ public class ReportService : Service
 
     public Boolean Edit(int id, NewReport data)
     {
+        if(data.CompanyIds.Count == 0)
+        {
+            throw new ArgumentException("No companies selected", nameof(data.CompanyIds));
+        }
         Report? report = GetById(id);
 
         if (report == null)
@@ -42,7 +50,7 @@ public class ReportService : Service
 
         report.Title = data.Title;
         report.Body = data.Body;
-        report.UserId = data.UserId;
+        report.Companies = data.CompanyIds.Select(id => Context.Companies.FirstOrDefault(c => c.Id == id)).ToList();
         report.MachineId = data.MachineId;
 
         Context.SaveChanges();

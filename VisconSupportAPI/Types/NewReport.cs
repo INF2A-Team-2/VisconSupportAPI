@@ -6,6 +6,6 @@ public class NewReport
 {
     public string Title { get; set; }
     public string Body { get; set; }
-    public int UserId { get; set; }
+    public List<int> CompanyIds { get; set; }
     public int MachineId { get; set; }
 }

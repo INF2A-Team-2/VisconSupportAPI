@@ -85,11 +85,8 @@ public class DatabaseContext : DbContext
             .HasMaxLength(512);
 
         modelBuilder.Entity<Report>()
-            .HasOne<User>(x => x.User)
-            .WithMany()
-            .HasForeignKey(x => x.UserId)
-            .HasPrincipalKey(x => x.Id)
-            .IsRequired();
+            .HasMany<Company>(x => x.Companies)
+            .WithMany(x => x.Reports);
         
         modelBuilder.Entity<Report>()
             .HasOne<Machine>(x => x.Machine)
