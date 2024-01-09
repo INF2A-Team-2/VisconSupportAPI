@@ -20,7 +20,7 @@ public class ReportService : Service
         {
             Title = data.Title,
             Body = data.Body,
-            UserId = data.UserId,
+            Public = data.pub, 
             MachineId = data.MachineId,
             TimeStamp = DateTime.UtcNow
         };
@@ -42,7 +42,7 @@ public class ReportService : Service
 
         report.Title = data.Title;
         report.Body = data.Body;
-        report.UserId = data.UserId;
+        report.Public = data.pub;
         report.MachineId = data.MachineId;
 
         Context.SaveChanges();

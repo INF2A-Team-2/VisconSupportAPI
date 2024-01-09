@@ -9,8 +9,7 @@ public class Report
     public string Title { get; set; }
     public string Body { get; set; }
     public DateTime TimeStamp { get; set; }
-    public int UserId { get; set; }
     public int MachineId { get; set; }
-    [JsonIgnore] public User User { get; set; }
+    public bool Public { get; set; }
     [JsonIgnore] public Machine Machine { get; set; }
 }

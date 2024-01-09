@@ -14,55 +14,71 @@ public class ReportHandler : Handler
     {
     }
 
-    public ActionResult<List<Report>> GetAllReports()
+    public ActionResult<List<Report>> GetAllReports(User? user)
     {
-        return new OkObjectResult(Services.Reports.GetAll());
+        if (user == null)
+        {
+            return new UnauthorizedResult();
+        }
+
+        if (user.Type == AccountType.Admin)
+            return new OkObjectResult(Services.Reports.GetAll());
+        if (user.Type == AccountType.Helpdesk)
+            return new OkObjectResult(Services.Reports.GetAll());
+        if (user.Type == AccountType.User)
+        {
+            if (user.CompanyId == null)
+                return new UnauthorizedResult();
+            return new OkObjectResult(Services.Reports.GetAll().Where(h =>
+                Services.Companies.GetById(user.CompanyId.Value)!.Machines.Any(m => m.Id == h.MachineId)));
+        }
+        return new BadRequestResult();
     }
 
     public ActionResult<Report> GetReportById(int reportId)
-    {
-        Report? report = Services.Reports.GetById(reportId);
-        
-        if (report == null)
         {
-            return new NotFoundResult();
+            Report? report = Services.Reports.GetById(reportId);
+        
+            if (report == null)
+            {
+                return new NotFoundResult();
+            }
+        
+            return new OkObjectResult(report);
         }
-        
-        return new OkObjectResult(report);
-    }
 
-    public ActionResult<Report> CreateReport(NewReport data)
-    {
-        Report createdReport = Services.Reports.Create(data);
-        
-        return new CreatedAtActionResult(
-            "GetReport",
-            "Report",
-            new { reportId = createdReport.Id },
-            createdReport);
-    }
-
-    public ActionResult EditReport(int reportId, NewReport data)
-    {
-        bool isEdited = Services.Reports.Edit(reportId, data);
-        
-        if (!isEdited)
+        public ActionResult<Report> CreateReport(NewReport data)
         {
-            return new NotFoundResult();
-        }
+            Report createdReport = Services.Reports.Create(data);
         
-        return new NoContentResult();
-    }
+            return new CreatedAtActionResult(
+                "GetReport",
+                "Report",
+                new { reportId = createdReport.Id },
+                createdReport);
+        }
 
-    public ActionResult DeleteReport(int reportId)
-    {
-        bool isDeleted = Services.Reports.Delete(reportId);
-        
-        if (!isDeleted)
+        public ActionResult EditReport(int reportId, NewReport data)
         {
-            return new NotFoundResult();
-        }
+            bool isEdited = Services.Reports.Edit(reportId, data);
         
-        return new OkResult();
-    }
+            if (!isEdited)
+            {
+                return new NotFoundResult();
+            }
+        
+            return new NoContentResult();
+        }
+
+        public ActionResult DeleteReport(int reportId)
+        {
+            bool isDeleted = Services.Reports.Delete(reportId);
+        
+            if (!isDeleted)
+            {
+                return new NotFoundResult();
+            }
+        
+            return new OkResult();
+        }
 }

@@ -83,13 +83,6 @@ public class DatabaseContext : DbContext
         modelBuilder.Entity<Unit>()
             .Property(u => u.Description)
             .HasMaxLength(512);
-
-        modelBuilder.Entity<Report>()
-            .HasOne<User>(x => x.User)
-            .WithMany()
-            .HasForeignKey(x => x.UserId)
-            .HasPrincipalKey(x => x.Id)
-            .IsRequired();
         
         modelBuilder.Entity<Report>()
             .HasOne<Machine>(x => x.Machine)
