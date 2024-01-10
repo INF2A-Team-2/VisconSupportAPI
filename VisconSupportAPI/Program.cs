@@ -62,7 +62,7 @@ public class Program
                 policyBuilder
                     .AllowAnyHeader()
                     .AllowAnyMethod()
-                    .SetIsOriginAllowed((host) => true)
+                    .SetIsOriginAllowed((_) => true)
                     .AllowCredentials();
             });
         });
@@ -75,6 +75,11 @@ public class Program
         {
             app.UseSwagger();
             app.UseSwaggerUI();
+        }
+
+        if (!Directory.Exists("Logs"))
+        {
+            Directory.CreateDirectory("Logs");
         }
         
         var path = DateTime.Now.ToString("yyyyMMddHHmmssfff") + ".log.txt";
