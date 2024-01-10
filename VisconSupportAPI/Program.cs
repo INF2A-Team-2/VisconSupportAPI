@@ -121,5 +121,7 @@ public class Program
         }
         
         writer.WriteLine("\n\n\n");
+        
+        writer.Close();
     }
 }
