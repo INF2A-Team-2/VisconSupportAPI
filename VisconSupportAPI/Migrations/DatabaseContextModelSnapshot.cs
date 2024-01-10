@@ -37,6 +37,21 @@ namespace VisconSupportAPI.Migrations
                     b.ToTable("CompanyMachine");
                 });
 
+            modelBuilder.Entity("CompanyReport", b =>
+                {
+                    b.Property<int>("CompaniesId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("ReportsId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("CompaniesId", "ReportsId");
+
+                    b.HasIndex("ReportsId");
+
+                    b.ToTable("CompanyReport");
+                });
+
             modelBuilder.Entity("VisconSupportAPI.Models.Attachment", b =>
                 {
                     b.Property<int>("Id")
@@ -80,6 +95,10 @@ namespace VisconSupportAPI.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.HasKey("Id");
 
                     b.ToTable("Companies");
@@ -107,6 +126,10 @@ namespace VisconSupportAPI.Migrations
 
                     b.Property<int>("MachineId")
                         .HasColumnType("integer");
+
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("text");
 
                     b.Property<int>("Priority")
                         .HasColumnType("integer");
@@ -164,7 +187,6 @@ namespace VisconSupportAPI.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.Property<int?>("UserId")
-                        .IsRequired()
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
@@ -253,14 +275,9 @@ namespace VisconSupportAPI.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
                     b.HasKey("Id");
 
                     b.HasIndex("MachineId");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Reports");
                 });
@@ -337,6 +354,21 @@ namespace VisconSupportAPI.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("CompanyReport", b =>
+                {
+                    b.HasOne("VisconSupportAPI.Models.Company", null)
+                        .WithMany()
+                        .HasForeignKey("CompaniesId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("VisconSupportAPI.Models.Report", null)
+                        .WithMany()
+                        .HasForeignKey("ReportsId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("VisconSupportAPI.Models.Attachment", b =>
                 {
                     b.HasOne("VisconSupportAPI.Models.Issue", "issue")
@@ -393,9 +425,7 @@ namespace VisconSupportAPI.Migrations
 
                     b.HasOne("VisconSupportAPI.Models.User", "User")
                         .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                        .HasForeignKey("UserId");
 
                     b.Navigation("Attachment");
 
@@ -437,15 +467,7 @@ namespace VisconSupportAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("VisconSupportAPI.Models.User", "User")
-                        .WithMany()
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("Machine");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("VisconSupportAPI.Models.User", b =>
