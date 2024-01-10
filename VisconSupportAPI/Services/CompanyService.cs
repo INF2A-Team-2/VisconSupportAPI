@@ -20,7 +20,8 @@ public class CompanyService : Service
         {
             Name = data.Name,
             Latitude = data.Latitude,
-            Longitude = data.Longitude
+            Longitude = data.Longitude,
+            PhoneNumber = data.PhoneNumber
         };
         
         Context.Companies.Add(company);
