@@ -76,11 +76,6 @@ public class Program
             app.UseSwagger();
             app.UseSwaggerUI();
         }
-
-        if (!Directory.Exists("Logs"))
-        {
-            Directory.CreateDirectory("Logs");
-        }
         
         var path = DateTime.Now.ToString("yyyyMMddHHmmssfff") + ".log.txt";
         
