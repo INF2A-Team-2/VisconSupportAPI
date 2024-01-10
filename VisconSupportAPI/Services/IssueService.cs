@@ -18,11 +18,6 @@ public class IssueService : Service
     
     public Issue Create(NewIssue data, User user)
     {
-        if (Context.Users.FirstOrDefault(u => u.Id == user.Id)?.PhoneNumber == null && Context.Companies.FirstOrDefault(c => c.Id == user.CompanyId)?.PhoneNumber == null)
-        {
-            throw new ArgumentException("No phone number found", nameof(user));
-        }
-        
         Issue issue = new Issue()
         {
             Priority = data.Priority,
@@ -31,8 +26,7 @@ public class IssueService : Service
             Expected = data.Expected,
             Tried = data.Tried,
             Headline = data.Headline,
-            PhoneNumber = Context.Users.FirstOrDefault(u => u.Id == user.Id)?.PhoneNumber
-                          ?? Context.Companies.FirstOrDefault(c => c.Id == user.CompanyId)?.PhoneNumber,
+            PhoneNumber = data.PhoneNumber ?? Context.Companies.FirstOrDefault(c => c.Id == user.CompanyId)?.PhoneNumber ?? "No phone number found.",
             TimeStamp = DateTime.UtcNow,
             MachineId = data.MachineId,
             UserId = user.Id
