@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -6,9 +5,7 @@ using Microsoft.Extensions.Primitives;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using VisconSupportAPI.Data;
-using VisconSupportAPI.Handlers;
 using VisconSupportAPI.Hubs;
-using VisconSupportAPI.Models;
 
 namespace VisconSupportAPI;
 
