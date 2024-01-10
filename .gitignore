@@ -10,3 +10,5 @@ appsettings.json
 testconfig.json
 .vs
 .DS_Store
+
+*.log.txt
