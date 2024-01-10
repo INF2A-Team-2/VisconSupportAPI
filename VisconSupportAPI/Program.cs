@@ -110,12 +110,16 @@ public class Program
     
     private static void LogRequestHeaders(string path, HttpRequest request)
     {
-        File.AppendText(path).WriteLine($"{request.Method} {request.Path}");
-        File.AppendText(path).WriteLine("Request Headers:");
+        StreamWriter writer = File.AppendText(path);
+        
+        writer.WriteLine($"{request.Method} {request.Path}");
+        writer.WriteLine("Request Headers:");
+        
         foreach (KeyValuePair<string, StringValues> header in request.Headers)
         {
-            File.AppendText(path).WriteLine($"{header.Key}: {string.Join(", ", header.Value)}");
+            writer.WriteLine($"{header.Key}: {string.Join(", ", header.Value)}");
         }
-        File.AppendText(path).WriteLine("\n\n\n");
+        
+        writer.WriteLine("\n\n\n");
     }
 }
