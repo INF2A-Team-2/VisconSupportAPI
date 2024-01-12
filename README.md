@@ -7,8 +7,11 @@
 #### Sorting
 ##### `sort={key}.{asc/desc}`  
 The key can be the C# Property `FooBar` or the JSON property `fooBar`.  
-`asc` for ascending order and `desc` for descending order.
+`asc` for ascending order and `desc` for descending order.  
+Example: `sort=Id.asc` `sort=dateOfBirth.desc`
 
 #### Limiting
 ##### `limit={n}`
-Positive integer specifying how many items to include.
+Positive integer specifying how many items to include.  
+If no limit is set the response includes all items.  
+Example: `limit=1` `limit=100`
