@@ -83,6 +83,10 @@ public class DatabaseContext : DbContext
         modelBuilder.Entity<Unit>()
             .Property(u => u.Description)
             .HasMaxLength(512);
+
+        modelBuilder.Entity<Report>()
+            .HasMany<Company>(x => x.Companies)
+            .WithMany(x => x.Reports);
         
         modelBuilder.Entity<Report>()
             .HasOne<Machine>(x => x.Machine)

@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -6,9 +5,7 @@ using Microsoft.Extensions.Primitives;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using VisconSupportAPI.Data;
-using VisconSupportAPI.Handlers;
 using VisconSupportAPI.Hubs;
-using VisconSupportAPI.Models;
 
 namespace VisconSupportAPI;
 
@@ -65,7 +62,7 @@ public class Program
                 policyBuilder
                     .AllowAnyHeader()
                     .AllowAnyMethod()
-                    .SetIsOriginAllowed((host) => true)
+                    .SetIsOriginAllowed((_) => true)
                     .AllowCredentials();
             });
         });
@@ -79,10 +76,14 @@ public class Program
             app.UseSwagger();
             app.UseSwaggerUI();
         }
-
+        
+        if(!Directory.Exists("Logs"))
+            Directory.CreateDirectory("Logs");
+        var path = "Logs/" + DateTime.Now.ToString("yyyyMMddHHmmssfff") + ".log.txt";
+        
         app.Use((context, next) =>
         {
-            LogRequestHeaders(context.Request);
+            LogRequestHeaders(path, context.Request);
             return next();
         });
 
@@ -99,14 +100,16 @@ public class Program
         app.Run();
     }
     
-    private static void LogRequestHeaders(HttpRequest request)
+    private static void LogRequestHeaders(string path, HttpRequest request)
     {
-        Console.WriteLine($"{request.Method} {request.Path}");
-        Console.WriteLine("Request Headers:");
+        List<string> headers = new List<string>();
+        headers.Add($"{request.Method} {request.Path}");
+        headers.Add("Request Headers:");
         foreach (KeyValuePair<string, StringValues> header in request.Headers)
         {
-            Console.WriteLine($"{header.Key}: {string.Join(", ", header.Value)}");
+            headers.Add($"{header.Key}: {string.Join(", ", header.Value)}");
         }
-        Console.WriteLine("\n\n\n");
+        headers.Add("\n\n\n");
+        File.AppendAllLinesAsync(path, headers);
     }
 }

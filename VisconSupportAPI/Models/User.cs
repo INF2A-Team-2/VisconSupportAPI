@@ -9,7 +9,6 @@ public class User
     public string Username { get; set; }
     [JsonIgnore] public string PasswordHash { get; set; }
     public AccountType Type { get; set; }
-    public string? PhoneNumber { get; set; }
     public int? UnitId { get; set; }
     public int? CompanyId { get; set; }
     [JsonIgnore] public Company? Company { get; set; }

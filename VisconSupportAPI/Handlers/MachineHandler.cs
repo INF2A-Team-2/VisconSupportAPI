@@ -11,11 +11,11 @@ namespace VisconSupportAPI.Handlers;
 
 public class MachineHandler : Handler
 {
-    public MachineHandler(ILogger logger, DatabaseContext context, IConfiguration configuration) 
+    public MachineHandler(ILogger logger, DatabaseContext context, IConfiguration configuration)
         : base(logger, context, configuration)
     {
     }
-    
+
     public ActionResult<List<Machine>> GetAllMachines(User? user)
     {
         if (user == null)
@@ -46,7 +46,7 @@ public class MachineHandler : Handler
         {
             return new UnauthorizedResult();
         }
-        
+
         Machine? machine = Services.Machines.GetById(machineId);
 
         if (machine == null)
@@ -59,7 +59,7 @@ public class MachineHandler : Handler
             return new OkObjectResult(machine);
         }
 
-        Services.LoadReference(user, u=> u.Company);
+        Services.LoadReference(user, u => u.Company);
 
         if (user.Company == null)
         {
@@ -73,23 +73,11 @@ public class MachineHandler : Handler
             return new ForbidResult();
         }
 
-        if (user == null)
-        {
-            return new NotFoundResult();
-        }
-        
-        Machine? exists = Services.Machines.GetByName(machine.Name);
-        
-        Machine createdMachine = Services.Users.AddMachine(user.Id, exists ?? new Machine() { Name = machine.Name });
+        return new OkObjectResult(machine);
+    }
+}
 
-        
-        
-        return new OkResult();
-    }
-    
-    }
-    
-    // public ActionResult ImportMachines(User? user, IFormFile formFile)
+// public ActionResult ImportMachines(User? user, IFormFile formFile)
     // {
     //     if (user == null)
     //     {

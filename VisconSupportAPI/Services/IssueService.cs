@@ -26,6 +26,7 @@ public class IssueService : Service
             Expected = data.Expected,
             Tried = data.Tried,
             Headline = data.Headline,
+            PhoneNumber = data.PhoneNumber ?? Context.Companies.FirstOrDefault(c => c.Id == user.CompanyId)?.PhoneNumber ?? "No phone number found.",
             TimeStamp = DateTime.UtcNow,
             MachineId = data.MachineId,
             UserId = user.Id
@@ -38,7 +39,7 @@ public class IssueService : Service
         return issue;
     }
 
-    public void Edit(int id, NewIssue data, User user)
+    public bool Edit(int id, Issue data, User user)
     {
         Issue? issue = GetById(id);
 
@@ -56,7 +57,7 @@ public class IssueService : Service
         issue.MachineId = data.MachineId;
         issue.UserId = user.Id;
 
-        Context.SaveChanges();
+        return Context.SaveChanges() > 0;
     }
 
     public void Delete(int id)

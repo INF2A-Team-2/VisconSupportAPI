@@ -1,5 +1,3 @@
-using VisconSupportAPI.Types;
-
 namespace VisconSupportAPI.Controllers;
 
 public class NewReport
