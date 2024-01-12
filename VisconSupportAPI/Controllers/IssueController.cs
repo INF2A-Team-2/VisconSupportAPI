@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using VisconSupportAPI.Data;
 using VisconSupportAPI.Handlers;
 using VisconSupportAPI.Models;
+using VisconSupportAPI.Types;
 
 namespace VisconSupportAPI.Controllers;
 
@@ -32,6 +33,14 @@ public class IssueController: Controller<IssueController, IssueHandler>
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public ActionResult<Issue> CreateIssue(NewIssue ticket, int? userId) => Handler.CreateIssue(GetUserFromClaims(), ticket, userId);
+
+    [HttpPut("{issueId:int}/priority")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public ActionResult ChangeIssuePriority([FromBody] Priority priority, int issueId) => Handler.ChangeIssuePriority(GetUserFromClaims(), priority, issueId);
 
     [HttpGet("{issueId:int}/messages")]
     [Authorize]

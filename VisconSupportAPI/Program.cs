@@ -1,4 +1,3 @@
-using System.Security.Claims;
 using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -6,9 +5,7 @@ using Microsoft.Extensions.Primitives;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using VisconSupportAPI.Data;
-using VisconSupportAPI.Handlers;
 using VisconSupportAPI.Hubs;
-using VisconSupportAPI.Models;
 
 namespace VisconSupportAPI;
 
@@ -79,16 +76,11 @@ public class Program
             app.UseSwagger();
             app.UseSwaggerUI();
         }
-
-        if (!Directory.Exists("Logs"))
-        {
+        
+        if(!Directory.Exists("Logs"))
             Directory.CreateDirectory("Logs");
-        }
+        var path = "Logs/" + DateTime.Now.ToString("yyyyMMddHHmmssfff") + ".log.txt";
         
-        string path = $"Logs/{DateTime.Now:s}.log.txt";
-        
-        File.Create(path).Close();
-
         app.Use((context, next) =>
         {
             LogRequestHeaders(path, context.Request);
@@ -110,18 +102,14 @@ public class Program
     
     private static void LogRequestHeaders(string path, HttpRequest request)
     {
-        StreamWriter writer = File.AppendText(path);
-        
-        writer.WriteLine($"{request.Method} {request.Path}");
-        writer.WriteLine("Request Headers:");
-        
+        List<string> headers = new List<string>();
+        headers.Add($"{request.Method} {request.Path}");
+        headers.Add("Request Headers:");
         foreach (KeyValuePair<string, StringValues> header in request.Headers)
         {
-            writer.WriteLine($"{header.Key}: {string.Join(", ", header.Value)}");
+            headers.Add($"{header.Key}: {string.Join(", ", header.Value)}");
         }
-        
-        writer.WriteLine("\n\n\n");
-        
-        writer.Close();
+        headers.Add("\n\n\n");
+        File.AppendAllLinesAsync(path, headers);
     }
 }

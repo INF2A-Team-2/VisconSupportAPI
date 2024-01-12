@@ -18,11 +18,6 @@ public class IssueService : Service
     
     public Issue Create(NewIssue data, User user)
     {
-        if (Context.Users.FirstOrDefault(u => u.Id == user.Id)?.PhoneNumber == null && Context.Companies.FirstOrDefault(c => c.Id == user.CompanyId)?.PhoneNumber == null)
-        {
-            throw new ArgumentException("No phone number found", nameof(user));
-        }
-        
         Issue issue = new Issue()
         {
             Priority = data.Priority,
@@ -31,8 +26,7 @@ public class IssueService : Service
             Expected = data.Expected,
             Tried = data.Tried,
             Headline = data.Headline,
-            PhoneNumber = Context.Users.FirstOrDefault(u => u.Id == user.Id)?.PhoneNumber
-                          ?? Context.Companies.FirstOrDefault(c => c.Id == user.CompanyId)?.PhoneNumber,
+            PhoneNumber = data.PhoneNumber ?? Context.Companies.FirstOrDefault(c => c.Id == user.CompanyId)?.PhoneNumber ?? "No phone number found.",
             TimeStamp = DateTime.UtcNow,
             MachineId = data.MachineId,
             UserId = user.Id
@@ -45,7 +39,7 @@ public class IssueService : Service
         return issue;
     }
 
-    public void Edit(int id, NewIssue data, User user)
+    public bool Edit(int id, Issue data, User user)
     {
         Issue? issue = GetById(id);
 
@@ -63,7 +57,7 @@ public class IssueService : Service
         issue.MachineId = data.MachineId;
         issue.UserId = user.Id;
 
-        Context.SaveChanges();
+        return Context.SaveChanges() > 0;
     }
 
     public void Delete(int id)
