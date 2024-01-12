@@ -34,6 +34,13 @@ public class IssueController: Controller<IssueController, IssueHandler>
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     public ActionResult<Issue> CreateIssue(NewIssue ticket, int? userId) => Handler.CreateIssue(GetUserFromClaims(), ticket, userId);
 
+    [HttpPost("{issueId:int}/resolve")]
+    [Authorize]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    public ActionResult ResolveIssue(NewReport report, int issueId) => Handler.ResolveIssue(GetUserFromClaims(), issueId, report);
+    
     [HttpPut("{issueId:int}/priority")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]

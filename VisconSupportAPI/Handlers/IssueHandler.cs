@@ -241,4 +241,24 @@ public class IssueHandler : Handler
 
         return new OkObjectResult(newAttachment);
     }
+
+    public ActionResult ResolveIssue(User? user, int issueId, NewReport report)
+    {
+        if (user == null)
+        {
+            return new UnauthorizedResult();
+        }
+        if (user.Type is not (AccountType.Admin or AccountType.Helpdesk))
+        {
+            return new ForbidResult();
+        }
+
+        var issue = Services.Issues.GetById(issueId);
+        if (issue == null) return new NotFoundResult();
+        issue.Status = Status.Archived;
+
+        Services.Issues.Edit(issueId, issue, user);
+        Services.Reports.Create(report);
+        return new OkResult();
+    }
 }

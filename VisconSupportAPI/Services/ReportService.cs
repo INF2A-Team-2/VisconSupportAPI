@@ -1,7 +1,7 @@
 using VisconSupportAPI.Controllers;
 using VisconSupportAPI.Data;
 using VisconSupportAPI.Models;
-using VisconSupportAPI.Types;
+
 namespace VisconSupportAPI.Services;
 
 public class ReportService : Service
@@ -22,6 +22,7 @@ public class ReportService : Service
             Body = data.Body,
             Public = data.pub, 
             MachineId = data.MachineId,
+            IssueId = data.IssueId,
             TimeStamp = DateTime.UtcNow
         };
 
