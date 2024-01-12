@@ -77,7 +77,9 @@ public class Program
             app.UseSwaggerUI();
         }
         
-        var path = DateTime.Now.ToString("yyyyMMddHHmmssfff") + ".log.txt";
+        if(!Directory.Exists("Logs"))
+            Directory.CreateDirectory("Logs");
+        var path = "Logs/" + DateTime.Now.ToString("yyyyMMddHHmmssfff") + ".log.txt";
         
         app.Use((context, next) =>
         {
@@ -108,6 +110,6 @@ public class Program
             headers.Add($"{header.Key}: {string.Join(", ", header.Value)}");
         }
         headers.Add("\n\n\n");
-        File.AppendAllLines(path, headers);
+        File.AppendAllLinesAsync(path, headers);
     }
 }
