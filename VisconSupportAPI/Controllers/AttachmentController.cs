@@ -20,7 +20,7 @@ public class AttachmentController : Controller<AttachmentController, AttachmentH
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    public ActionResult<List<Attachment>> GetAttachment(int attachmentId) => Handler.GetAttachment(attachmentId);
+    public ActionResult<Attachment> GetAttachment(int attachmentId) => Handler.GetAttachment(attachmentId);
 
     [HttpGet("{attachmentId:int}/authenticate")]
     [Authorize]
