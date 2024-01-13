@@ -10,6 +10,12 @@ The key can be the C# Property `FooBar` or the JSON property `fooBar`.
 `asc` for ascending order and `desc` for descending order.  
 Example: `sort=Id.asc` `sort=dateOfBirth.desc`
 
+#### Offset
+##### `offset={n}`
+Positive integer specifying how many elements to skip.  
+Useful when working with pages.  
+Example: `offset=1` `offset=30`
+
 #### Limiting
 ##### `limit={n}`
 Positive integer specifying how many items to include.  
