@@ -18,5 +18,5 @@ public class PagingController : Controller<PagingController, PagingHandler>
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult<int> GetAttachment(string table, int pageSize) => Handler.GetPages(table, pageSize);
+    public ActionResult<int> GetPages(string table, int pageSize) => Handler.GetPages(table, pageSize);
 }
