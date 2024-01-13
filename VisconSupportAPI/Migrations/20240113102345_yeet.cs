@@ -7,7 +7,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace VisconSupportAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class yeet : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -64,7 +64,6 @@ namespace VisconSupportAPI.Migrations
                     Username = table.Column<string>(type: "text", nullable: false),
                     PasswordHash = table.Column<string>(type: "text", nullable: false),
                     Type = table.Column<int>(type: "integer", nullable: false),
-                    PhoneNumber = table.Column<string>(type: "text", nullable: true),
                     UnitId = table.Column<int>(type: "integer", nullable: true),
                     CompanyId = table.Column<int>(type: "integer", nullable: true)
                 },
@@ -103,28 +102,6 @@ namespace VisconSupportAPI.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Reports",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "integer", nullable: false)
-                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Title = table.Column<string>(type: "text", nullable: false),
-                    Body = table.Column<string>(type: "text", nullable: false),
-                    TimeStamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    MachineId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Reports", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Reports_Machines_MachineId",
-                        column: x => x.MachineId,
-                        principalTable: "Machines",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Issues",
                 columns: table => new
                 {
@@ -154,30 +131,6 @@ namespace VisconSupportAPI.Migrations
                         name: "FK_Issues_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "CompanyReport",
-                columns: table => new
-                {
-                    CompaniesId = table.Column<int>(type: "integer", nullable: false),
-                    ReportsId = table.Column<int>(type: "integer", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CompanyReport", x => new { x.CompaniesId, x.ReportsId });
-                    table.ForeignKey(
-                        name: "FK_CompanyReport_Companies_CompaniesId",
-                        column: x => x.CompaniesId,
-                        principalTable: "Companies",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_CompanyReport_Reports_ReportsId",
-                        column: x => x.ReportsId,
-                        principalTable: "Reports",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -227,6 +180,42 @@ namespace VisconSupportAPI.Migrations
                         name: "FK_Messages_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Reports",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "integer", nullable: false)
+                        .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
+                    Title = table.Column<string>(type: "text", nullable: false),
+                    Body = table.Column<string>(type: "text", nullable: false),
+                    TimeStamp = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    IssueId = table.Column<int>(type: "integer", nullable: false),
+                    MachineId = table.Column<int>(type: "integer", nullable: false),
+                    Public = table.Column<bool>(type: "boolean", nullable: false),
+                    CompanyId = table.Column<int>(type: "integer", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Reports", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Reports_Companies_CompanyId",
+                        column: x => x.CompanyId,
+                        principalTable: "Companies",
+                        principalColumn: "Id");
+                    table.ForeignKey(
+                        name: "FK_Reports_Issues_IssueId",
+                        column: x => x.IssueId,
+                        principalTable: "Issues",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Reports_Machines_MachineId",
+                        column: x => x.MachineId,
+                        principalTable: "Machines",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -293,11 +282,6 @@ namespace VisconSupportAPI.Migrations
                 column: "MachinesId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_CompanyReport_ReportsId",
-                table: "CompanyReport",
-                column: "ReportsId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Issues_MachineId",
                 table: "Issues",
                 column: "MachineId");
@@ -348,6 +332,16 @@ namespace VisconSupportAPI.Migrations
                 column: "UserId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Reports_CompanyId",
+                table: "Reports",
+                column: "CompanyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Reports_IssueId",
+                table: "Reports",
+                column: "IssueId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Reports_MachineId",
                 table: "Reports",
                 column: "MachineId");
@@ -365,16 +359,13 @@ namespace VisconSupportAPI.Migrations
                 name: "CompanyMachine");
 
             migrationBuilder.DropTable(
-                name: "CompanyReport");
-
-            migrationBuilder.DropTable(
                 name: "Logs");
 
             migrationBuilder.DropTable(
-                name: "Units");
+                name: "Reports");
 
             migrationBuilder.DropTable(
-                name: "Reports");
+                name: "Units");
 
             migrationBuilder.DropTable(
                 name: "Attachments");

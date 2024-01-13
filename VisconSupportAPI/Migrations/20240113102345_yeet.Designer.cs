@@ -12,8 +12,8 @@ using VisconSupportAPI.Data;
 namespace VisconSupportAPI.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20240110130828_init")]
-    partial class init
+    [Migration("20240113102345_yeet")]
+    partial class yeet
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -38,21 +38,6 @@ namespace VisconSupportAPI.Migrations
                     b.HasIndex("MachinesId");
 
                     b.ToTable("CompanyMachine");
-                });
-
-            modelBuilder.Entity("CompanyReport", b =>
-                {
-                    b.Property<int>("CompaniesId")
-                        .HasColumnType("integer");
-
-                    b.Property<int>("ReportsId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("CompaniesId", "ReportsId");
-
-                    b.HasIndex("ReportsId");
-
-                    b.ToTable("CompanyReport");
                 });
 
             modelBuilder.Entity("VisconSupportAPI.Models.Attachment", b =>
@@ -268,8 +253,17 @@ namespace VisconSupportAPI.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("IssueId")
+                        .HasColumnType("integer");
+
                     b.Property<int>("MachineId")
                         .HasColumnType("integer");
+
+                    b.Property<bool>("Public")
+                        .HasColumnType("boolean");
 
                     b.Property<DateTime>("TimeStamp")
                         .HasColumnType("timestamp with time zone");
@@ -279,6 +273,10 @@ namespace VisconSupportAPI.Migrations
                         .HasColumnType("text");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CompanyId");
+
+                    b.HasIndex("IssueId");
 
                     b.HasIndex("MachineId");
 
@@ -322,9 +320,6 @@ namespace VisconSupportAPI.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("text");
-
                     b.Property<int>("Type")
                         .HasColumnType("integer");
 
@@ -353,21 +348,6 @@ namespace VisconSupportAPI.Migrations
                     b.HasOne("VisconSupportAPI.Models.Machine", null)
                         .WithMany()
                         .HasForeignKey("MachinesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("CompanyReport", b =>
-                {
-                    b.HasOne("VisconSupportAPI.Models.Company", null)
-                        .WithMany()
-                        .HasForeignKey("CompaniesId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("VisconSupportAPI.Models.Report", null)
-                        .WithMany()
-                        .HasForeignKey("ReportsId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
                 });
@@ -464,11 +444,23 @@ namespace VisconSupportAPI.Migrations
 
             modelBuilder.Entity("VisconSupportAPI.Models.Report", b =>
                 {
+                    b.HasOne("VisconSupportAPI.Models.Company", null)
+                        .WithMany("Reports")
+                        .HasForeignKey("CompanyId");
+
+                    b.HasOne("VisconSupportAPI.Models.Issue", "Issue")
+                        .WithMany()
+                        .HasForeignKey("IssueId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("VisconSupportAPI.Models.Machine", "Machine")
                         .WithMany()
                         .HasForeignKey("MachineId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.Navigation("Issue");
 
                     b.Navigation("Machine");
                 });
@@ -485,6 +477,8 @@ namespace VisconSupportAPI.Migrations
             modelBuilder.Entity("VisconSupportAPI.Models.Company", b =>
                 {
                     b.Navigation("Employees");
+
+                    b.Navigation("Reports");
                 });
 
             modelBuilder.Entity("VisconSupportAPI.Models.Issue", b =>

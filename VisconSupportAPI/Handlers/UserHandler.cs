@@ -84,10 +84,8 @@ public class UserHandler : Handler
         }
 
         Services.Users.Edit(userId, data);
-        
-        User editedUser = Services.Users.Create(data);
 
-        Services.Logs.Create(user, $"User: {editedUser.Username} has been edited", user: editedUser); 
+        Services.Logs.Create(user, $"User: {data.Username} has been edited"); 
 
         return new NoContentResult();
     }
