@@ -78,7 +78,7 @@ public class UserHandler : Handler
             return new UnauthorizedResult();
         }
 
-        if (user.Type != AccountType.Admin)
+        if (user.Type != AccountType.Admin && user.Id != userId)
         {
             return new ForbidResult();
         }
