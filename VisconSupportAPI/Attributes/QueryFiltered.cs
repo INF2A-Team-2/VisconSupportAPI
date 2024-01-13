@@ -45,6 +45,20 @@ public class QueryFiltered : ActionFilterAttribute
 
                 data = SortData(data, key, descending);
             }
+
+            if (query.TryGetValue("offset", out value))
+            {
+                string? offset = value;
+                
+                if (offset == null || !int.TryParse(offset, out int offsetValue))
+                {
+                    context.Result = new BadRequestResult();
+                    base.OnActionExecuted(context);
+                    return;
+                }
+
+                data = data.Skip(offsetValue);
+            }
             
             if (query.TryGetValue("limit", out value))
             {
