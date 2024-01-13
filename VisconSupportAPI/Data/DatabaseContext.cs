@@ -62,13 +62,8 @@ public class DatabaseContext : DbContext
             .WithMany()
             .HasForeignKey(x => x.AuthorId)
             .HasPrincipalKey(x => x.Id)
+            .OnDelete(DeleteBehavior.Cascade)
             .IsRequired();
-
-        modelBuilder.Entity<Log>()
-            .HasOne<User>(x => x.User)
-            .WithMany()
-            .HasForeignKey(x => x.UserId)
-            .HasPrincipalKey(x => x.Id);
         
         modelBuilder.Entity<Company>()
             .HasMany<User>(x => x.Employees)
