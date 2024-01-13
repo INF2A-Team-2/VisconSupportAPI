@@ -70,19 +70,21 @@ public class UserService : Service
             user.Type = data.Type;
         }
 
-        if (data.UnitId != null)
+        if (user.Type == AccountType.Admin)
         {
-            user.UnitId = data.UnitId;
-        }
+            if (data.UnitId != null)
+            {
+                user.UnitId = data.UnitId;
+            }
 
-        if (data.CompanyId != null)
-        {
-            user.CompanyId = data.CompanyId;
+            if (data.CompanyId != null)
+            {
+                user.CompanyId = data.CompanyId;
+            }
         }
 
         Context.SaveChanges();
     }
-
     public Machine AddMachine(int id, Machine machine)
     {
         User? user = GetById(id);
