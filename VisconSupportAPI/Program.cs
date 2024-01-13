@@ -108,6 +108,7 @@ public class Program
     {
         List<string> headers = new List<string>();
         
+        headers.Add($"{DateTime.Now:F}");
         headers.Add($"{request.Method} {request.Path}");
         headers.Add("Request Headers:");
         
