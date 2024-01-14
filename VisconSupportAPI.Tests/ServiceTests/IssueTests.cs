@@ -31,6 +31,8 @@ public class IssueTests : ServiceTest
         {
             Actual = "My machine is broken",
             Expected = "My machine is working",
+            Tried = "I tried to fix it",
+            PhoneNumber = "0612345678",
             Headline = "Machine broken",
             MachineId = machineId,
             Priority = Priority.High,
@@ -41,7 +43,8 @@ public class IssueTests : ServiceTest
     [Fact]
     public void TestGetById()
     {
-        Issue? issue = Services.Issues.GetById(1);
+        var id = CreateTestIssue().Id;
+        Issue? issue = Services.Issues.GetById(id);
 
         Assert.NotNull(issue);
     }
@@ -49,6 +52,7 @@ public class IssueTests : ServiceTest
     [Fact]
     public void TestGetAll()
     {
+        CreateTestIssue();
         List<Issue> issues = Services.Issues.GetAll();
         
         Assert.NotEmpty(issues);
