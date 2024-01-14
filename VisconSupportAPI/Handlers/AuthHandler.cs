@@ -35,4 +35,45 @@ public class AuthHandler : Handler
         
         return new OkObjectResult(user);    
     }
+
+    public ActionResult CreatePasswordResetSession(string email)
+    {
+        User? user = Services.Users.GetByEmail(email);
+
+        if (user == null)
+        {
+            return new NotFoundResult();
+        }
+
+        PasswordResetSession session = Services.Auth.CreatePasswordResetSession(user);
+        
+        Services.Mail.Send(
+            user.Email,
+            "Reset password",
+            $"""
+               Click the following link to reset your password. This link expires in 24 hours.
+               Do not share this link with anyone.
+               
+               https://project-c.zoutigewolf.dev/forgot-password?token={session.Token}
+            """);
+        
+        return new OkResult();
+    }
+
+    public ActionResult ChangePassword(string token, string password)
+    {
+        PasswordResetSession? session = Services.Auth.GetSessionByToken(token);
+
+        if (session == null)
+        {
+            return new NotFoundResult();
+        }
+        
+        Services.Users.Edit(session.UserId, new NewUser()
+        {
+            Password = password
+        });
+
+        return new OkResult();
+    }
 }

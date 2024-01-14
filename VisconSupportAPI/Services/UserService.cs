@@ -14,14 +14,15 @@ public class UserService : Service
 
     public User? GetByUsername(string username) => Context.Users.FirstOrDefault(u => u.Username == username);
 
-    public List<User> GetAll() => Context.Users.ToList();
+    public User? GetByEmail(string email) => Context.Users.FirstOrDefault(u => u.Email == email);
 
+    public List<User> GetAll() => Context.Users.ToList();
 
     public User Create(NewUser data)
     {
-        if (data.Username == null || data.Password == null)
+        if (data.Username == null || data.Password == null || data.Email == null)
         {
-            throw new ArgumentNullException(nameof(data), "Username or password cannot be null");
+            throw new ArgumentNullException(nameof(data), "Username, password or email cannot be null");
         }
         
         User user = new User()
@@ -30,10 +31,10 @@ public class UserService : Service
             PasswordHash = AuthService.HashPassword(data.Password),
             Type = data.Type,
             UnitId = data.UnitId,
-            CompanyId = data.CompanyId
+            CompanyId = data.CompanyId,
+            Email = data.Email
         };
         
-
         Context.Users.Add(user);
 
         Context.SaveChanges();
@@ -63,6 +64,11 @@ public class UserService : Service
         if (data.Password != null)
         {
             user.PasswordHash = AuthService.HashPassword(data.Password);
+        }
+
+        if (data.Email != null)
+        {
+            user.Email = data.Email;
         }
 
         user.Type = data.Type;

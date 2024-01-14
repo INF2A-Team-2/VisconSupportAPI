@@ -7,4 +7,5 @@ public class NewUser
     public AccountType Type { get; set; }
     public int? UnitId { get; set; }
     public int? CompanyId { get; set; }
+    public string? Email { get; set; }
 }

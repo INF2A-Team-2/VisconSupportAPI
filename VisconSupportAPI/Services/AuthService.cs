@@ -46,6 +46,50 @@ public class AuthService : Service
 
         return user;
     }
+
+    public PasswordResetSession? GetSessionByToken(string token) =>
+        Context.PasswordResetSessions.FirstOrDefault(x => x.Token == token);
+
+    public PasswordResetSession CreatePasswordResetSession(User user)
+    {
+        PasswordResetSession? existingSession = Context.PasswordResetSessions.FirstOrDefault(x => x.UserId == user.Id);
+
+        if (existingSession != null)
+        {
+            Context.PasswordResetSessions.Remove(existingSession);
+        }
+        
+        PasswordResetSession session = new PasswordResetSession()
+        {
+            UserId = user.Id,
+            Token = GenerateRandomAsciiString(128),
+            CreatedAt = DateTime.UtcNow
+        };
+
+        Context.PasswordResetSessions.Add(session);
+        Context.SaveChanges();
+
+        return session;
+    }
+    
+    public static string GenerateRandomAsciiString(int length)
+    {
+        using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
+        {
+            byte[] buffer = new byte[length];
+            rng.GetBytes(buffer);
+
+            StringBuilder result = new StringBuilder(length);
+
+            foreach (byte b in buffer)
+            {
+                char asciiChar = (char)(32 + (b % 95));
+                result.Append(asciiChar);
+            }
+
+            return result.ToString();
+        }
+    }
     
     public static string HashPassword(string input)
     {
