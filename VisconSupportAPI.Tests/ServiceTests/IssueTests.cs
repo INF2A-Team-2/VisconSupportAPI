@@ -22,6 +22,7 @@ public class IssueTests : ServiceTest
         {
             Username = "testuser",
             Password = "test",
+            Type = AccountType.User
         });
     }
     public Issue CreateTestIssue()
@@ -88,12 +89,12 @@ public class IssueTests : ServiceTest
         
         try
         {
-            issue = CreateTestIssue();
             passed = Services.Issues.Edit(issue.Id, issue, CreateTestUser());
         }
         catch (Exception e)
         {
             passed = false;
+            Console.WriteLine(e);
         }
 
         Assert.True(passed);
