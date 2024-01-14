@@ -29,8 +29,8 @@ public class ReportHandler : Handler
         {
             if (user.CompanyId == null)
                 return new UnauthorizedResult();
-            return new OkObjectResult(Services.Reports.GetAll().Where(h =>
-                Services.Companies.GetById(user.CompanyId.Value)!.Machines.Any(m => m.Id == h.MachineId)));
+            return new OkObjectResult(Services.Reports.GetAll().Where(h => 
+                h.Public || h.Issue.UserId == user.Id || h.Issue.Machine.Companies.Contains(user.Company)).ToList());
         }
         return new BadRequestResult();
     }
