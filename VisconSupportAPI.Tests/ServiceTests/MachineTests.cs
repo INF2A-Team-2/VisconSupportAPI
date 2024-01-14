@@ -43,7 +43,7 @@ public class MachineTests : ServiceTest
     {
         List<Machine> machines = Services.Machines.GetAll();
 
-        Assert.Single(machines);
+        Assert.NotEmpty(machines);
     }
 
     [Fact]

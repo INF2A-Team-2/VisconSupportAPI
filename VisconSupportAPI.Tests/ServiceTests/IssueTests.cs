@@ -18,22 +18,14 @@ public class IssueTests : ServiceTest
     
     public User CreateTestUser()
     {
-        return Services.Users.GetByUsername("testuser") ?? Services.Users.Create(new NewUser()
+        return Services.Users.GetByUsername("issuetestuser") ?? Services.Users.Create(new NewUser()
         {
-            Username = "testuser",
+            Username = "issuetestuser",
             Password = "test",
             Type = AccountType.User
         });
     }
     
-    public void DeleteTestUser()
-    {
-        User? user = Services.Users.GetByUsername("testuser");
-        if (user != null)
-        {
-            Services.Users.Delete(user.Id);
-        }
-    }
     public Issue CreateTestIssue()
     {
         var machineId = CreateTestMachine().Id;
@@ -124,10 +116,10 @@ public class IssueTests : ServiceTest
         }
         catch (Exception e)
         {
+            Console.WriteLine(e);
             passed = false;
         }
 
         Assert.True(passed);
-        DeleteTestUser();
     }
 }
