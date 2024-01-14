@@ -5,6 +5,7 @@ riderModule.iml
 /_ReSharper.Caches/
 
 .idea/
+Folder.DotSettings.user
 appsettings.Development.json
 appsettings.json
 testconfig.json
