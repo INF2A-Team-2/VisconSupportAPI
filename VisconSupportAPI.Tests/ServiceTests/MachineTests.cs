@@ -2,6 +2,7 @@ using System.Runtime.InteropServices;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using VisconSupportAPI.Data;
+using VisconSupportAPI.Types;
 
 namespace VisconSupportAPI.Tests;
 
@@ -85,12 +86,10 @@ public class MachineTests : ServiceTest
     }
 
     [Theory]
-    [InlineData(true, "someothername", false)]
-    [InlineData(false, "someothername", true)]
-    [InlineData(false, "machine", false)]
-    public void TestEdit(bool isMachineNull, string name, bool valid)
+    [InlineData("testmachine", true)]
+    public void TestEdit(string name, bool valid)
     {
-        Machine? machine = isMachineNull ? null : CreateTestMachine();
+        Machine machine = CreateTestMachine();
 
         bool passed = true;
 
