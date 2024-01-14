@@ -1,3 +1,4 @@
+using System.Reflection.Metadata.Ecma335;
 using Microsoft.AspNetCore.Mvc;
 using VisconSupportAPI.Data;
 using VisconSupportAPI.Models;
@@ -34,5 +35,30 @@ public class AuthHandler : Handler
         }
         
         return new OkObjectResult(user);    
+    }
+
+    public ActionResult ForgotPassword(string email)
+    {
+        var user = Services.Users.GetAll().FirstOrDefault(u => u.Email == email);
+        if(user == null)
+        {
+            return new NotFoundResult();
+        }
+
+        Services.ForgotPassword.GetToken(user);
+        return new OkResult();
+    }
+    
+    public ActionResult ResetPassword(string token, string password)
+    {
+        try
+        {
+            Services.ForgotPassword.ResetPassword(token, password);
+            return new OkResult();
+        }
+        catch (ArgumentException e)
+        {
+            return new BadRequestObjectResult(new {error = e.Message});
+        }
     }
 }

@@ -8,6 +8,7 @@ public class User
     public int Id { get; set; }
     public string Username { get; set; }
     [JsonIgnore] public string PasswordHash { get; set; }
+    public string Email { get; set; }
     public AccountType Type { get; set; }
     public int? UnitId { get; set; }
     public int? CompanyId { get; set; }

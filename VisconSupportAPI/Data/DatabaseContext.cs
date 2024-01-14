@@ -19,6 +19,7 @@ public class DatabaseContext : DbContext
     public DbSet<Log> Logs { get; set; }
     public DbSet<Unit> Units { get; set; } 
     public DbSet<Report> Reports { get; set; }
+    public DbSet<ForgotPassword> ForgotPasswords { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

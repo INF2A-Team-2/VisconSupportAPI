@@ -21,6 +21,8 @@ public class ServicesList
     public readonly LogService Logs;
     public readonly UnitService Units;
     public readonly ReportService Reports;
+    public readonly ForgotPasswordService ForgotPassword;
+    public readonly MailService Mail;
     
     public ServicesList(DatabaseContext context, IConfiguration configuration)
     {

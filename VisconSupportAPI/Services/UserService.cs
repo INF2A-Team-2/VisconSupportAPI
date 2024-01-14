@@ -19,9 +19,9 @@ public class UserService : Service
 
     public User Create(NewUser data)
     {
-        if (data.Username == null || data.Password == null)
+        if (data.Username == null || data.Password == null || data.Email == null)
         {
-            throw new ArgumentNullException(nameof(data), "Username or password cannot be null");
+            throw new ArgumentNullException(nameof(data), "Username or password or email cannot be null");
         }
         
         User user = new User()
