@@ -8,7 +8,7 @@ public class Company
     public string Name { get; set; }
     public double Latitude { get; set; }
     public double Longitude { get; set; }
-    public string PhoneNumber { get; set; }
+    public string? PhoneNumber { get; set; }
     [JsonIgnore]public List<User> Employees { get; set; }
     [JsonIgnore]public List<Machine> Machines { get; set; }
     [JsonIgnore]public List<Report> Reports { get; set; }
