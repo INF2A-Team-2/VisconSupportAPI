@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using VisconSupportAPI.Attributes;
 using VisconSupportAPI.Data;
 using VisconSupportAPI.Handlers;
 using VisconSupportAPI.Models;
@@ -21,6 +22,7 @@ public class UnitController : Controller<UnitController, UnitHandler>
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [QueryFiltered("Id.asc")]
     public ActionResult<List<Unit>> GetUnits() => Handler.GetAllUnits();
 
     [HttpGet("{unitId:int}")]

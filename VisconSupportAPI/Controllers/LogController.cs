@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using VisconSupportAPI.Attributes;
 using VisconSupportAPI.Data;
 using VisconSupportAPI.Handlers;
 using VisconSupportAPI.Models;
@@ -19,5 +20,6 @@ public class LogController : Controller<LogController, LogHandler>
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [QueryFiltered("Id.asc")]
     public ActionResult<List<Log>> GetLogs(int? quantity) => Handler.GetAllLogs(GetUserFromClaims(), quantity);
 }
