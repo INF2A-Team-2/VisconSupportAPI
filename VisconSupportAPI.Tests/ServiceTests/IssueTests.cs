@@ -8,17 +8,111 @@ public class IssueTests : ServiceTest
     public IssueTests() : base()
     {}
 
+    public Machine CreateTestMachine()
+    {
+        return Services.Machines.GetByName("Illuminator") ?? Services.Machines.Create(new NewMachine()
+        {
+            Name = "Illuminator"
+        });
+    }
+    
+    public User CreateTestUser()
+    {
+        return Services.Users.GetByUsername("testuser") ?? Services.Users.Create(new NewUser()
+        {
+            Username = "testuser",
+            Password = "test",
+        });
+    }
     public Issue CreateTestIssue()
     {
-        return new Issue()
+        var machineId = CreateTestMachine().Id;
+        return Services.Issues.GetById(1) ?? Services.Issues.Create(new NewIssue()
         {
             Actual = "My machine is broken",
-            Attachments = new List<Attachment>(),
             Expected = "My machine is working",
             Headline = "Machine broken",
-            MachineId = 1,
+            MachineId = machineId,
             Priority = Priority.High,
             Status = Status.Open,
-        };
+        }, CreateTestUser());
+    }
+    
+    [Fact]
+    public void TestGetById()
+    {
+        Issue? issue = Services.Issues.GetById(1);
+
+        Assert.NotNull(issue);
+    }
+    
+    [Fact]
+    public void TestGetAll()
+    {
+        List<Issue> issues = Services.Issues.GetAll();
+        
+        Assert.NotEmpty(issues);
+    }
+    
+    [Fact]
+    public void TestCreate()
+    {
+        bool passed = true;
+
+        Issue? issue = null;
+
+        try
+        {
+            issue = CreateTestIssue();
+        }
+        catch (Exception e)
+        {
+            passed = false;
+        }
+
+        Assert.True(passed);
+        Assert.NotNull(issue);
+    }
+    
+    [Fact]
+    public void TestEdit()
+    {
+        bool passed;
+
+        Issue issue = CreateTestIssue();
+        issue.Priority = Priority.Low;
+        
+        try
+        {
+            issue = CreateTestIssue();
+            passed = Services.Issues.Edit(issue.Id, issue, CreateTestUser());
+        }
+        catch (Exception e)
+        {
+            passed = false;
+        }
+
+        Assert.True(passed);
+        Assert.NotNull(issue);
+        
+    }
+    
+    [Fact]
+    public void TestDelete()
+    {
+        bool passed = true;
+
+        Issue issue = CreateTestIssue();
+        
+        try
+        {
+            Services.Issues.Delete(issue.Id);
+        }
+        catch (Exception e)
+        {
+            passed = false;
+        }
+
+        Assert.True(passed);
     }
 }
