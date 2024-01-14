@@ -74,6 +74,8 @@ public class AuthService : Service
     
     public static string GenerateRandomAsciiString(int length)
     {
+        const string allowedChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._";
+
         using (RandomNumberGenerator rng = RandomNumberGenerator.Create())
         {
             byte[] buffer = new byte[length];
@@ -83,8 +85,8 @@ public class AuthService : Service
 
             foreach (byte b in buffer)
             {
-                char asciiChar = (char)(32 + (b % 95));
-                result.Append(asciiChar);
+                char urlChar = allowedChars[b % allowedChars.Length];
+                result.Append(urlChar);
             }
 
             return result.ToString();

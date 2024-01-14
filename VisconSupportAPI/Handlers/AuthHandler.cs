@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Primitives;
 using VisconSupportAPI.Data;
 using VisconSupportAPI.Models;
 using VisconSupportAPI.Types;
@@ -36,16 +37,28 @@ public class AuthHandler : Handler
         return new OkObjectResult(user);    
     }
 
-    public ActionResult CreatePasswordResetSession(string email)
+    public ActionResult CreatePasswordResetSession(string email, StringValues origin)
     {
         User? user = Services.Users.GetByEmail(email);
-
+        
         if (user == null)
         {
             return new NotFoundResult();
         }
 
         PasswordResetSession session = Services.Auth.CreatePasswordResetSession(user);
+
+        string baseUrl = "https://project-c.zoutigewolf.dev";
+
+        if (origin.Count > 0)
+        {
+            string? url = origin[0];
+
+            if (url != null)
+            {
+                baseUrl = url;
+            }
+        }
         
         Services.Mail.Send(
             user.Email,
@@ -54,7 +67,7 @@ public class AuthHandler : Handler
                Click the following link to reset your password. This link expires in 24 hours.
                Do not share this link with anyone.
                
-               https://project-c.zoutigewolf.dev/forgot-password?token={session.Token}
+               {baseUrl}/forgot-password?token={session.Token}
             """);
         
         return new OkResult();
@@ -65,6 +78,13 @@ public class AuthHandler : Handler
         PasswordResetSession? session = Services.Auth.GetSessionByToken(token);
 
         if (session == null)
+        {
+            return new NotFoundResult();
+        }
+
+        TimeSpan diff = DateTime.UtcNow - session.CreatedAt;
+
+        if (diff.TotalDays > 1)
         {
             return new NotFoundResult();
         }
