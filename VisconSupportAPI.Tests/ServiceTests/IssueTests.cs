@@ -25,6 +25,15 @@ public class IssueTests : ServiceTest
             Type = AccountType.User
         });
     }
+    
+    public void DeleteTestUser()
+    {
+        User? user = Services.Users.GetByUsername("testuser");
+        if (user != null)
+        {
+            Services.Users.Delete(user.Id);
+        }
+    }
     public Issue CreateTestIssue()
     {
         var machineId = CreateTestMachine().Id;
@@ -119,5 +128,6 @@ public class IssueTests : ServiceTest
         }
 
         Assert.True(passed);
+        DeleteTestUser();
     }
 }
