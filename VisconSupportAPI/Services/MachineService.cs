@@ -17,7 +17,13 @@ public class MachineService : Service
 
     public List<Machine> GetAllForUser(User user)
     {
-        return user.Company.Machines;
+        Services.LoadReference(user, u => u.Company);
+        if (user.Company == null)
+        {
+            return new List<Machine>();
+        }
+        var machines = Context.Machines.Where(h => h.Companies.Contains(user.Company)).ToList();
+        return user.Company == null ? new List<Machine>() : machines;
     }
 
     public Machine Create(NewMachine data)
