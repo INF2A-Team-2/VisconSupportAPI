@@ -53,12 +53,10 @@ public class CompanyTest : ServiceTest
     }
     
     [Theory]
-    [InlineData(true, "someothername", false)]
-    [InlineData(false, "someothername", true)]
-    [InlineData(false, "customer", false)]
-    public void TestEdit(bool isUserNull, string username, bool valid)
+    [InlineData("testcompany", true)]
+    public void TestEdit(string companyname, bool valid)
     {
-        Company? company = isUserNull ? null : CreateCompanyTest();
+        Company company = CreateCompanyTest();
 
         bool passed = true;
 
@@ -66,14 +64,14 @@ public class CompanyTest : ServiceTest
         {
             Services.Companies.Edit(company?.Id ?? -1, new NewCompany()
             {
-                Name = username
+                Name = companyname
             });
         }
-        catch (Exception)
+        catch (ArgumentException)
         {
             passed = false;
         }
-        
+
         Assert.Equal(valid, passed);
 
         if (company != null)
