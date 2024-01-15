@@ -17,19 +17,11 @@ public class ServiceTest : BaseTest, IDisposable
 
     public void Dispose()
     {
-        User? user = Context.Users.FirstOrDefault(h => h.Username == "testuser");
-        if (user != null)
-        {
-            Context.Users.Remove(user);
-        }
-
-        User? user2 = Context.Users.FirstOrDefault(h => h.Username == "issuetestuser");
-        if (user2 != null)
-        {
-            Context.Users.Remove(user2);
-        }
-
+        //Context.Users.Where(u => u.Username.Contains("Test")).
         Context.Machines.Where(h => h.Name == "machine").ToList()
-            .ForEach(h => Context.Machines.Remove(h));
+            .ForEach(h => Services.Machines.Delete(h.Id));
+        
+        Context.Machines.Where(u => u.Name.Contains("test")).ToList()
+            .ForEach(u => Services.Users.Delete(u.Id));
     }
 }

@@ -30,10 +30,11 @@ public class MachineTests : ServiceTest
     }
 
     [Theory]
-    [InlineData("machine", true)]
+    [InlineData("testmachine", true)]
     [InlineData("nonexistentmachine", false)]
     public void TestGetByName(string name, bool exists)
     {
+        CreateTestMachine();
         Machine? machine = Services.Machines.GetByName(name);
 
         Assert.Equal(exists, machine != null);
@@ -58,16 +59,16 @@ public class MachineTests : ServiceTest
     }
 
     [Theory]
-    [InlineData("testmachine", true)]
-    [InlineData("machine", false)]
+    [InlineData("testmachine", false)]
+    [InlineData("machine", true)]
     public void TestCreate(string name, bool valid)
     {
         bool passed = true;
+        CreateTestMachine();
 
-        Machine machine = null;
         try
         {
-            machine = Services.Machines.Create(new NewMachine()
+            Services.Machines.Create(new NewMachine()
             {
                 Name = name
             });
@@ -78,11 +79,6 @@ public class MachineTests : ServiceTest
         }
 
         Assert.Equal(valid, passed);
-
-        if (machine != null)
-        {
-            Services.Machines.Delete(machine.Id);
-        }
     }
 
     [Theory]
@@ -106,11 +102,6 @@ public class MachineTests : ServiceTest
         }
 
         Assert.Equal(valid, passed);
-
-        if (machine != null)
-        {
-            Services.Machines.Delete(machine.Id);
-        }
     }
 
     [Fact]
