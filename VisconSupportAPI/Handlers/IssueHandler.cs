@@ -253,12 +253,20 @@ public class IssueHandler : Handler
             return new ForbidResult();
         }
 
-        var issue = Services.Issues.GetById(issueId);
-        if (issue == null) return new NotFoundResult();
+        Issue? issue = Services.Issues.GetById(issueId);
+
+        if (issue == null)
+        {
+            return new NotFoundResult();
+        }
+        
         issue.Status = Status.Archived;
 
-        Services.Issues.Edit(issueId, issue, user);
+        report.IssueId = issue.Id;
+        report.MachineId = issue.MachineId;
+        
         Services.Reports.Create(report);
+        
         return new OkResult();
     }
 }
