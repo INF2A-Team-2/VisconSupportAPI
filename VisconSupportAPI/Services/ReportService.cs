@@ -19,6 +19,7 @@ public class ReportService : Service
         var userId = Services.Issues.GetById(data.IssueId).UserId;
         var companyId = Services.Users.GetById(userId).CompanyId;
         if (companyId == null) return null;
+        
         Report report = new Report()
         {
             Title = data.Title,
