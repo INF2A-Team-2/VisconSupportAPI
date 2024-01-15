@@ -33,7 +33,7 @@ public class IssueHandler : Handler
             case AccountType.Helpdesk:
                 issues = (from issue in Services.Issues.GetAll()
                     join newUser in Services.Users.GetAll() on issue.UserId equals newUser.Id
-                    where newUser.UnitId == user.UnitId
+                    where newUser.UnitId == user.UnitId && issue.Status == Status.Open
                     select issue).ToList();
                 break;
             
