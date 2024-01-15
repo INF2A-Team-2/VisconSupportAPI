@@ -25,6 +25,7 @@ public class UnitsTest : ServiceTest
     [InlineData(0, false)]
     public void TestGetById(int UnitId, bool exists)
     {
+        CreateUnitModel();
         Unit? Unit = Services.Units.GetById(UnitId);
 
         Assert.Equal(exists, Unit != null);
