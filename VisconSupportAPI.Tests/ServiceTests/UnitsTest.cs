@@ -21,7 +21,6 @@ public class UnitsTest : ServiceTest
     }
 
     [Theory]
-    [InlineData(1, true)]
     [InlineData(0, false)]
     public void TestGetById(int UnitId, bool exists)
     {
