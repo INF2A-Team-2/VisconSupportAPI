@@ -29,8 +29,10 @@ public class ReportHandler : Handler
             Services.LoadReference(user, u => u.Company);
             if (user.CompanyId == null || user.Company == null)
                 return new BadRequestResult();
+            var company = user.Company;
+            Services.LoadCollection(company, c => c.Machines);
             return new OkObjectResult(Services.Reports.GetAll()
-                .Where(h => user.CompanyId == h.CompanyId || (user.Company.Machines.Contains(h.Machine) && h.Public)));
+                .Where(h => user.CompanyId == h.CompanyId || (company.Machines.Contains(h.Machine) && h.Public)));
         }
         return new BadRequestResult();
     }
