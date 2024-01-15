@@ -27,13 +27,14 @@ public class IssueHandler : Handler
         switch (user.Type)
         {
             case AccountType.User:
-                issues = Context.Issues.Where(i => i.UserId == user.Id && i.Status == Status.Open).ToList();
+                issues = Context.Issues.Where(i => i.UserId == user.Id 
+                                                   && (i.Status == Status.Open || i.Status == Status.InProgress)).ToList();
                 break;
             
             case AccountType.Helpdesk:
                 issues = (from issue in Services.Issues.GetAll()
                     join newUser in Services.Users.GetAll() on issue.UserId equals newUser.Id
-                    where newUser.UnitId == user.UnitId && issue.Status == Status.Open
+                    where newUser.UnitId == user.UnitId && issue.Status is Status.Open or Status.InProgress
                     select issue).ToList();
                 break;
             
@@ -182,6 +183,12 @@ public class IssueHandler : Handler
         if (user.Type is not (AccountType.Admin or AccountType.Helpdesk) && selectedIssue.UserId != user.Id)
         {
             return new ForbidResult();
+        }
+        
+        if (selectedIssue.Status == Status.Open)
+        {
+            selectedIssue.Status = Status.InProgress;
+            Services.Issues.Edit(selectedIssue.Id, selectedIssue, user);
         }
 
         Message createdMessage = Services.Messages.Create(message, selectedIssue, user);
