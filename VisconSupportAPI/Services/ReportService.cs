@@ -16,9 +16,19 @@ public class ReportService : Service
 
     public Report? Create(NewReport data)
     {
-        var userId = Services.Issues.GetById(data.IssueId).UserId;
-        var companyId = Services.Users.GetById(userId).CompanyId;
-        if (companyId == null) return null;
+        Issue? issue = Services.Issues.GetById(data.IssueId);
+
+        if (issue == null)
+        {
+            return null;
+        }
+
+        int? companyId = Services.Users.GetById(issue.UserId)?.CompanyId;
+
+        if (companyId == null)
+        {
+            return null;
+        }
         
         Report report = new Report()
         {
