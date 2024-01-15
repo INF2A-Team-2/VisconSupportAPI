@@ -4,6 +4,7 @@ using VisconSupportAPI.Data;
 using VisconSupportAPI.Models;
 using VisconSupportAPI.Types;
 using VisconSupportAPI.Services;
+using VisconSupportAPI.Migrations;
 
 namespace VisconSupportAPI.Handlers;
 
@@ -27,10 +28,11 @@ public class ReportHandler : Handler
             return new OkObjectResult(Services.Reports.GetAll());
         if (user.Type == AccountType.User)
         {
+            Services.LoadReference(user, u => u.Company);
             if (user.CompanyId == null || user.Company == null)
                 return new BadRequestResult();
             return new OkObjectResult(Services.Reports.GetAll()
-                .Where(h => user.CompanyId == h.CompanyId || user.Company.Machines.Contains(h.Machine) && h.Public));
+                .Where(h => user.CompanyId == h.CompanyId || (user.Company.Machines.Contains(h.Machine) && h.Public)));
         }
         return new BadRequestResult();
     }
