@@ -76,10 +76,12 @@ public class Program
             app.UseSwagger();
             app.UseSwaggerUI();
         }
+      
+        if (!Directory.Exists("Logs"))
+            Directory.CreateDirectory("Logs");
+            
         
-        // if(!Directory.Exists("Logs"))
-        //     Directory.CreateDirectory("Logs");
-        // var path = "Logs/" + DateTime.Now.ToString("yyyyMMddHHmmssfff") + ".log.txt";
+        string path = "Logs/" + DateTime.Now.ToString("yyyyMMddHHmmssfff") + ".log.txt";
         
         // app.Use((context, next) =>
         // {
@@ -99,17 +101,22 @@ public class Program
 
         app.Run();
     }
-    
-    // private static void LogRequestHeaders(string path, HttpRequest request)
-    // {
-    //     List<string> headers = new List<string>();
-    //     headers.Add($"{request.Method} {request.Path}");
-    //     headers.Add("Request Headers:");
-    //     foreach (KeyValuePair<string, StringValues> header in request.Headers)
-    //     {
-    //         headers.Add($"{header.Key}: {string.Join(", ", header.Value)}");
-    //     }
-    //     headers.Add("\n\n\n");
-    //     File.AppendAllLines(path, headers);
-    // }
+  
+    private static void LogRequestHeaders(string path, HttpRequest request)
+    {
+        List<string> headers = new List<string>();
+        
+        headers.Add($"{DateTime.Now:F}");
+        headers.Add($"{request.Method} {request.Path}");
+        headers.Add("Request Headers:");
+        
+        foreach (KeyValuePair<string, StringValues> header in request.Headers)
+        {
+            headers.Add($"{header.Key}: {string.Join(", ", header.Value)}");
+        }
+        
+        headers.Add("\n\n\n");
+        
+        File.AppendAllLines(path, headers);
+    }
 }

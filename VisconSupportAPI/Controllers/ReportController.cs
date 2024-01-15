@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using VisconSupportAPI.Attributes;
 using VisconSupportAPI.Data;
 using VisconSupportAPI.Handlers;
 using VisconSupportAPI.Models;
@@ -21,6 +22,7 @@ public class ReportController : Controller<ReportController, ReportHandler>
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [QueryFiltered("Id.asc")]
     public ActionResult<List<Report>> GetReports() => Handler.GetAllReports(GetUserFromClaims());
 
     [HttpGet("{reportId:int}")]

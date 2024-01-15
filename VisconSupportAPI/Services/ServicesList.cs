@@ -21,6 +21,7 @@ public class ServicesList
     public readonly LogService Logs;
     public readonly UnitService Units;
     public readonly ReportService Reports;
+    public readonly MailService Mail;
     
     public ServicesList(DatabaseContext context, IConfiguration configuration)
     {
@@ -37,6 +38,7 @@ public class ServicesList
         Logs = new LogService(context, configuration, this);
         Units = new UnitService(context, configuration, this);
         Reports = new ReportService(context, configuration, this);
+        Mail = new MailService(context, configuration, this);
     }
     
     public IEnumerable<TProperty> LoadCollection<TEntity, TProperty>(TEntity entity, Expression<Func<TEntity, IEnumerable<TProperty>>> selector) 

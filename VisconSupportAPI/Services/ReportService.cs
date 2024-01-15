@@ -14,15 +14,19 @@ public class ReportService : Service
 
     public List<Report> GetAll() => Context.Reports.ToList();
 
-    public Report Create(NewReport data)
+    public Report? Create(NewReport data)
     {
+        var userId = Services.Issues.GetById(data.IssueId).UserId;
+        var companyId = Services.Users.GetById(userId).CompanyId;
+        if (companyId == null) return null;
+        
         Report report = new Report()
         {
             Title = data.Title,
             Body = data.Body,
-            Public = data.pub, 
+            Public = data.Public, 
             MachineId = data.MachineId,
-            IssueId = data.IssueId,
+            CompanyId = companyId.Value,
             TimeStamp = DateTime.UtcNow
         };
 
@@ -43,7 +47,7 @@ public class ReportService : Service
 
         report.Title = data.Title;
         report.Body = data.Body;
-        report.Public = data.pub;
+        report.Public = data.Public;
         report.MachineId = data.MachineId;
 
         Context.SaveChanges();

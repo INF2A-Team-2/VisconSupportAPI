@@ -12,7 +12,7 @@ public class Issue
     public string Actual {get; set;}
     public string Expected {get; set;}
     public string Tried {get; set;}
-    public string PhoneNumber {get; set;}
+    public string? PhoneNumber {get; set;}
     public DateTime TimeStamp { get; set; }
     public int UserId { get; set; }
     [JsonIgnore] public User User { get; set; }

@@ -3,7 +3,6 @@ using VisconSupportAPI.Controllers;
 using VisconSupportAPI.Data;
 using VisconSupportAPI.Models;
 using VisconSupportAPI.Types;
-using VisconSupportAPI.Services;
 
 namespace VisconSupportAPI.Handlers;
 
@@ -27,10 +26,11 @@ public class ReportHandler : Handler
             return new OkObjectResult(Services.Reports.GetAll());
         if (user.Type == AccountType.User)
         {
-            if (user.CompanyId == null)
-                return new UnauthorizedResult();
-            return new OkObjectResult(Services.Reports.GetAll().Where(h => 
-                h.Public || h.Issue.UserId == user.Id || h.Issue.Machine.Companies.Contains(user.Company)).ToList());
+            Services.LoadReference(user, u => u.Company);
+            if (user.CompanyId == null || user.Company == null)
+                return new BadRequestResult();
+            return new OkObjectResult(Services.Reports.GetAll()
+                .Where(h => user.CompanyId == h.CompanyId || (user.Company.Machines.Contains(h.Machine) && h.Public)));
         }
         return new BadRequestResult();
     }
@@ -49,7 +49,8 @@ public class ReportHandler : Handler
 
         public ActionResult<Report> CreateReport(NewReport data)
         {
-            Report createdReport = Services.Reports.Create(data);
+            Report? createdReport = Services.Reports.Create(data);
+            if(createdReport == null) return new BadRequestResult();
         
             return new CreatedAtActionResult(
                 "GetReport",

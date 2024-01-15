@@ -5,6 +5,7 @@ using VisconSupportAPI.Controllers;
 using VisconSupportAPI.Data;
 using VisconSupportAPI.Models;
 using CsvHelper;
+using VisconSupportAPI.Attributes;
 using VisconSupportAPI.Handlers;
 using VisconSupportAPI.Types;
 
@@ -22,6 +23,7 @@ public class MachineController : Controller<MachineController, MachineHandler>
     [Authorize]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [QueryFiltered("Id.asc")]
     public ActionResult<List<Machine>> GetMachines() => Handler.GetAllMachines(GetUserFromClaims());
     
     [HttpGet("{machineId:int}")]
