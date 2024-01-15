@@ -14,7 +14,7 @@ public class AttachmentHandler : Handler
     {
     }
 
-    public ActionResult<List<Attachment>> GetAttachment(int attachmentId)
+    public ActionResult<Attachment> GetAttachment(int attachmentId)
     {
         Attachment? attachment = Services.Attachments.GetById(attachmentId);
         

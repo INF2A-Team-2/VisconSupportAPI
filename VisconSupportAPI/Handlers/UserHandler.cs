@@ -19,9 +19,15 @@ public class UserHandler : Handler
             return new UnauthorizedResult();
         }
 
+        if (user.Type == AccountType.User)
+        {
+            return new ForbidResult();
+        }
+
         if (user.Type == AccountType.Helpdesk)
         {
-            return new OkObjectResult(Context.Users.Where(u => u.UnitId == user.UnitId && u.Id != user.Id).ToList());
+            return new OkObjectResult(Context.Users.Where(u => u.UnitId == user.UnitId 
+              && u.Type == AccountType.User && u.Id != user.Id).ToList());
         }
         return new OkObjectResult(Services.Users.GetAll().Where(u => u.Id != user.Id));
     }
