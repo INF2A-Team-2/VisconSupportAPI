@@ -1,4 +1,5 @@
 using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using VisconSupportAPI.Data;
 using VisconSupportAPI.Models;
@@ -39,6 +40,11 @@ public class ServicesList
         Units = new UnitService(context, configuration, this);
         Reports = new ReportService(context, configuration, this);
         Mail = new MailService(context, configuration, this);
+    }
+
+    public void DetachEntity<TEntity>(TEntity entity) where TEntity : notnull
+    {
+        Context.Entry(entity).State = EntityState.Detached;
     }
     
     public IEnumerable<TProperty> LoadCollection<TEntity, TProperty>(TEntity entity, Expression<Func<TEntity, IEnumerable<TProperty>>> selector) 

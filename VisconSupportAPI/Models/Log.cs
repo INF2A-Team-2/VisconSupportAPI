@@ -10,8 +10,11 @@ public class Log
     public string Description { get; set; }
     public int? IssueId { get; set; }
     public int? UserId { get; set; }
+    public int? CompanyId { get; set; }
+    public int? UnitId { get; set; }
     public int? MachineId { get; set; }
     public int? MessageId { get; set; }
     public int? AttachmentId { get; set; }
+    public int? ReportId { get; set; }
     [JsonIgnore] public User Author { get; set; }
 }

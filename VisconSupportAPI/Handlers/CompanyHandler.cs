@@ -50,7 +50,7 @@ public class CompanyHandler : Handler
 
         Company createdCompany = Services.Companies.Create(data);
         
-        //Services.Logs.Create(user, $"User: {createdCompany.Name} has been created", company : createdCompany); 
+        Services.Logs.Create(user, $"Company: \"{createdCompany.Name}\" [{createdCompany.Id}] has been created", company: createdCompany); 
 
         return new CreatedAtActionResult(
             "GetCompany",
@@ -71,7 +71,16 @@ public class CompanyHandler : Handler
             return new ForbidResult();
         }
 
+        Company? company = Services.Companies.GetById(companyId);
+
+        if (company == null)
+        {
+            return new NotFoundResult();
+        }
+
         Services.Companies.Edit(companyId, data);
+
+        Services.Logs.Create(user, $"Company: \"{company.Name}\" [{company.Id}] has been edited", company: company);
         
         return new NoContentResult();
     }
@@ -87,8 +96,19 @@ public class CompanyHandler : Handler
         {
             return new ForbidResult();
         }
+        
+        Company? company = Services.Companies.GetById(companyId);
 
+        if (company == null)
+        {
+            return new NotFoundResult();
+        }
+        
+        Services.DetachEntity(company);
+        
         Services.Companies.Delete(companyId);
+        
+        Services.Logs.Create(user, $"Company: \"{company.Name}\" [{company.Id}] has been deleted", company: company);
 
         return new OkResult();
     }
