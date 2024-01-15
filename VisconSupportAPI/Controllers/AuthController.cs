@@ -26,4 +26,14 @@ public class AuthController : Controller<AuthController, AuthHandler>
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public ActionResult<User> GetUser() => Handler.GetUser(GetUserFromClaims());
+
+    [HttpGet("forgot-password")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public ActionResult CreatePasswordResetSession(string email) => Handler.CreatePasswordResetSession(email, HttpContext.Request.Headers.Origin);
+    
+    [HttpPost("forgot-password")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public ActionResult ChangePassword(string token, string password) => Handler.ChangePassword(token, password);
 }

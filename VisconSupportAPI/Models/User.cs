@@ -11,7 +11,9 @@ public class User
     public AccountType Type { get; set; }
     public int? UnitId { get; set; }
     public int? CompanyId { get; set; }
+    public string Email { get; set; }
     [JsonIgnore] public Company? Company { get; set; }
     [JsonIgnore] public List<Issue> Issues { get; set; }
     [JsonIgnore] public List<Message> Messages { get; set; }
+    [JsonIgnore] public PasswordResetSession? PasswordResetSession { get; set; }
 }

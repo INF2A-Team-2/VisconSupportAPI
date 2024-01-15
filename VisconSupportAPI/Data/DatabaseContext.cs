@@ -19,6 +19,7 @@ public class DatabaseContext : DbContext
     public DbSet<Log> Logs { get; set; }
     public DbSet<Unit> Units { get; set; } 
     public DbSet<Report> Reports { get; set; }
+    public DbSet<PasswordResetSession> PasswordResetSessions { get; set; }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -94,6 +95,9 @@ public class DatabaseContext : DbContext
             .HasForeignKey(x => x.MachineId)
             .HasPrincipalKey(x => x.Id)
             .IsRequired();
-    }
 
+        modelBuilder.Entity<PasswordResetSession>()
+            .HasOne<User>(x => x.User)
+            .WithOne(x => x.PasswordResetSession);
+    }
 }

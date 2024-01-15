@@ -253,6 +253,35 @@ namespace VisconSupportAPI.Migrations
                     b.ToTable("Messages");
                 });
 
+            modelBuilder.Entity("VisconSupportAPI.Models.PasswordResetSession", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("integer");
+
+                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasColumnType("text");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("integer");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId")
+                        .IsUnique();
+
+                    b.HasIndex("Id", "Token")
+                        .IsUnique();
+
+                    b.ToTable("PasswordResetSessions");
+                });
+
             modelBuilder.Entity("VisconSupportAPI.Models.Report", b =>
                 {
                     b.Property<int>("Id")
@@ -315,11 +344,12 @@ namespace VisconSupportAPI.Migrations
                     b.Property<int?>("CompanyId")
                         .HasColumnType("integer");
 
-                    b.Property<string>("PasswordHash")
+                    b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("PhoneNumber")
+                    b.Property<string>("PasswordHash")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("Type")
@@ -459,6 +489,17 @@ namespace VisconSupportAPI.Migrations
                     b.Navigation("User");
                 });
 
+            modelBuilder.Entity("VisconSupportAPI.Models.PasswordResetSession", b =>
+                {
+                    b.HasOne("VisconSupportAPI.Models.User", "User")
+                        .WithOne("PasswordResetSession")
+                        .HasForeignKey("VisconSupportAPI.Models.PasswordResetSession", "UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
             modelBuilder.Entity("VisconSupportAPI.Models.Report", b =>
                 {
                     b.HasOne("VisconSupportAPI.Models.Machine", "Machine")
@@ -501,6 +542,8 @@ namespace VisconSupportAPI.Migrations
                     b.Navigation("Issues");
 
                     b.Navigation("Messages");
+
+                    b.Navigation("PasswordResetSession");
                 });
 #pragma warning restore 612, 618
         }
