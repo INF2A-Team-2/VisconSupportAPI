@@ -34,8 +34,8 @@ public class UnitsTest : ServiceTest
     [Fact]
     public void TestGetAll()
     {
+        CreateUnitModel();
         List<Unit> Units = Services.Units.GetAll();
-
         Assert.NotEmpty(Units);
     }
 
@@ -65,10 +65,10 @@ public class UnitsTest : ServiceTest
     public void TestEdit(string name, bool valid)
     {
         bool passed = true;
-        Unit Unit = CreateUnitModel();
+        Unit unit = CreateUnitModel();
         try
         {
-            Services.Units.Edit(Unit.Id, new NewUnit()
+            Services.Units.Edit(unit.Id, new NewUnit()
             {
                 Name = name,
                 Description = "testdescription"
@@ -88,8 +88,8 @@ public class UnitsTest : ServiceTest
         bool passed = true;
         try
         {
-            Unit Unit = CreateUnitModel();
-            Services.Units.Delete(Unit.Id);
+            Unit unit = CreateUnitModel();
+            Services.Units.Delete(unit.Id);
             Unit Unit2 = Services.Units.GetByName("extraunit");
             Services.Units.Delete(Unit2.Id);
         }
