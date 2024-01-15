@@ -27,7 +27,7 @@ public class IssueHandler : Handler
         switch (user.Type)
         {
             case AccountType.User:
-                issues = Context.Issues.Where(i => i.UserId == user.Id).ToList();
+                issues = Context.Issues.Where(i => i.UserId == user.Id && i.Status == Status.Open).ToList();
                 break;
             
             case AccountType.Helpdesk:

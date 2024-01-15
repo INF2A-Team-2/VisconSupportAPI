@@ -3,8 +3,6 @@ using VisconSupportAPI.Controllers;
 using VisconSupportAPI.Data;
 using VisconSupportAPI.Models;
 using VisconSupportAPI.Types;
-using VisconSupportAPI.Services;
-using VisconSupportAPI.Migrations;
 
 namespace VisconSupportAPI.Handlers;
 
