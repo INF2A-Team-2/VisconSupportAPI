@@ -88,10 +88,6 @@ public class UserService : Service
             user.Email = data.Email;
         }
 
-        user.Type = data.Type;
-        user.UnitId = data.UnitId;
-        user.CompanyId = data.CompanyId;
-
         Context.SaveChanges();
     }
     
