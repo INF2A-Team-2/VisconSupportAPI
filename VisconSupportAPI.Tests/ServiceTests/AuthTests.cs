@@ -9,7 +9,7 @@ using VisconSupportAPI.Types;
 
 namespace VisconSupportAPI.Tests;
 
-[Collection("AuthTests")]
+[Collection("Tests")]
 public class AuthTests : ServiceTest
 {
     public AuthTests() : base()

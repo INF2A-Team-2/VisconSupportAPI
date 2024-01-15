@@ -6,7 +6,7 @@ using VisconSupportAPI.Types;
 
 namespace VisconSupportAPI.Tests;
 
-[Collection("UserTests")]
+[Collection("Tests")]
 public class UserTests : ServiceTest
 {
     public UserTests() : base()
