@@ -38,7 +38,7 @@ public class ReportController : Controller<ReportController, ReportHandler>
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public ActionResult<Report> CreateReport(NewReport data) => Handler.CreateReport(data);
+    public ActionResult<Report> CreateReport(NewReport data) => Handler.CreateReport(GetUserFromClaims(), data);
 
     [HttpPut("{reportId:int}")]
     [Authorize]
@@ -46,7 +46,7 @@ public class ReportController : Controller<ReportController, ReportHandler>
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult EditReport(int reportId, NewReport data) => Handler.EditReport(reportId, data);
+    public ActionResult EditReport(int reportId, NewReport data) => Handler.EditReport(GetUserFromClaims(), reportId, data);
 
     [HttpDelete("{reportId:int}")]
     [Authorize]
@@ -54,5 +54,5 @@ public class ReportController : Controller<ReportController, ReportHandler>
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult DeleteReport(int reportId) => Handler.DeleteReport(reportId);
+    public ActionResult DeleteReport(int reportId) => Handler.DeleteReport(GetUserFromClaims(), reportId);
 }

@@ -47,8 +47,10 @@ public class ReportHandler : Handler
             return new OkObjectResult(report);
         }
 
-        public ActionResult<Report> CreateReport(NewReport data)
+        public ActionResult<Report> CreateReport(User? user, NewReport data)
         {
+            if(user == null) return new UnauthorizedResult();
+            if(user.Type is not AccountType.Admin and AccountType.Helpdesk) return new ForbidResult();
             Report? createdReport = Services.Reports.Create(data);
             if(createdReport == null) return new BadRequestResult();
         
@@ -59,8 +61,10 @@ public class ReportHandler : Handler
                 createdReport);
         }
 
-        public ActionResult EditReport(int reportId, NewReport data)
+        public ActionResult EditReport(User? user, int reportId, NewReport data)
         {
+            if(user == null) return new UnauthorizedResult();
+            if(user.Type is not AccountType.Admin and AccountType.Helpdesk) return new ForbidResult();
             bool isEdited = Services.Reports.Edit(reportId, data);
         
             if (!isEdited)
@@ -71,8 +75,10 @@ public class ReportHandler : Handler
             return new NoContentResult();
         }
 
-        public ActionResult DeleteReport(int reportId)
+        public ActionResult DeleteReport(User? user, int reportId)
         {
+            if(user == null) return new UnauthorizedResult();
+            if(user.Type is not AccountType.Admin and AccountType.Helpdesk) return new ForbidResult();
             bool isDeleted = Services.Reports.Delete(reportId);
         
             if (!isDeleted)
