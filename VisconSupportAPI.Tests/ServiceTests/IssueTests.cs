@@ -2,7 +2,7 @@ using VisconSupportAPI.Types;
 
 namespace VisconSupportAPI.Tests;
 
-[Collection("IssueTests")]
+[Collection("Tests")]
 public class IssueTests : ServiceTest
 {
     public IssueTests() : base()
@@ -22,6 +22,7 @@ public class IssueTests : ServiceTest
         {
             Username = "issuetestuser",
             Password = "test",
+            Email = "test@test.test",
             Type = AccountType.User
         });
     }
@@ -92,10 +93,9 @@ public class IssueTests : ServiceTest
         {
             passed = Services.Issues.Edit(issue.Id, issue, CreateTestUser());
         }
-        catch (Exception e)
+        catch (Exception)
         {
             passed = false;
-            Console.WriteLine(e);
         }
 
         Assert.True(passed);

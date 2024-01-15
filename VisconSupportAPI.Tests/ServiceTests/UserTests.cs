@@ -6,7 +6,7 @@ using VisconSupportAPI.Types;
 
 namespace VisconSupportAPI.Tests;
 
-[Collection("UserTests")]
+[Collection("Tests")]
 public class UserTests : ServiceTest
 {
     public UserTests() : base()
@@ -20,6 +20,7 @@ public class UserTests : ServiceTest
         {
             Username = "testuser",
             Password = "test",
+            Email = "test@test.test"
         });
     }
     
@@ -48,13 +49,13 @@ public class UserTests : ServiceTest
     {
         List<User> users = Services.Users.GetAll();
         
-        Assert.InRange(users.Count, 3, 5);
+        Assert.InRange(users.Count, 3, 7);
     }
     
     [Theory]
-    [InlineData("test", "test", true)]
-    [InlineData(null, null, false)]
-    public void TestCreate(string? username, string? password, bool valid)
+    [InlineData("test", "test", "test", true)]
+    [InlineData(null, null, null, false)]
+    public void TestCreate(string? username, string? password, string? email, bool valid)
     {
         bool passed = true;
 
@@ -65,7 +66,8 @@ public class UserTests : ServiceTest
             user = Services.Users.Create(new NewUser()
             {
                 Username = username,
-                Password = password
+                Password = password,
+                Email = email
             });
         }
         catch (Exception)
