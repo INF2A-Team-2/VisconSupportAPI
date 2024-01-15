@@ -14,9 +14,4 @@ public class Log
     public int? MessageId { get; set; }
     public int? AttachmentId { get; set; }
     [JsonIgnore] public User Author { get; set; }
-    [JsonIgnore] public Issue? Issue { get; set; }
-    [JsonIgnore] public User? User { get; set; }
-    [JsonIgnore] public Machine? Machine { get; set; }
-    [JsonIgnore] public Message? Message { get; set; }
-    [JsonIgnore] public Attachment? Attachment { get; set; }
 }

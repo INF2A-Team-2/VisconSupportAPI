@@ -27,13 +27,13 @@ public class IssueHandler : Handler
         switch (user.Type)
         {
             case AccountType.User:
-                issues = Context.Issues.Where(i => i.UserId == user.Id).ToList();
+                issues = Context.Issues.Where(i => i.UserId == user.Id && i.Status == Status.Open).ToList();
                 break;
             
             case AccountType.Helpdesk:
                 issues = (from issue in Services.Issues.GetAll()
                     join newUser in Services.Users.GetAll() on issue.UserId equals newUser.Id
-                    where newUser.UnitId == user.UnitId
+                    where newUser.UnitId == user.UnitId && issue.Status == Status.Open
                     select issue).ToList();
                 break;
             
@@ -240,5 +240,25 @@ public class IssueHandler : Handler
         Attachment newAttachment = Services.Attachments.Create(attachment, selectedIssue);
 
         return new OkObjectResult(newAttachment);
+    }
+
+    public ActionResult ResolveIssue(User? user, int issueId, NewReport report)
+    {
+        if (user == null)
+        {
+            return new UnauthorizedResult();
+        }
+        if (user.Type is not (AccountType.Admin or AccountType.Helpdesk))
+        {
+            return new ForbidResult();
+        }
+
+        var issue = Services.Issues.GetById(issueId);
+        if (issue == null) return new NotFoundResult();
+        issue.Status = Status.Archived;
+
+        Services.Issues.Edit(issueId, issue, user);
+        Services.Reports.Create(report);
+        return new OkResult();
     }
 }

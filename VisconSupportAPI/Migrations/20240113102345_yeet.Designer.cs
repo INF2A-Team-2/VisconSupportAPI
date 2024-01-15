@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using VisconSupportAPI.Data;
@@ -11,9 +12,11 @@ using VisconSupportAPI.Data;
 namespace VisconSupportAPI.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20240113102345_yeet")]
+    partial class yeet
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -81,6 +84,7 @@ namespace VisconSupportAPI.Migrations
                         .HasColumnType("text");
 
                     b.Property<string>("PhoneNumber")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.HasKey("Id");
@@ -112,6 +116,7 @@ namespace VisconSupportAPI.Migrations
                         .HasColumnType("integer");
 
                     b.Property<string>("PhoneNumber")
+                        .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<int>("Priority")
@@ -174,7 +179,17 @@ namespace VisconSupportAPI.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("AttachmentId");
+
                     b.HasIndex("AuthorId");
+
+                    b.HasIndex("IssueId");
+
+                    b.HasIndex("MachineId");
+
+                    b.HasIndex("MessageId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("Logs");
                 });
@@ -226,35 +241,6 @@ namespace VisconSupportAPI.Migrations
                     b.ToTable("Messages");
                 });
 
-            modelBuilder.Entity("VisconSupportAPI.Models.PasswordResetSession", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("integer");
-
-                    NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<string>("Token")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("integer");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("UserId")
-                        .IsUnique();
-
-                    b.HasIndex("Id", "Token")
-                        .IsUnique();
-
-                    b.ToTable("PasswordResetSessions");
-                });
-
             modelBuilder.Entity("VisconSupportAPI.Models.Report", b =>
                 {
                     b.Property<int>("Id")
@@ -267,7 +253,10 @@ namespace VisconSupportAPI.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<int>("CompanyId")
+                    b.Property<int?>("CompanyId")
+                        .HasColumnType("integer");
+
+                    b.Property<int>("IssueId")
                         .HasColumnType("integer");
 
                     b.Property<int>("MachineId")
@@ -286,6 +275,8 @@ namespace VisconSupportAPI.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("CompanyId");
+
+                    b.HasIndex("IssueId");
 
                     b.HasIndex("MachineId");
 
@@ -324,10 +315,6 @@ namespace VisconSupportAPI.Migrations
 
                     b.Property<int?>("CompanyId")
                         .HasColumnType("integer");
-
-                    b.Property<string>("Email")
-                        .IsRequired()
-                        .HasColumnType("text");
 
                     b.Property<string>("PasswordHash")
                         .IsRequired()
@@ -397,13 +384,43 @@ namespace VisconSupportAPI.Migrations
 
             modelBuilder.Entity("VisconSupportAPI.Models.Log", b =>
                 {
+                    b.HasOne("VisconSupportAPI.Models.Attachment", "Attachment")
+                        .WithMany()
+                        .HasForeignKey("AttachmentId");
+
                     b.HasOne("VisconSupportAPI.Models.User", "Author")
                         .WithMany()
                         .HasForeignKey("AuthorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("VisconSupportAPI.Models.Issue", "Issue")
+                        .WithMany()
+                        .HasForeignKey("IssueId");
+
+                    b.HasOne("VisconSupportAPI.Models.Machine", "Machine")
+                        .WithMany()
+                        .HasForeignKey("MachineId");
+
+                    b.HasOne("VisconSupportAPI.Models.Message", "Message")
+                        .WithMany()
+                        .HasForeignKey("MessageId");
+
+                    b.HasOne("VisconSupportAPI.Models.User", "User")
+                        .WithMany()
+                        .HasForeignKey("UserId");
+
+                    b.Navigation("Attachment");
+
                     b.Navigation("Author");
+
+                    b.Navigation("Issue");
+
+                    b.Navigation("Machine");
+
+                    b.Navigation("Message");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("VisconSupportAPI.Models.Message", b =>
@@ -425,22 +442,15 @@ namespace VisconSupportAPI.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("VisconSupportAPI.Models.PasswordResetSession", b =>
-                {
-                    b.HasOne("VisconSupportAPI.Models.User", "User")
-                        .WithOne("PasswordResetSession")
-                        .HasForeignKey("VisconSupportAPI.Models.PasswordResetSession", "UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("VisconSupportAPI.Models.Report", b =>
                 {
-                    b.HasOne("VisconSupportAPI.Models.Company", "Company")
+                    b.HasOne("VisconSupportAPI.Models.Company", null)
                         .WithMany("Reports")
-                        .HasForeignKey("CompanyId")
+                        .HasForeignKey("CompanyId");
+
+                    b.HasOne("VisconSupportAPI.Models.Issue", "Issue")
+                        .WithMany()
+                        .HasForeignKey("IssueId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
@@ -450,7 +460,7 @@ namespace VisconSupportAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Company");
+                    b.Navigation("Issue");
 
                     b.Navigation("Machine");
                 });
@@ -488,8 +498,6 @@ namespace VisconSupportAPI.Migrations
                     b.Navigation("Issues");
 
                     b.Navigation("Messages");
-
-                    b.Navigation("PasswordResetSession");
                 });
 #pragma warning restore 612, 618
         }

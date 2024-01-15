@@ -66,6 +66,23 @@ public class UserService : Service
             user.PasswordHash = AuthService.HashPassword(data.Password);
         }
 
+        if (data.Type != null)
+        {
+            user.Type = data.Type;
+        }
+
+        if (user.Type == AccountType.Admin)
+        {
+            if (data.UnitId != null)
+            {
+                user.UnitId = data.UnitId;
+            }
+
+            if (data.CompanyId != null)
+            {
+                user.CompanyId = data.CompanyId;
+            }
+        }
         if (data.Email != null)
         {
             user.Email = data.Email;
@@ -77,7 +94,7 @@ public class UserService : Service
 
         Context.SaveChanges();
     }
-
+    
     public Machine AddMachine(int id, Machine machine)
     {
         User? user = GetById(id);

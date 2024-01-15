@@ -23,7 +23,7 @@ public class ReportController : Controller<ReportController, ReportHandler>
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [QueryFiltered("Id.asc")]
-    public ActionResult<List<Report>> GetReports() => Handler.GetAllReports();
+    public ActionResult<List<Report>> GetReports() => Handler.GetAllReports(GetUserFromClaims());
 
     [HttpGet("{reportId:int}")]
     [Authorize]

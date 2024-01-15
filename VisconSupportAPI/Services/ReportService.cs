@@ -1,7 +1,7 @@
 using VisconSupportAPI.Controllers;
 using VisconSupportAPI.Data;
 using VisconSupportAPI.Models;
-using VisconSupportAPI.Types;
+
 namespace VisconSupportAPI.Services;
 
 public class ReportService : Service
@@ -14,18 +14,19 @@ public class ReportService : Service
 
     public List<Report> GetAll() => Context.Reports.ToList();
 
-    public Report Create(NewReport data)
+    public Report? Create(NewReport data)
     {
-        if(data.CompanyIds.Count == 0)
-        {
-            throw new ArgumentException("No companies selected", nameof(data.CompanyIds));
-        }
+        var userId = Services.Issues.GetById(data.IssueId).UserId;
+        var companyId = Services.Users.GetById(userId).CompanyId;
+        if (companyId == null) return null;
+        
         Report report = new Report()
         {
             Title = data.Title,
             Body = data.Body,
-            Companies = data.CompanyIds.Select(id => Context.Companies.FirstOrDefault(c => c.Id == id)).ToList(), 
+            Public = data.Public, 
             MachineId = data.MachineId,
+            CompanyId = companyId.Value,
             TimeStamp = DateTime.UtcNow
         };
 
@@ -37,10 +38,6 @@ public class ReportService : Service
 
     public Boolean Edit(int id, NewReport data)
     {
-        if(data.CompanyIds.Count == 0)
-        {
-            throw new ArgumentException("No companies selected", nameof(data.CompanyIds));
-        }
         Report? report = GetById(id);
 
         if (report == null)
@@ -50,7 +47,7 @@ public class ReportService : Service
 
         report.Title = data.Title;
         report.Body = data.Body;
-        report.Companies = data.CompanyIds.Select(id => Context.Companies.FirstOrDefault(c => c.Id == id)).ToList();
+        report.Public = data.Public;
         report.MachineId = data.MachineId;
 
         Context.SaveChanges();

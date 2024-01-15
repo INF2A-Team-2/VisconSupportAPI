@@ -1,7 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using VisconSupportAPI.Data;
 using VisconSupportAPI.Models;
-using VisconSupportAPI.Services;
 using VisconSupportAPI.Types;
 
 namespace VisconSupportAPI.Handlers;
@@ -27,9 +26,10 @@ public class UserHandler : Handler
 
         if (user.Type == AccountType.Helpdesk)
         {
-            return new OkObjectResult(Context.Users.Where(u => u.UnitId == user.UnitId && u.Type == AccountType.User).ToList());
+            return new OkObjectResult(Context.Users.Where(u => u.UnitId == user.UnitId 
+              && u.Type == AccountType.User && u.Id != user.Id).ToList());
         }
-        return new OkObjectResult(Services.Users.GetAll());
+        return new OkObjectResult(Services.Users.GetAll().Where(u => u.Id != user.Id));
     }
     
     public ActionResult<User> GetUserById(User? user, int userId)
@@ -84,16 +84,14 @@ public class UserHandler : Handler
             return new UnauthorizedResult();
         }
 
-        if (user.Type != AccountType.Admin)
+        if (user.Type != AccountType.Admin && user.Id != userId)
         {
             return new ForbidResult();
         }
 
         Services.Users.Edit(userId, data);
-        
-        User editedUser = Services.Users.Create(data);
 
-        Services.Logs.Create(user, $"User: {editedUser.Username} has been edited", user: editedUser); 
+        Services.Logs.Create(user, $"User: {data.Username} has been edited"); 
 
         return new NoContentResult();
     }
