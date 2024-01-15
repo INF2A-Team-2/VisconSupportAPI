@@ -29,7 +29,7 @@ public class UserHandler : Handler
             return new OkObjectResult(Context.Users.Where(u => u.UnitId == user.UnitId 
               && u.Type == AccountType.User && u.Id != user.Id).ToList());
         }
-        return new OkObjectResult(Services.Users.GetAll().Where(u => u.Id != user.Id));
+        return new OkObjectResult(Services.Users.GetAll());
     }
     
     public ActionResult<User> GetUserById(User? user, int userId)
