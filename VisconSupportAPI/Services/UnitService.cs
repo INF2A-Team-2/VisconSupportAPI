@@ -11,6 +11,8 @@ public class UnitService : Service
 
     public Unit? GetById(int id) => Context.Units.FirstOrDefault(u => u.Id == id);
 
+    public Unit? GetByName(string name) => Context.Units.FirstOrDefault(u => u.Name == name);
+
     public List<Unit> GetAll() => Context.Units.ToList();
 
     public Unit Create(NewUnit data)
