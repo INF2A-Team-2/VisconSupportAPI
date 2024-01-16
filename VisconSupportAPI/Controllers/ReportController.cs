@@ -32,14 +32,6 @@ public class ReportController : Controller<ReportController, ReportHandler>
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     public ActionResult<Report> GetReport(int reportId) => Handler.GetReportById(reportId);
 
-    [HttpPost]
-    [Authorize]
-    [ProducesResponseType(StatusCodes.Status201Created)]
-    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
-    [ProducesResponseType(StatusCodes.Status403Forbidden)]
-    [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public ActionResult<Report> CreateReport(NewReport data) => Handler.CreateReport(GetUserFromClaims(), data);
-
     [HttpPut("{reportId:int}")]
     [Authorize]
     [ProducesResponseType(StatusCodes.Status204NoContent)]

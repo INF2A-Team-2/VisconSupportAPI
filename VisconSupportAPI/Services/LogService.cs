@@ -17,9 +17,12 @@ public class LogService : Service
     public Log Create(User author, string description, 
         Issue? issue = null,
         User? user = null,
+        Company? company = null,
+        Unit? unit = null,
         Machine? machine = null,
         Message? message = null,
-        Attachment? attachment = null)
+        Attachment? attachment = null,
+        Report? report = null)
     {
         Log log = new Log()
         {
@@ -28,9 +31,12 @@ public class LogService : Service
             Description = description,
             IssueId = issue?.Id,
             UserId = user?.Id,
+            CompanyId = company?.Id,
+            UnitId = unit?.Id,
             MachineId = machine?.Id,
             MessageId = message?.Id,
-            AttachmentId = attachment?.Id
+            AttachmentId = attachment?.Id,
+            ReportId = report?.Id
         };
 
         Context.Logs.Add(log);

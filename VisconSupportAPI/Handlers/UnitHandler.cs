@@ -28,9 +28,23 @@ public class UnitHandler : Handler
         return new OkObjectResult(unit);
     }
 
-    public ActionResult<Unit> CreateUnit(NewUnit data)
+    public ActionResult<Unit> CreateUnit(User? user, NewUnit data)
     {
+        if (user == null)
+        {
+            return new UnauthorizedResult();
+        }
+
+        if (user.Type == AccountType.User)
+        {
+            return new ForbidResult();
+        }
+        
         Unit createdUnit = Services.Units.Create(data);
+        
+        Services.Logs.Create(user, $"Unit: \"{createdUnit.Name}\" [{createdUnit.Id}] has been created", unit: createdUnit); 
+
+        
         return new CreatedAtActionResult(
             "GetUnit",
             "Unit",
@@ -38,23 +52,57 @@ public class UnitHandler : Handler
             createdUnit);
     }
 
-    public ActionResult EditUnit(int unitId, NewUnit data)
+    public ActionResult EditUnit(User? user, int unitId, NewUnit data)
     {
-        bool isEdited = Services.Units.Edit(unitId, data);
-        if (!isEdited)
+        if (user == null)
+        {
+            return new UnauthorizedResult();
+        }
+
+        if (user.Type == AccountType.User)
+        {
+            return new ForbidResult();
+        }
+        
+        Unit? unit = Services.Units.GetById(unitId);
+
+        if (unit == null)
         {
             return new NotFoundResult();
         }
+        
+        Services.Units.Edit(unitId, data);
+        
+        Services.Logs.Create(user, $"Report: \"{unit.Name}\" [{unit.Id}] has been edited", unit: unit); 
+        
         return new NoContentResult();
     }
 
-    public ActionResult DeleteUnit(int unitId)
+    public ActionResult DeleteUnit(User? user, int unitId)
     {
-        bool isDeleted = Services.Units.Delete(unitId);
-        if (!isDeleted)
+        if (user == null)
+        {
+            return new UnauthorizedResult();
+        }
+
+        if (user.Type == AccountType.User)
+        {
+            return new ForbidResult();
+        }
+
+        Unit? unit = Services.Units.GetById(unitId);
+
+        if (unit == null)
         {
             return new NotFoundResult();
         }
+        
+        Services.DetachEntity(unit);
+        
+        Services.Units.Delete(unitId);
+        
+        Services.Logs.Create(user, $"Report: \"{unit.Name}\" [{unit.Id}] has been deleted", unit: unit); 
+        
         return new OkResult();
     }
 }

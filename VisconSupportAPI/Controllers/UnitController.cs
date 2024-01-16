@@ -38,7 +38,7 @@ public class UnitController : Controller<UnitController, UnitHandler>
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public ActionResult<Unit> PostUnit(NewUnit data) => Handler.CreateUnit(data);
+    public ActionResult<Unit> PostUnit(NewUnit data) => Handler.CreateUnit(GetUserFromClaims(), data);
 
     [HttpPut("{unitId:int}")]
     [Authorize]
@@ -46,7 +46,7 @@ public class UnitController : Controller<UnitController, UnitHandler>
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult PutUnit(int unitId, NewUnit data) => Handler.EditUnit(unitId, data);
+    public ActionResult PutUnit(int unitId, NewUnit data) => Handler.EditUnit(GetUserFromClaims(), unitId, data);
 
     [HttpDelete("{unitId:int}")]
     [Authorize]
@@ -54,5 +54,5 @@ public class UnitController : Controller<UnitController, UnitHandler>
     [ProducesResponseType(StatusCodes.Status401Unauthorized)]
     [ProducesResponseType(StatusCodes.Status403Forbidden)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public ActionResult DeleteUnit(int unitId) => Handler.DeleteUnit(unitId);
+    public ActionResult DeleteUnit(int unitId) => Handler.DeleteUnit(GetUserFromClaims(), unitId);
 }

@@ -49,44 +49,56 @@ public class ReportHandler : Handler
             return new OkObjectResult(report);
         }
 
-        public ActionResult<Report> CreateReport(User? user, NewReport data)
-        {
-            if(user == null) return new UnauthorizedResult();
-            if(user.Type is not AccountType.Admin and AccountType.Helpdesk) return new ForbidResult();
-            Report? createdReport = Services.Reports.Create(data);
-            if(createdReport == null) return new BadRequestResult();
-        
-            return new CreatedAtActionResult(
-                "GetReport",
-                "Report",
-                new { reportId = createdReport.Id },
-                createdReport);
-        }
-
         public ActionResult EditReport(User? user, int reportId, NewReport data)
         {
-            if(user == null) return new UnauthorizedResult();
-            if(user.Type is not AccountType.Admin and AccountType.Helpdesk) return new ForbidResult();
-            bool isEdited = Services.Reports.Edit(reportId, data);
-        
-            if (!isEdited)
+            if (user == null)
+            {
+                return new UnauthorizedResult();
+            }
+
+            if (user.Type == AccountType.User)
+            {
+                return new ForbidResult();
+            }
+
+            Report? report = Services.Reports.GetById(reportId);
+
+            if (report == null)
             {
                 return new NotFoundResult();
             }
+            
+            Services.Reports.Edit(reportId, data);
+            
+            Services.Logs.Create(user, $"Report: \"{report.Title}\" [{report.Id}] has been edited", report: report); 
         
             return new NoContentResult();
         }
 
         public ActionResult DeleteReport(User? user, int reportId)
         {
-            if(user == null) return new UnauthorizedResult();
-            if(user.Type is not AccountType.Admin and AccountType.Helpdesk) return new ForbidResult();
-            bool isDeleted = Services.Reports.Delete(reportId);
-        
-            if (!isDeleted)
+            if (user == null)
+            {
+                return new UnauthorizedResult();
+            }
+
+            if (user.Type == AccountType.User)
+            {
+                return new ForbidResult();
+            }
+            
+            Report? report = Services.Reports.GetById(reportId);
+
+            if (report == null)
             {
                 return new NotFoundResult();
             }
+            
+            Services.DetachEntity(report);
+            
+            Services.Reports.Delete(reportId);
+            
+            Services.Logs.Create(user, $"Report: \"{report.Title}\" [{report.Id}] has been deleted", report: report); 
         
             return new OkResult();
         }

@@ -29,7 +29,7 @@ public class UserHandler : Handler
             return new OkObjectResult(Context.Users.Where(u => u.UnitId == user.UnitId 
               && u.Type == AccountType.User && u.Id != user.Id).ToList());
         }
-        return new OkObjectResult(Services.Users.GetAll().Where(u => u.Id != user.Id));
+        return new OkObjectResult(Services.Users.GetAll());
     }
     
     public ActionResult<User> GetUserById(User? user, int userId)
@@ -89,9 +89,16 @@ public class UserHandler : Handler
             return new ForbidResult();
         }
 
+        User? selectedUser = Services.Users.GetById(userId);
+
+        if (selectedUser == null)
+        {
+            return new NotFoundResult();
+        }
+
         Services.Users.Edit(userId, data);
 
-        Services.Logs.Create(user, $"User: {data.Username} has been edited"); 
+        Services.Logs.Create(user, $"User: \"{selectedUser.Username}\" [{selectedUser.Id}] has been edited", user: selectedUser); 
 
         return new NoContentResult();
     }
@@ -107,10 +114,19 @@ public class UserHandler : Handler
         {
             return new ForbidResult();
         }
+        
+        User? selectedUser = Services.Users.GetById(userId);
 
-        Services.Logs.Create(user, $"User: {user.Username} has been edited", user: user);
+        if (selectedUser == null)
+        {
+            return new NotFoundResult();
+        }
+        
+        Services.DetachEntity(selectedUser);
         
         Services.Users.Delete(userId);
+        
+        Services.Logs.Create(user, $"User: \"{selectedUser.Username}\" [{selectedUser.Id}] has been deleted", user: selectedUser);
         
         return new OkResult();
     }

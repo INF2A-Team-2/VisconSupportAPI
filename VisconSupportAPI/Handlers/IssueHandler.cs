@@ -99,13 +99,13 @@ public class IssueHandler : Handler
 
         Issue issue = Services.Issues.Create(ticket, issueUser);
 
-        Services.Logs.Create(user, $"Ticket: {ticket.Headline} has been created", issue : issue); 
+        Services.Logs.Create(user, $"Ticket: \"{issue.Headline}\" [{issue.Id}] has been created", issue: issue); 
         
-            return new CreatedAtActionResult(
-            "GetIssue",
-            "Issue",
-            new { issueId = issue.Id },
-            issue);
+        return new CreatedAtActionResult(
+        "GetIssue",
+        "Issue",
+        new { issueId = issue.Id },
+        issue);
     }
 
     public ActionResult ChangeIssuePriority(User? user, Priority priority, int issueId)
@@ -117,10 +117,18 @@ public class IssueHandler : Handler
 
         if (user.Type is AccountType.User) return new ForbidResult();
 
-        var oldIssue = Services.Issues.GetById(issueId);
-        if (oldIssue == null) return new BadRequestResult();
-        oldIssue.Priority = priority;
-        return Services.Issues.Edit(issueId, oldIssue, user) ? new OkResult() : new BadRequestResult();
+        Issue? issue = Services.Issues.GetById(issueId);
+
+        if (issue == null)
+        {
+            return new BadRequestResult();
+        }
+        
+        issue.Priority = priority;
+        
+        Services.Logs.Create(user, $"Ticket: \"{issue.Headline}\" [{issue.Id}] priority has been set to \"{priority}\"", issue: issue);
+        
+        return Services.Issues.Edit(issueId, issue, user) ? new OkResult() : new BadRequestResult();
     }
     
     public ActionResult<List<Message>> GetAllIssueMessages(User? user, int issueId)
@@ -192,8 +200,6 @@ public class IssueHandler : Handler
         }
 
         Message createdMessage = Services.Messages.Create(message, selectedIssue, user);
-
-        Services.Logs.Create(user, $"Ticket: {selectedIssue.Headline} has been created", issue : selectedIssue); 
         
         return new CreatedAtActionResult(
             "GetMessage",
@@ -273,6 +279,8 @@ public class IssueHandler : Handler
         report.MachineId = issue.MachineId;
         
         Services.Reports.Create(report);
+        
+        Services.Logs.Create(user, $"Ticket: \"{issue.Headline}\" [{issue.Id}] has been resolved", issue: issue); 
         
         return new OkResult();
     }
