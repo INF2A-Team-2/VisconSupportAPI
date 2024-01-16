@@ -192,11 +192,13 @@ public class IssueHandler : Handler
         {
             return new ForbidResult();
         }
+
+        Services.LoadReference(selectedIssue, i => i.User);
         
         if (selectedIssue.Status == Status.Open)
         {
             selectedIssue.Status = Status.InProgress;
-            Services.Issues.Edit(selectedIssue.Id, selectedIssue, user);
+            Services.Issues.Edit(selectedIssue.Id, selectedIssue, selectedIssue.User);
         }
 
         Message createdMessage = Services.Messages.Create(message, selectedIssue, user);
